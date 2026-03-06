@@ -7,190 +7,152 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; --s: #a855f7; --t: #ec4899; --gold: #fbbf24; }
-        * { -webkit-tap-highlight-color: transparent; outline: none; }
-        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; margin: 0; transition: 0.5s; }
+        :root { --p: #6366f1; --s: #a855f7; --t: #ec4899; }
+        * { -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; margin: 0; }
         
         body.dark { background: #020617; color: #f8fafc; }
-        body.light { background: #f1f5f9; color: #1e293b; }
+        body.light { background: #f8fafc; color: #1e293b; }
 
-        /* تأثير النص اللامع المتحرك */
         .shimmer-text {
-            background: linear-gradient(90deg, #6366f1, #ec4899, #fbbf24, #6366f1);
+            background: linear-gradient(90deg, #818cf8, #f472b6, #fbbf24, #818cf8);
             background-size: 200% auto;
-            -webkit-background-clip: text;
-            color: transparent;
-            animation: shimmer 4s linear infinite;
+            -webkit-background-clip: text; color: transparent;
+            animation: shimmer 5s linear infinite;
         }
         @keyframes shimmer { to { background-position: 200% center; } }
 
-        /* زجاج كريستالي فخم */
         .glass { 
-            backdrop-filter: blur(20px) saturate(160%); 
+            backdrop-filter: blur(20px) saturate(180%); 
             background: rgba(255, 255, 255, 0.03); 
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .light .glass { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0,0,0,0.05); }
 
-        /* تأثير البطاقات الثلاثية */
-        .hero-card {
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            perspective: 1000px;
-        }
-        .hero-card:active { transform: scale(0.95); }
+        .page { display: none; }
+        .active-page { display: block; animation: fadeInUp 0.5s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* شريط التنقل للهاتف */
-        .mobile-dock {
+        .dock {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; padding: 10px; border-radius: 2rem;
+            width: 90%; max-width: 380px; padding: 12px; border-radius: 2.5rem;
             display: flex; justify-content: space-around; z-index: 1000;
         }
-        .nav-icon { transition: 0.3s; padding: 10px; border-radius: 1.2rem; }
-        .nav-icon.active { background: var(--p); color: white; transform: translateY(-10px) scale(1.2); box-shadow: 0 10px 20px rgba(99,102,241,0.4); }
+        .nav-link { transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 8px 15px; border-radius: 1.5rem; }
+        .nav-link.active { background: white; color: black; transform: scale(1.1); box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
+        .dark .nav-link.active { background: #6366f1; color: white; }
 
-        /* الأنيميشن */
-        .page { display: none; }
-        .active-page { display: block; animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-
-        .particles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        /* ستايل الإعلانات الهامة */
+        .urgent-card {
+            border-right: 6px solid #ef4444;
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.1), transparent);
+        }
     </style>
 </head>
 <body class="dark">
 
-    <canvas class="particles" id="canvas"></canvas>
-
     <div id="loginGate" class="min-h-screen flex items-center justify-center p-6">
-        <div class="glass p-10 rounded-[3rem] w-full max-w-sm text-center shadow-2xl">
-            <div class="w-20 h-20 bg-gradient-to-tr from-indigo-600 to-pink-500 rounded-3xl mx-auto mb-6 flex items-center justify-center text-4xl shadow-xl animate-bounce">✨</div>
-            <h1 class="text-3xl font-900 mb-8 shimmer-text font-black">موقع الصف الأول ب</h1>
+        <div class="glass p-12 rounded-[3.5rem] w-full max-w-sm text-center shadow-2xl">
+            <h1 class="text-4xl font-900 mb-10 shimmer-text font-black leading-tight">موقع الصف الأول ب</h1>
             <div class="space-y-4">
-                <input type="text" id="userInput" placeholder="اسمك الجميل" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 outline-none text-center font-bold focus:ring-2 ring-indigo-500 transition-all">
-                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 outline-none text-center font-bold focus:ring-2 ring-indigo-500 transition-all">
-                <button id="submitLogin" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-2xl font-black text-xl transition-all active:scale-90 shadow-lg">دخول الأبطال 🚀</button>
+                <input type="text" id="userInput" placeholder="اسم المستخدم" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 outline-none text-center font-bold">
+                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 outline-none text-center font-bold">
+                <button id="submitLogin" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xl shadow-xl active:scale-95 transition-all">دخول 🚀</button>
             </div>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <header class="p-4 flex justify-between items-center glass sticky top-0 z-50">
+        <header class="p-5 flex justify-between items-center glass sticky top-0 z-50">
             <div class="flex items-center gap-3" onclick="openProfile()">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 border-2 border-white/20 flex items-center justify-center">👤</div>
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg">👤</div>
                 <span id="navName" class="font-bold text-sm"></span>
             </div>
+            <h1 class="font-900 text-lg shimmer-text font-black">ابن رشد</h1>
             <button onclick="toggleTheme()" class="text-xl">🌓</button>
         </header>
 
-        <main class="p-6 pb-32 max-w-4xl mx-auto">
+        <main class="p-6 pb-32 max-w-5xl mx-auto">
             <section id="homePage" class="page active-page space-y-12">
-                <div class="text-center py-10">
-                    <h2 class="text-5xl font-900 shimmer-text font-black mb-4">أهلاً بك يا بطل!</h2>
-                    <p class="opacity-50 font-bold">استعد لمغامرة التعلم اليوم</p>
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-black flex items-center gap-3">📢 أخبارنا الهامة</h3>
+                    <div id="newsGrid" class="grid grid-cols-1 gap-4"></div>
                 </div>
-                
-                <div id="newsGrid" class="space-y-4"></div>
 
                 <div class="space-y-6">
-                    <h3 class="text-xl font-black flex items-center gap-2">💎 نجوم الأسبوع</h3>
-                    <div id="starsGrid" class="grid grid-cols-2 gap-4"></div>
+                    <h3 class="text-2xl font-black flex items-center gap-3">💎 نجوم الصف</h3>
+                    <div id="starsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
                 </div>
             </section>
 
-            <section id="hwPage" class="page space-y-6">
+            <section id="hwPage" class="page space-y-8">
                 <h2 class="text-4xl font-900 shimmer-text text-center font-black">ركن الوظائف</h2>
-                <div id="hwArea" class="space-y-4"></div>
+                <div id="hwArea" class="grid grid-cols-1 gap-6"></div>
             </section>
 
-            <section id="eventsPage" class="page space-y-8">
-                <h2 class="text-4xl font-900 shimmer-text text-center font-black">صورنا وفرحتنا</h2>
-                <div id="eventsArea" class="space-y-12"></div>
+            <section id="eventsPage" class="page space-y-10">
+                <h2 class="text-4xl font-900 shimmer-text text-center font-black">معرض الفعاليات</h2>
+                <div id="eventsArea" class="space-y-16"></div>
             </section>
         </main>
 
-        <nav class="mobile-dock glass shadow-2xl">
-            <button onclick="changePage('homePage', this)" class="nav-icon active">🏠</button>
-            <button onclick="changePage('hwPage', this)" class="nav-icon text-2xl opacity-40">📚</button>
-            <button onclick="changePage('eventsPage', this)" class="nav-icon text-2xl opacity-40">📸</button>
+        <nav class="dock glass">
+            <button onclick="changePage('homePage', this)" class="nav-link active text-2xl">🏠</button>
+            <button onclick="changePage('hwPage', this)" class="nav-link text-2xl opacity-40">📚</button>
+            <button onclick="changePage('eventsPage', this)" class="nav-link text-2xl opacity-40">📸</button>
         </nav>
     </div>
 
-    <div id="profileModal" class="fixed inset-0 bg-slate-950/90 hidden z-[2000] backdrop-blur-xl p-6 overflow-y-auto">
-        <div class="max-w-md mx-auto space-y-6 pt-10">
-            <div class="glass p-8 rounded-[3rem] text-center relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4" onclick="closeProfile()">✕</div>
-                <div class="w-24 h-24 rounded-3xl bg-indigo-600 mx-auto mb-4 flex items-center justify-center text-4xl shadow-2xl border-4 border-white/10">👤</div>
-                <h2 id="pFullName" class="text-2xl font-black shimmer-text"></h2>
-                <p class="text-xs opacity-50 font-bold">طالب متميز في الصف الأول ب</p>
-                
-                <div class="grid grid-cols-2 gap-4 mt-8">
-                    <div class="bg-white/5 p-4 rounded-2xl">
-                        <p class="text-[10px] opacity-40">النجوم</p>
-                        <p class="text-xl font-black text-yellow-400">180 ⭐</p>
-                    </div>
-                    <div class="bg-white/5 p-4 rounded-2xl">
-                        <p class="text-[10px] opacity-40">المستوى</p>
-                        <p class="text-xl font-black text-green-400">ممتاز 🏆</p>
-                    </div>
+    <div id="profileModal" class="fixed inset-0 bg-black/90 hidden z-[2000] backdrop-blur-2xl p-6 overflow-y-auto">
+        <div class="max-w-md mx-auto space-y-6">
+            <div class="flex justify-end"><button onclick="closeProfile()" class="text-3xl opacity-50">✕</button></div>
+            
+            <div class="glass p-10 rounded-[3rem] text-center shadow-2xl border-indigo-500/20">
+                <div class="w-24 h-24 rounded-3xl bg-indigo-600 mx-auto mb-4 flex items-center justify-center text-5xl shadow-2xl">👤</div>
+                <h2 id="pFullName" class="text-2xl font-black shimmer-text mb-2"></h2>
+                <div class="flex justify-center gap-2 mb-8">
+                    <span class="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full text-[10px] font-bold">طالب متميز</span>
+                    <span class="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-[10px] font-bold">180 نجمة ⭐</span>
                 </div>
-            </div>
 
-            <div class="glass p-6 rounded-[2.5rem] space-y-4">
-                <h3 class="font-black text-sm flex items-center gap-2">📊 نتائج الاختبارات</h3>
-                <div id="pExams" class="space-y-3"></div>
-            </div>
+                <div class="space-y-4 text-right">
+                    <h3 class="font-black text-sm border-r-4 border-indigo-500 pr-2">📊 كشف العلامات</h3>
+                    <div id="pExams" class="space-y-2"></div>
+                </div>
 
-            <button onclick="logout()" class="w-full p-4 rounded-2xl bg-red-500/10 text-red-500 font-bold text-sm">تسجيل الخروج</button>
+                <button onclick="logout()" class="mt-12 text-red-500 font-bold text-xs opacity-50">تسجيل الخروج</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // أنيميشن الخلفية (Canvas)
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let dots = [];
-        function initCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            dots = [];
-            for(let i=0; i<50; i++) dots.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*2, s: Math.random()*0.5 });
-        }
-        function animate() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255,255,255,0.3)";
-            dots.forEach(d => {
-                ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
-                d.y += d.s; if(d.y > canvas.height) d.y = -10;
-            });
-            requestAnimationFrame(animate);
-        }
-        initCanvas(); animate();
-        window.onresize = initCanvas;
-
         window.toggleTheme = () => {
             const isD = document.body.classList.toggle('dark');
             document.body.classList.toggle('light');
-            localStorage.setItem('v7_theme', isD ? 'dark' : 'light');
+            localStorage.setItem('v8_theme', isD ? 'dark' : 'light');
         };
+        if(localStorage.getItem('v8_theme') === 'light') toggleTheme();
 
         window.changePage = (id, btn) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
-            document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active', 'opacity-40'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active', 'opacity-40'));
+            document.querySelectorAll('.nav-link').forEach(l => { if(l !== btn) l.classList.add('opacity-40')});
             btn.classList.add('active');
             window.scrollTo({top:0, behavior:'smooth'});
         };
 
-        const session = JSON.parse(localStorage.getItem('v7_session'));
+        const session = JSON.parse(localStorage.getItem('v8_session'));
         if(session) loginOk(session);
 
         document.getElementById('submitLogin').onclick = async () => {
             const u = document.getElementById('userInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
             const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).maybeSingle();
-            if(data) { localStorage.setItem('v7_session', JSON.stringify(data)); loginOk(data); }
-            else alert("اسم البطل أو كلمة السر خطأ!");
+            if(data) { localStorage.setItem('v8_session', JSON.stringify(data)); loginOk(data); }
+            else alert("خطأ في الدخول");
         };
 
         function loginOk(user) {
@@ -204,46 +166,50 @@
             const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
             const { data: stds } = await supabase.from('students').select('*').order('full_name');
 
+            // الإعلانات الهامة
             document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `
-                <div class="glass p-6 rounded-[2rem] border-r-4 border-indigo-500 hero-card">
+                <div class="glass p-6 rounded-2xl urgent-card">
                     <p class="font-black text-lg">${a.title}</p>
                 </div>
             `).join('');
 
+            // الوظائف
             document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `
-                <div class="glass p-8 rounded-[2.5rem] hero-card">
+                <div class="glass p-8 rounded-[2rem] border-b-4 border-indigo-500/20">
                     <p class="text-xl font-bold leading-relaxed">${a.description}</p>
                 </div>
             `).join('');
 
+            // الفعاليات
             document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => `
                 <div class="space-y-4">
-                    <h4 class="text-xl font-black pr-4">${a.title || ''}</h4>
-                    <div class="glass p-2 rounded-[2.5rem] overflow-hidden">
+                    <h4 class="text-2xl font-black text-center">${a.title || ''}</h4>
+                    <div class="glass p-2 rounded-[2.5rem] overflow-hidden shadow-2xl">
                         <img src="${a.image_url}" class="w-full rounded-[2rem]">
                     </div>
                 </div>
             `).join('');
 
+            // النجوم
             document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `
-                <div class="glass p-6 rounded-[2rem] text-center hero-card">
+                <div class="glass p-5 rounded-2xl text-center">
                     <div class="text-3xl mb-2">💎</div>
-                    <p class="text-xs font-black">${s.full_name.split(' ')[0]}</p>
+                    <p class="text-[10px] font-black opacity-70">${s.full_name.split(' ')[0]}</p>
                 </div>
             `).join('');
         }
 
         window.openProfile = async () => {
-            const u = JSON.parse(localStorage.getItem('v7_session'));
+            const u = JSON.parse(localStorage.getItem('v8_session'));
             document.getElementById('profileModal').classList.remove('hidden');
             document.getElementById('pFullName').innerText = u.full_name;
             const { data } = await supabase.from('exams').select('*').eq('student_id', u.id).order('created_at', {ascending: false});
             document.getElementById('pExams').innerHTML = data.map(e => `
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl">
-                    <span class="text-xs font-bold opacity-50">${e.subject}</span>
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl">
+                    <span class="text-xs font-bold opacity-40">${e.subject}</span>
                     <span class="font-black text-indigo-400">${e.score}</span>
                 </div>
-            `).join('') || '<p class="text-center opacity-20">لا يوجد بيانات</p>';
+            `).join('') || '<p class="text-center opacity-20">لا نتائج</p>';
         };
         window.closeProfile = () => document.getElementById('profileModal').classList.add('hidden');
         window.logout = () => { localStorage.clear(); location.reload(); };
