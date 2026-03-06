@@ -5,140 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>موقع الصف الأول ب</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; --s: #a855f7; --t: #ec4899; }
-        * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        :root { --accent: #6366f1; }
+        body { font-family: 'Cairo', sans-serif; transition: background 0.4s ease; -webkit-tap-highlight-color: transparent; }
         
-        /* شفق قطبي متحرك في الخلفية */
-        .aurora-bg {
-            position: fixed; inset: 0; z-index: -1;
-            background: radial-gradient(circle at 20% 30%, #4338ca 0%, transparent 40%),
-                        radial-gradient(circle at 80% 70%, #7e22ce 0%, transparent 40%),
-                        radial-gradient(circle at 50% 50%, #1e1b4b 0%, #020617 100%);
-            filter: blur(80px); animation: aurora 20s infinite alternate;
-        }
-        @keyframes aurora { 
-            0% { transform: scale(1) rotate(0deg); } 
-            100% { transform: scale(1.2) rotate(5deg); } 
-        }
+        /* الوضع الفاتح */
+        body.light { background-color: #f8fafc; color: #0f172a; }
+        .light .card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .light .glass-nav { background: rgba(255, 255, 255, 0.8); border-bottom: 1px solid #e2e8f0; }
 
-        /* زجاج كريستالي فائق النقاء */
-        .crystal { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
+        /* الوضع الداكن */
+        body.dark { background-color: #020617; color: #f1f5f9; }
+        .dark .card { background: #0f172a; border: 1px solid #1e293b; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.8); border-bottom: 1px solid #1e293b; }
 
-        /* نص الهوية الجديد */
-        .brand-text {
-            background: linear-gradient(to right, #fff, #a5b4fc);
-            -webkit-background-clip: text; color: transparent;
-            font-weight: 900; letter-spacing: -0.05em;
-        }
-
+        .glass-nav { backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 1000; }
+        
+        .hero-text { background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%); -webkit-background-clip: text; color: transparent; }
+        
         .page { display: none; }
-        .active-page { display: block; animation: pageReveal 0.7s cubic-bezier(0.2, 1, 0.2, 1); }
-        @keyframes pageReveal { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .active-page { display: block; animation: fadeInUp 0.5s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* شريط التنقل العائم (Mobile Optimized) */
-        .floating-dock {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            padding: 8px; border-radius: 2.5rem; display: flex; gap: 8px; z-index: 1000;
-            width: fit-content; max-width: 95vw;
-        }
-        .nav-item {
-            width: 60px; height: 60px; border-radius: 2rem;
-            display: flex; items-center; justify-content: center;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .nav-item.active { background: white; color: black; transform: scale(1.1); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+        .btn-main { background: var(--accent); color: white; transition: 0.3s; }
+        .btn-main:hover { opacity: 0.9; transform: translateY(-2px); }
 
-        /* بطاقة الطالب المتألق */
-        .student-glow {
-            position: relative; transition: 0.5s;
-        }
-        .student-glow:hover { transform: translateY(-10px); }
-        .student-glow::after {
-            content: ''; position: absolute; inset: -1px; background: linear-gradient(45deg, var(--p), var(--s));
-            border-radius: inherit; z-index: -1; opacity: 0; transition: 0.5s;
-        }
-        .student-glow:hover::after { opacity: 1; filter: blur(15px); }
+        /* شريط التنقل السفلي */
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; border-radius: 2rem; display: flex; justify-content: space-around; padding: 12px; z-index: 1001; }
+        .nav-link { opacity: 0.4; transition: 0.3s; cursor: pointer; font-size: 1.5rem; }
+        .nav-link.active { opacity: 1; transform: scale(1.2); color: var(--accent); }
     </style>
 </head>
-<body class="dark text-white">
-
-    <div class="aurora-bg"></div>
+<body class="dark">
 
     <div id="loginGate" class="min-h-screen flex items-center justify-center p-6">
-        <div class="crystal p-10 rounded-[3.5rem] w-full max-w-sm text-center">
-            <div class="w-20 h-20 bg-indigo-600 rounded-3xl mx-auto mb-8 flex items-center justify-center text-4xl shadow-2xl">✨</div>
-            <h1 class="text-3xl font-black mb-2 brand-text">موقع الصف الأول ب</h1>
-            <p class="text-indigo-300/50 text-xs font-bold mb-10 tracking-[0.2em] uppercase">مدرسة ابن رشد</p>
+        <div class="card p-10 rounded-[2.5rem] w-full max-w-sm text-center">
+            <h1 class="text-3xl font-900 mb-2 hero-text font-black">موقع الصف الأول ب</h1>
+            <p class="text-sm opacity-50 mb-8 font-bold">مدرسة ابن رشد الابتدائية</p>
             
-            <div class="space-y-3">
-                <input type="text" id="userInput" placeholder="اسم البطل" class="w-full p-5 rounded-2xl bg-white/5 border border-white/5 outline-none font-bold focus:bg-white/10 transition-all text-center placeholder:opacity-20">
-                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-5 rounded-2xl bg-white/5 border border-white/5 outline-none font-bold focus:bg-white/10 transition-all text-center placeholder:opacity-20">
-                <button id="submitLogin" class="w-full bg-white text-black py-5 rounded-2xl font-black text-lg active:scale-95 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.1)]">انطلق للمستقبل 🚀</button>
+            <div class="space-y-4">
+                <input type="text" id="userInput" placeholder="اسم المستخدم" class="w-full p-4 rounded-2xl bg-slate-500/10 border-none outline-none text-center font-bold focus:ring-2 ring-indigo-500">
+                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-4 rounded-2xl bg-slate-500/10 border-none outline-none text-center font-bold focus:ring-2 ring-indigo-500">
+                <button id="submitLogin" class="w-full btn-main py-4 rounded-2xl font-black text-lg shadow-lg">دخول 🚀</button>
             </div>
+            <button onclick="toggleTheme()" class="mt-6 text-xs opacity-30 font-bold uppercase tracking-widest">تبديل المظهر 🌓</button>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <header class="p-4 sticky top-4 z-50 mx-4">
-            <div class="crystal rounded-[2rem] p-4 flex justify-between items-center max-w-5xl mx-auto">
+        <nav class="glass-nav p-4">
+            <div class="max-w-4xl mx-auto flex justify-between items-center">
                 <div class="flex items-center gap-3 cursor-pointer" onclick="openProfile()">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg text-xl">👤</div>
-                    <p id="navName" class="font-black text-sm"></p>
+                    <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white">👤</div>
+                    <p id="navName" class="font-bold text-sm"></p>
                 </div>
-                <button onclick="toggleTheme()" class="w-12 h-12 flex items-center justify-center text-2xl">🌓</button>
+                <button onclick="toggleTheme()" class="text-xl">🌓</button>
             </div>
-        </header>
+        </nav>
 
-        <main class="max-w-5xl mx-auto px-6 pt-10 pb-32">
-            <section id="homePage" class="page active-page space-y-16">
-                <div class="text-center py-10">
-                    <h1 class="text-6xl md:text-8xl font-black brand-text leading-tight mb-4 tracking-tighter">موقع الصف الأول ب</h1>
-                    <p class="text-indigo-300/60 text-lg font-bold">بوابة المبدعين الصغار في ابن رشد</p>
+        <main class="max-w-4xl mx-auto px-6 pt-8 pb-32">
+            <section id="homePage" class="page active-page space-y-12">
+                <div class="py-12 text-center">
+                    <h2 class="text-5xl font-black hero-text mb-4">أهلاً بكم أبطالنا</h2>
+                    <p class="opacity-60 font-bold">كل يوم هو مغامرة جديدة في مدرسة ابن رشد</p>
                 </div>
 
-                <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
-                <div class="space-y-8">
-                    <h3 class="text-2xl font-black flex items-center gap-4 px-2">💎 الطلاب المتميزون</h3>
-                    <div id="starsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
+                <div class="space-y-6">
+                    <h3 class="text-xl font-black border-r-4 border-indigo-500 pr-3">💎 الطلاب المتميزون</h3>
+                    <div id="starsGrid" class="grid grid-cols-3 sm:grid-cols-5 gap-4"></div>
                 </div>
             </section>
 
-            <section id="hwPage" class="page space-y-8">
-                <h2 class="text-5xl font-black text-center brand-text">ركن الوظائف</h2>
-                <div id="hwArea" class="grid gap-6 text-right"></div>
+            <section id="hwPage" class="page space-y-6">
+                <h2 class="text-3xl font-black hero-text text-center">الوظائف والمهام</h2>
+                <div id="hwArea" class="space-y-4 text-right"></div>
             </section>
 
             <section id="eventsPage" class="page space-y-12">
-                <h2 class="text-5xl font-black text-center brand-text">معرض الفعاليات</h2>
-                <div id="eventsArea" class="space-y-24"></div>
+                <h2 class="text-3xl font-black hero-text text-center">معرض الفعاليات</h2>
+                <div id="eventsArea" class="space-y-16"></div>
             </section>
         </main>
 
-        <div class="floating-dock crystal">
-            <button onclick="changePage('homePage', 'الرئيسية', this)" class="nav-item active text-2xl">🏠</button>
-            <button onclick="changePage('hwPage', 'الوظائف', this)" class="nav-item text-2xl text-white/40">📚</button>
-            <button onclick="changePage('eventsPage', 'الفعاليات', this)" class="nav-item text-2xl text-white/40">📸</button>
+        <div class="bottom-nav card border-none shadow-2xl">
+            <span onclick="changePage('homePage', this)" class="nav-link active">🏠</span>
+            <span onclick="changePage('hwPage', this)" class="nav-link">📚</span>
+            <span onclick="changePage('eventsPage', this)" class="nav-link">📸</span>
         </div>
     </div>
 
-    <div id="profileModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-6 z-[2000] backdrop-blur-xl">
-        <div class="crystal w-full max-w-sm rounded-[3.5rem] overflow-hidden">
-            <div class="h-32 bg-gradient-to-br from-indigo-500 to-purple-800"></div>
-            <div class="p-10 -mt-16 text-center">
-                <div class="w-24 h-24 rounded-[2rem] bg-slate-900 border-4 border-indigo-600 mx-auto flex items-center justify-center text-4xl shadow-2xl mb-6">👤</div>
-                <h2 id="pFullName" class="text-2xl font-black mb-8 brand-text"></h2>
-                <div id="pExams" class="space-y-2 max-h-48 overflow-y-auto text-right"></div>
-                <button onclick="logout()" class="mt-10 text-red-400 font-black text-xs opacity-40">تسجيل الخروج</button>
-                <button onclick="closeProfile()" class="block w-full mt-4 font-bold opacity-10">إغلاق</button>
+    <div id="profileModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-6 z-[2000] backdrop-blur-md">
+        <div class="card w-full max-w-sm rounded-[2rem] overflow-hidden">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 rounded-full bg-indigo-600 mx-auto flex items-center justify-center text-3xl mb-4">👤</div>
+                <h2 id="pFullName" class="text-2xl font-black mb-6"></h2>
+                <div id="pExams" class="space-y-2 text-right"></div>
+                <button onclick="logout()" class="mt-8 text-red-500 font-bold text-xs">خروج</button>
+                <button onclick="closeProfile()" class="block w-full mt-4 opacity-20 text-sm">إغلاق</button>
             </div>
         </div>
     </div>
@@ -149,30 +115,27 @@
         window.toggleTheme = () => {
             const isD = document.body.classList.toggle('dark');
             document.body.classList.toggle('light');
-            localStorage.setItem('v5_theme', isD ? 'dark' : 'light');
+            localStorage.setItem('theme_final', isD ? 'dark' : 'light');
         };
+        if(localStorage.getItem('theme_final') === 'light') toggleTheme();
 
-        window.changePage = (id, title, btn) => {
+        window.changePage = (id, btn) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
-            document.querySelectorAll('.nav-item').forEach(b => { 
-                b.classList.remove('active', 'text-black'); 
-                b.classList.add('text-white/40'); 
-            });
-            btn.classList.add('active', 'text-black');
-            btn.classList.remove('text-white/40');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            btn.classList.add('active');
             window.scrollTo({top: 0, behavior: 'smooth'});
         };
 
-        const session = JSON.parse(localStorage.getItem('v5_session'));
+        const session = JSON.parse(localStorage.getItem('session_final'));
         if(session) loginOk(session);
 
         document.getElementById('submitLogin').onclick = async () => {
             const u = document.getElementById('userInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
             const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).maybeSingle();
-            if(data) { localStorage.setItem('v5_session', JSON.stringify(data)); loginOk(data); }
-            else alert("خطأ في البيانات!");
+            if(data) { localStorage.setItem('session_final', JSON.stringify(data)); loginOk(data); }
+            else alert("بيانات الدخول غير صحيحة");
         };
 
         function loginOk(user) {
@@ -186,48 +149,25 @@
             const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
             const { data: stds } = await supabase.from('students').select('*').order('full_name');
 
-            document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `
-                <div class="crystal p-8 rounded-[2.5rem] border-l-4 border-white shadow-xl">
-                    <p class="text-xl font-black">${a.title}</p>
-                </div>
-            `).join('');
-
-            document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `
-                <div class="crystal p-10 rounded-[3rem]">
-                    <p class="text-2xl font-bold leading-relaxed">${a.description}</p>
-                </div>
-            `).join('');
-
-            document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => {
-                const isV = a.image_url.includes('mp4') || a.image_url.includes('youtu');
-                return `
-                <div class="space-y-6">
-                    <h4 class="text-3xl font-black text-center">${a.title || ''}</h4>
-                    <div class="rounded-[3rem] overflow-hidden crystal p-3">
-                        ${isV ? `<video src="${a.image_url}" controls class="w-full rounded-[2rem]"></video>` : `<img src="${a.image_url}" class="w-full rounded-[2rem]">`}
-                    </div>
-                </div>`;
-            }).join('');
-
-            document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `
-                <div class="crystal p-6 rounded-[2rem] text-center student-glow">
-                    <div class="text-3xl mb-2">💎</div>
-                    <p class="font-black text-[10px] opacity-70">${s.full_name.split(' ')[0]}</p>
-                </div>
-            `).join('');
+            if(ads) {
+                document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `<div class="card p-6 rounded-2xl"><p class="font-bold text-lg">${a.title}</p></div>`).join('');
+                document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `<div class="card p-8 rounded-2xl"><p class="text-xl leading-relaxed">${a.description}</p></div>`).join('');
+                document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => {
+                    const isV = a.image_url.includes('mp4');
+                    return `<div class="space-y-4"><h4 class="text-xl font-bold text-center">${a.title || ''}</h4><div class="card p-2 rounded-2xl overflow-hidden">${isV ? `<video src="${a.image_url}" controls class="w-full rounded-xl"></video>` : `<img src="${a.image_url}" class="w-full rounded-xl">`}</div></div>`;
+                }).join('');
+            }
+            if(stds) {
+                document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `<div class="card p-4 rounded-xl text-center"><div class="text-2xl mb-1">💎</div><p class="text-[10px] font-bold opacity-60">${s.full_name.split(' ')[0]}</p></div>`).join('');
+            }
         }
 
         window.openProfile = async () => {
-            const u = JSON.parse(localStorage.getItem('v5_session'));
+            const u = JSON.parse(localStorage.getItem('session_final'));
             document.getElementById('profileModal').classList.replace('hidden', 'flex');
             document.getElementById('pFullName').innerText = u.full_name;
             const { data } = await supabase.from('exams').select('*').eq('student_id', u.id).order('created_at', {ascending: false});
-            document.getElementById('pExams').innerHTML = data.map(e => `
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl">
-                    <span class="font-black text-xs opacity-50">${e.subject}</span>
-                    <span class="bg-white text-black px-4 py-1 rounded-full font-black text-[10px]">${e.score}</span>
-                </div>
-            `).join('') || '<p class="text-center opacity-20 text-xs italic">لا بيانات</p>';
+            document.getElementById('pExams').innerHTML = data.map(e => `<div class="flex justify-between items-center p-3 border-b border-slate-500/10"><span class="text-xs font-bold opacity-50">${e.subject}</span><span class="font-black text-indigo-500">${e.score}</span></div>`).join('') || '<p class="text-center opacity-20 text-xs">لا يوجد نتائج</p>';
         };
         window.closeProfile = () => document.getElementById('profileModal').classList.replace('flex', 'hidden');
         window.logout = () => { localStorage.clear(); location.reload(); };
