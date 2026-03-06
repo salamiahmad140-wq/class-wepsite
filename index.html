@@ -3,100 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الصف الأول "ب" الرسمية</title>
+    <title>منصة النجوم | الصف الأول "ب"</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; transition: 0.5s ease; min-height: 100vh; }
-        body.dark { background: #020617; color: #f8fafc; }
-        body.light { background: #f0f2f5; color: #1c1c1e; }
+        :root { --accent: #6366f1; --purple: #a855f7; }
+        body { font-family: 'Cairo', sans-serif; transition: 0.5s; overflow-x: hidden; }
         
-        .glass { backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        /* التدرج الفخم في الخلفية */
+        body.dark { background: #020617; color: white; }
+        body.light { background: #f8fafc; color: #1e293b; }
+
+        .glass { backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
         .dark .glass { background: rgba(15, 23, 42, 0.7); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        .light .glass { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .light .glass { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
-        .page { display: none; animation: slideUp 0.5s ease forwards; }
+        .hero-card { background: linear-gradient(135deg, var(--accent), var(--purple)); border-radius: 2.5rem; }
+        
+        .page { display: none; animation: slideUp 0.6s cubic-bezier(0.2, 1, 0.2, 1) forwards; }
         .active-page { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .nav-dock { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; height: 75px; border-radius: 2rem; z-index: 1000; }
-        .profile-header { background: linear-gradient(45deg, #6366f1, #a855f7); height: 120px; }
+        .nav-dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 420px; height: 75px; border-radius: 2rem; z-index: 1000; }
+        .id-card-header { background: linear-gradient(to right, #6366f1, #a855f7); height: 100px; }
     </style>
 </head>
 <body class="dark">
 
     <div id="loginGate" class="min-h-screen flex items-center justify-center p-6">
-        <div class="glass p-10 rounded-[3rem] w-full max-w-md text-center">
-            <h1 class="text-3xl font-black mb-2">موقع الصف الأول "ب"</h1>
-            <p class="text-indigo-500 font-bold mb-8">تسجيل دخول الأبطال</p>
+        <div class="glass p-12 rounded-[3.5rem] w-full max-w-md text-center">
+            <h1 class="text-4xl font-black mb-2 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">موقع الصف الأول "ب"</h1>
+            <p class="text-slate-400 font-bold mb-10 italic">أهلاً بك في عالم الأبطال</p>
             <div class="space-y-4">
-                <input type="text" id="u" placeholder="اسم المستخدم" class="w-full p-4 rounded-2xl glass outline-none font-bold">
-                <input type="password" id="p" placeholder="كلمة السر" class="w-full p-4 rounded-2xl glass outline-none font-bold">
-                <button id="loginBtn" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg">انطلق 🚀</button>
+                <input type="text" id="u" placeholder="اسم المستخدم" class="w-full p-5 rounded-2xl glass outline-none border-none font-bold focus:ring-2 ring-indigo-500 transition-all">
+                <input type="password" id="p" placeholder="كلمة السر" class="w-full p-5 rounded-2xl glass outline-none border-none font-bold focus:ring-2 ring-indigo-500 transition-all">
+                <button id="loginBtn" class="w-full hero-card text-white py-5 rounded-2xl font-black text-xl shadow-2xl active:scale-95 transition-all">دخول المنصة 🚀</button>
             </div>
-            <button onclick="toggleTheme()" class="mt-6 opacity-50 text-xs font-bold">تبديل المظهر 🌓</button>
+            <button onclick="toggleTheme()" class="mt-8 opacity-40 text-xs font-bold uppercase tracking-widest">تبديل المظهر 🌓</button>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <nav class="p-4 sticky top-0 z-50 glass mb-6">
+        <nav class="p-6 sticky top-0 z-50 glass mb-6">
             <div class="flex justify-between items-center max-w-5xl mx-auto">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="openProfile()">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white">👤</div>
-                    <span id="navName" class="font-black text-sm">البطل</span>
+                <div class="flex items-center gap-4 cursor-pointer" onclick="openProfile()">
+                    <div class="w-12 h-12 rounded-2xl hero-card flex items-center justify-center text-white shadow-lg">👤</div>
+                    <div class="hidden md:block text-right">
+                        <p class="text-[10px] opacity-50 font-black uppercase">طالب متميز</p>
+                        <p id="navName" class="font-black text-sm">جاري التحميل...</p>
+                    </div>
                 </div>
-                <h2 id="currentTitle" class="font-black text-lg">الرئيسية</h2>
-                <button onclick="toggleTheme()" class="text-xl">🌓</button>
+                <h2 id="currentTitle" class="text-xl font-black">الرئيسية</h2>
+                <button onclick="toggleTheme()" class="text-2xl p-2 glass rounded-xl">🌓</button>
             </div>
         </nav>
 
-        <main class="max-w-4xl mx-auto px-6 pb-32">
-            <section id="homePage" class="page active-page space-y-8">
-                <div class="glass p-10 rounded-[2.5rem] text-center">
-                    <h1 class="text-3xl font-black mb-2">أهلاً بك في موقعنا المبدع</h1>
-                    <p class="text-indigo-500 font-bold">بإشراف المعلمة لبنى سلامي</p>
+        <main class="max-w-5xl mx-auto px-6 pb-32">
+            <section id="homePage" class="page active-page space-y-12">
+                <div class="hero-card p-14 text-white text-center shadow-2xl relative overflow-hidden">
+                    <h1 class="text-5xl font-black mb-4">أهلاً بك في موقعنا المبدع</h1>
+                    <p class="text-indigo-100 font-bold opacity-80">الصف الأول ب - مدرسة ابن رشد الابتدائية</p>
                 </div>
-                <div id="newsArea" class="grid gap-4"></div>
-                <div class="glass p-6 rounded-[2.5rem]">
-                    <h3 class="font-black mb-4">⭐ لوحة النجوم</h3>
-                    <div id="starsGrid" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+
+                <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+
+                <div class="glass p-10 rounded-[3rem]">
+                    <h3 class="text-2xl font-black mb-8 flex items-center gap-3">🏆 لوحة الشرف <span class="h-[1px] flex-1 bg-white/10"></span></h3>
+                    <div id="starsGrid" class="grid grid-cols-2 md:grid-cols-5 gap-4"></div>
                 </div>
             </section>
 
-            <section id="hwPage" class="page space-y-6">
-                <h2 class="text-2xl font-black text-center mb-6">📚 ركن الوظائف</h2>
-                <div id="hwArea" class="space-y-4"></div>
+            <section id="hwPage" class="page space-y-8">
+                <div class="glass p-12 rounded-[3rem] text-center bg-indigo-600/5">
+                    <h2 class="text-4xl font-black bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">ركن الوظائف المدرسية</h2>
+                </div>
+                <div id="hwArea" class="space-y-6"></div>
             </section>
 
-            <section id="eventsPage" class="page space-y-6">
-                <h2 class="text-2xl font-black text-center mb-6">📸 فعالياتنا</h2>
-                <div id="eventsArea" class="grid gap-6"></div>
+            <section id="eventsPage" class="page space-y-8">
+                <div class="glass p-12 rounded-[3rem] text-center bg-purple-600/5">
+                    <h2 class="text-4xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">معرض الفعاليات والنشاطات</h2>
+                </div>
+                <div id="eventsArea" class="grid grid-cols-1 gap-10"></div>
             </section>
         </main>
 
-        <div class="nav-dock glass flex justify-around items-center px-4">
-            <button onclick="changePage('homePage', 'الرئيسية', this)" class="text-2xl p-4 text-indigo-500">🏠</button>
-            <button onclick="changePage('hwPage', 'الوظائف', this)" class="text-2xl p-4 opacity-40">📚</button>
-            <button onclick="changePage('eventsPage', 'الفعاليات', this)" class="text-2xl p-4 opacity-40">📸</button>
+        <div class="nav-dock glass flex justify-around items-center px-6 shadow-2xl">
+            <button onclick="changePage('homePage', 'الرئيسية', this)" class="text-2xl p-4 text-indigo-500 scale-125 transition-all">🏠</button>
+            <button onclick="changePage('hwPage', 'الوظائف', this)" class="text-2xl p-4 opacity-30 transition-all">📚</button>
+            <button onclick="changePage('eventsPage', 'الفعاليات', this)" class="text-2xl p-4 opacity-30 transition-all">📸</button>
         </div>
     </div>
 
-    <div id="profileModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-[2000] backdrop-blur-xl">
-        <div class="glass w-full max-w-sm rounded-[3rem] overflow-hidden">
-            <div class="profile-header"></div>
-            <div class="p-8 -mt-12 text-center">
-                <div class="w-20 h-20 rounded-2xl bg-indigo-600 border-4 border-white dark:border-slate-900 mx-auto flex items-center justify-center text-white text-3xl shadow-xl">👤</div>
-                <h2 id="pName" class="text-xl font-black mt-4"></h2>
-                <div id="pExams" class="mt-6 space-y-2 text-right"></div>
-                <button onclick="logout()" class="mt-8 text-red-500 font-bold text-xs uppercase tracking-widest">تسجيل الخروج</button>
-                <button onclick="closeProfile()" class="block w-full mt-4 font-bold opacity-50">إغلاق</button>
+    <div id="profileModal" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-4 z-[2000] backdrop-blur-2xl">
+        <div class="glass w-full max-w-md rounded-[3.5rem] overflow-hidden">
+            <div class="id-card-header flex items-end justify-center pb-4">
+                <div class="w-24 h-24 rounded-[2rem] bg-slate-900 border-4 border-white flex items-center justify-center text-white text-4xl shadow-2xl -mb-12 z-10">👤</div>
+            </div>
+            <div class="pt-16 pb-10 px-8 text-center">
+                <h2 id="pFullName" class="text-2xl font-black mb-1"></h2>
+                <div class="flex justify-center gap-4 text-[10px] font-bold opacity-50 mb-8">
+                    <span>يوزر: <span id="pUser"></span></span>
+                    <span>باسورد: <span id="pPass"></span></span>
+                </div>
+                
+                <div class="text-right">
+                    <h4 class="text-indigo-400 font-black text-sm mb-4 border-r-4 border-indigo-500 pr-3">آخر نتائج الاختبارات:</h4>
+                    <div id="pExams" class="space-y-2 max-h-48 overflow-y-auto pr-2"></div>
+                </div>
+
+                <button onclick="logout()" class="mt-10 text-red-500 font-black text-xs uppercase tracking-tighter opacity-50 hover:opacity-100 transition-all">تسجيل الخروج</button>
+                <button onclick="closeProfile()" class="block w-full mt-4 font-bold opacity-30">إغلاق</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
-        
+
+        // تذكر المظهر
         window.toggleTheme = () => {
             const isDark = document.body.classList.toggle('dark');
             document.body.classList.toggle('light');
@@ -108,46 +133,82 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
             document.getElementById('currentTitle').innerText = title;
-            document.querySelectorAll('.nav-dock button').forEach(b => b.classList.add('opacity-40'));
-            btn.classList.remove('opacity-40');
+            document.querySelectorAll('.nav-dock button').forEach(b => { b.classList.add('opacity-30'); b.classList.remove('scale-125', 'text-indigo-500'); });
+            btn.classList.remove('opacity-30'); btn.classList.add('scale-125', 'text-indigo-500');
         };
 
-        const session = JSON.parse(localStorage.getItem('edu_session'));
+        // تذكر الدخول
+        const session = JSON.parse(localStorage.getItem('edu_session_v2'));
         if(session) loginOk(session);
 
         document.getElementById('loginBtn').onclick = async () => {
             const u = document.getElementById('u').value, p = document.getElementById('p').value;
             const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).single();
-            if(data) { localStorage.setItem('edu_session', JSON.stringify(data)); loginOk(data); }
-            else alert("بيانات غير صحيحة");
+            if(data) { localStorage.setItem('edu_session_v2', JSON.stringify(data)); loginOk(data); }
+            else alert("عذراً.. تأكد من اسم المستخدم وكلمة السر");
         };
 
         function loginOk(user) {
             document.getElementById('loginGate').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
             document.getElementById('navName').innerText = user.full_name;
-            loadAll();
+            loadData();
         }
 
-        async function loadAll() {
+        async function loadData() {
             const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
-            const { data: stds } = await supabase.from('students').select('*');
+            const { data: stds } = await supabase.from('students').select('*').order('full_name');
 
-            document.getElementById('newsArea').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `<div class="glass p-6 rounded-2xl border-r-4 border-indigo-500 font-bold">${a.title}</div>`).join('');
-            document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `<div class="glass p-6 rounded-3xl border-b-4 border-indigo-500 font-bold text-lg leading-relaxed">${a.description}</div>`).join('');
+            // الإعلانات
+            document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `
+                <div class="glass p-8 rounded-[2.5rem] border-r-8 border-indigo-500 shadow-xl hover:scale-105 transition-all">
+                    <span class="text-indigo-400 font-black text-xs block mb-2">📢 إعلان رسمي</span>
+                    <p class="text-xl font-black">${a.title}</p>
+                </div>
+            `).join('');
+
+            // الوظائف
+            document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `
+                <div class="glass p-10 rounded-[3rem] border-b-8 border-indigo-600">
+                    <p class="text-2xl font-black leading-relaxed">${a.description}</p>
+                </div>
+            `).join('');
+
+            // الفعاليات (صور + فيديو)
             document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => {
                 const isV = a.image_url.includes('mp4') || a.image_url.includes('youtu');
-                return `<div class="glass p-4 rounded-[2rem]"><h4 class="font-black mb-3 text-center">${a.title || 'فعالية'}</h4>${isV ? `<video src="${a.image_url}" controls class="rounded-xl w-full"></video>` : `<img src="${a.image_url}" class="rounded-xl w-full">`}</div>`;
+                return `
+                <div class="glass p-6 rounded-[3.5rem] space-y-4">
+                    <h4 class="text-2xl font-black text-center text-purple-400">${a.title || 'لحظة مميزة'}</h4>
+                    <div class="rounded-[2.5rem] overflow-hidden shadow-2xl">
+                        ${isV ? `<video src="${a.image_url}" controls class="w-full"></video>` : `<img src="${a.image_url}" class="w-full">`}
+                    </div>
+                </div>`;
             }).join('');
-            document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `<div class="glass p-4 rounded-2xl text-center text-xs font-black">⭐<br>${s.full_name.split(' ')[0]}</div>`).join('');
+
+            // النجوم
+            document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `
+                <div class="glass p-6 rounded-[2rem] text-center">
+                    <div class="text-3xl mb-2">⭐</div>
+                    <p class="font-black text-xs">${s.full_name.split(' ')[0]}</p>
+                </div>
+            `).join('');
         }
 
         window.openProfile = async () => {
-            const user = JSON.parse(localStorage.getItem('edu_session'));
+            const user = JSON.parse(localStorage.getItem('edu_session_v2'));
             document.getElementById('profileModal').classList.replace('hidden', 'flex');
-            document.getElementById('pName').innerText = user.full_name;
+            document.getElementById('pFullName').innerText = user.full_name;
+            document.getElementById('pUser').innerText = user.username;
+            document.getElementById('pPass').innerText = user.password;
+            
             const { data } = await supabase.from('exams').select('*').eq('student_id', user.id).order('created_at', {ascending: false});
-            document.getElementById('pExams').innerHTML = data.map(e => `<div class="flex justify-between glass p-3 rounded-xl text-xs font-bold"><span>${e.subject}</span><span class="text-indigo-500">${e.score}</span></div>`).join('');
+            document.getElementById('pExams').innerHTML = data.map(e => `
+                <div class="flex justify-between items-center glass p-4 rounded-2xl mb-2">
+                    <span class="font-black text-xs">${e.subject}</span>
+                    <span class="bg-indigo-600 text-white px-4 py-1 rounded-full font-black text-xs shadow-lg shadow-indigo-500/30">${e.score}</span>
+                </div>
+            `).join('') || '<p class="text-center opacity-30 italic">لا توجد اختبارات مسجلة</p>';
         };
         window.closeProfile = () => document.getElementById('profileModal').classList.replace('flex', 'hidden');
         window.logout = () => { localStorage.clear(); location.reload(); };
