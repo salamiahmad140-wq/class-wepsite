@@ -1,7 +1,58 @@
-<section class="p-4 grid grid-cols-1 gap-6">
-    <h2 class="text-2xl font-black text-purple-600 mb-4">📸 ذكرياتنا الجميلة:</h2>
-    <div class="bg-white p-2 rounded-3xl shadow-lg overflow-hidden">
-        <img src="رابط_الصورة_هنا" class="w-full h-48 object-cover rounded-2xl">
-        <p class="p-3 font-bold text-center">فعالية يوم الشجرة 🌳</p>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لحظاتنا الجميلة | أول "ب"</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        .light { background: #f5f3ff; color: #1e293b; }
+        .dark { background: #0f172a; color: #f1f5f9; }
+        .nav-bottom { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 50; }
+        .dark .nav-bottom { background: #1e293b; border-top: 1px solid #334155; }
+        .img-card { background: white; border-radius: 2rem; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .dark .img-card { background: #1e293b; }
+    </style>
+</head>
+<body class="light pb-24" id="bodyTag">
+    <nav class="p-4 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <button onclick="toggleTheme()" class="text-2xl">🌓</button>
+        <span class="font-black text-purple-600">معرض الذكريات 📸</span>
+    </nav>
+
+    <div class="p-6">
+        <header class="bg-purple-600 p-8 rounded-[3rem] text-white text-center mb-8 shadow-lg">
+            <h1 class="text-3xl font-black">فعاليات أول "ب" 🌟</h1>
+            <p class="font-bold opacity-80 italic">صورنا الجميلة في المدرسة</p>
+        </header>
+
+        <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            </div>
     </div>
-</section>
+
+    <div class="nav-bottom">
+        <a href="index.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="text-xl">🏠</span><span class="text-[10px] font-bold">الرئيسية</span></a>
+        <a href="homework.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="text-xl">📚</span><span class="text-[10px] font-bold">الوظائف</span></a>
+        <a href="events.html" class="flex flex-col items-center gap-1 text-indigo-600"><span class="text-xl">📸</span><span class="text-[10px] font-bold">الفعاليات</span></a>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabaseClient.js';
+        window.toggleTheme = () => { document.getElementById('bodyTag').classList.toggle('light'); document.getElementById('bodyTag').classList.toggle('dark'); };
+        async function loadEvents() {
+            const { data } = await supabase.from('assignments').select('*').not('image_url', 'is', null).order('created_at', {ascending: false});
+            document.getElementById('eventsGrid').innerHTML = data.length ? data.map(e => `
+                <div class="img-card animate-pop">
+                    <img src="${e.image_url}" class="w-full h-64 object-cover" onerror="this.src='https://placehold.co/600x400?text=فعالية+جميلة'">
+                    <div class="p-4">
+                        <p class="font-black text-center text-purple-600 dark:text-purple-400">${e.title || 'فعالية صفية'}</p>
+                    </div>
+                </div>
+            `).join('') : '<p class="text-center text-slate-400 italic">انتظروا صور فعالياتنا القادمة! 📸</p>';
+        }
+        loadEvents();
+    </script>
+</body>
+</html>
