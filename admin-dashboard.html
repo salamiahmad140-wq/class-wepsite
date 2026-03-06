@@ -2,135 +2,100 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم المعلمة لبنى | الصف الأول "ب"</title>
+    <title>لوحة تحكم المعلمة لبنى | إدارة النجوم</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #0b0f1a; color: white; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .admin-card { border-right: 4px solid #3b82f6; }
-        input, textarea { outline: none !important; }
-    </style>
+    <style>body { font-family: 'Tajawal', sans-serif; background-color: #0b0f1a; color: white; }</style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
-
-    <header class="max-w-6xl mx-auto flex justify-between items-center mb-10 glass p-6 rounded-3xl border-blue-500/20 shadow-2xl">
+    <header class="max-w-6xl mx-auto flex justify-between items-center mb-10 bg-slate-800/50 p-6 rounded-3xl border border-blue-500/20 shadow-2xl">
         <div>
-            <h1 class="text-2xl font-black text-blue-400">أهلاً المعلمة لبنى سلامي 👋</h1>
-            <p class="text-slate-400 text-sm">إدارة شؤون الصف الأول "ب"</p>
+            <h1 class="text-2xl font-black text-blue-400">إدارة نجوم الصف الأول "ب" ⭐</h1>
+            <p class="text-slate-400 text-sm">أهلاً المعلمة لبنى سلامي</p>
         </div>
-        <button onclick="location.href='index.html'" class="bg-red-500/10 text-red-400 px-4 py-2 rounded-xl border border-red-500/30 hover:bg-red-500 hover:text-white transition">خروج</button>
+        <button onclick="location.href='index.html'" class="bg-red-500/10 text-red-400 px-4 py-2 rounded-xl border border-red-500/30">خروج</button>
     </header>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <div class="lg:col-span-1 space-y-6">
-            <section class="glass p-6 rounded-[2rem] admin-card shadow-xl">
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-blue-400">
-                    <span>👤</span> إضافة طالب جديد
-                </h3>
-                <div class="space-y-4">
-                    <input type="text" id="studentName" placeholder="اسم الطالب الكامل" class="w-full bg-slate-900/50 border border-slate-700 p-3 rounded-xl focus:border-blue-500 transition-all">
-                    <input type="text" id="studentUser" placeholder="اسم المستخدم" class="w-full bg-slate-900/50 border border-slate-700 p-3 rounded-xl focus:border-blue-500 transition-all">
-                    <input type="password" id="studentPass" placeholder="كلمة المرور" class="w-full bg-slate-900/50 border border-slate-700 p-3 rounded-xl focus:border-blue-500 transition-all">
-                    <button id="btnSaveStudent" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/40">حفظ في القاعدة</button>
-                </div>
-            </section>
+        <section class="bg-slate-800/50 p-6 rounded-[2rem] border-r-4 border-blue-500 shadow-xl">
+            <h3 class="text-xl font-bold mb-6 text-blue-400">👤 تسجيل طالب جديد</h3>
+            <div class="space-y-4">
+                <input type="text" id="studentName" placeholder="الاسم الكامل" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-blue-400">
+                <input type="text" id="studentUser" placeholder="اسم المستخدم (بالإنجليزي)" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl">
+                <input type="password" id="studentPass" placeholder="كلمة المرor" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl">
+                <button id="btnSaveStudent" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/40 transition-all">حفظ الطالب</button>
+            </div>
+        </section>
 
-            <section class="glass p-6 rounded-[2rem] border-r-4 border-green-500 shadow-xl">
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-green-400">
-                    <span>📚</span> إضافة وظيفة بيتية
-                </h3>
-                <textarea id="taskText" placeholder="اكتبي تفاصيل الوظيفة هنا..." class="w-full bg-slate-900/50 border border-slate-700 p-3 rounded-xl h-32 mb-4 focus:border-green-500 transition-all"></textarea>
-                <button id="btnSaveTask" class="w-full bg-green-600 hover:bg-green-500 py-3 rounded-xl font-bold transition-all shadow-lg shadow-green-900/40">نشر للطلاب</button>
-            </section>
-        </div>
-
-        <div class="lg:col-span-2">
-            <section class="glass p-6 rounded-[2rem] min-h-[500px] shadow-2xl overflow-hidden">
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-yellow-400">
-                    <span>🌟</span> قائمة الطلاب والدرجات
-                </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right">
-                        <thead>
-                            <tr class="text-slate-500 border-b border-slate-800">
-                                <th class="pb-4">الطالب</th>
-                                <th class="pb-4 text-center">العلامة</th>
-                                <th class="pb-4 text-center">تميز</th>
-                                <th class="pb-4 text-center">إجراء</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentsList">
-                            </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-
+        <section class="lg:col-span-2 bg-slate-800/50 p-6 rounded-[2.5rem] shadow-2xl">
+            <h3 class="text-xl font-bold mb-6 text-yellow-400">📋 قائمة الطلاب وتعديل الدرجات</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right">
+                    <thead>
+                        <tr class="text-slate-500 border-b border-slate-800">
+                            <th class="pb-4">اسم الطالب</th>
+                            <th class="pb-4 text-center">الدرجة</th>
+                            <th class="pb-4 text-center">نجمة تميز</th>
+                            <th class="pb-4 text-center">حفظ التعديل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsList"></tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // 1. وظيفة إضافة طالب جديد
+        // إضافة طالب جديد
         async function saveStudent() {
             const name = document.getElementById('studentName').value;
             const user = document.getElementById('studentUser').value;
             const pass = document.getElementById('studentPass').value;
+            if(!name || !user || !pass) return alert("يرجى ملء كافة الحقول");
 
-            if(!name || !user || !pass) return alert("يرجى تعبئة كافة الحقول");
-
-            const { data, error } = await supabase
-                .from('students')
-                .insert([{ full_name: name, username: user, password: pass }]);
-
-            if (error) {
-                alert("حدث خطأ: " + error.message);
-            } else {
-                alert("تمت إضافة الطالب " + name + " بنجاح! 🎉");
-                location.reload(); 
-            }
+            const { error } = await supabase.from('students').insert([{ full_name: name, username: user, password: pass }]);
+            if (error) alert("خطأ: " + error.message);
+            else { alert("تم تسجيل الطالب بنجاح! 🎉"); location.reload(); }
         }
 
-        // 2. وظيفة جلب وعرض الطلاب
+        // جلب الطلاب وعرضهم
         async function fetchStudents() {
-            const { data: students, error } = await supabase
-                .from('students')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) console.error(error);
-            
+            const { data: students } = await supabase.from('students').select('*').order('created_at', { ascending: false });
             const list = document.getElementById('studentsList');
-            list.innerHTML = '';
-
-            students.forEach(student => {
-                list.innerHTML += `
-                    <tr class="border-b border-slate-800/50 hover:bg-white/5 transition-colors">
-                        <td class="py-4 font-bold text-slate-200">${student.full_name}</td>
-                        <td class="py-4 text-center">
-                            <input type="number" value="${student.grade || 0}" 
-                                class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1 text-center text-blue-400 focus:border-blue-500">
-                        </td>
-                        <td class="py-4 text-center">
-                            <button class="text-2xl ${student.is_star ? 'grayscale-0' : 'grayscale'} hover:grayscale-0 transition-all">⭐</button>
-                        </td>
-                        <td class="py-4 text-center">
-                            <button class="text-red-500/50 hover:text-red-400 text-sm">حذف</button>
-                        </td>
-                    </tr>
-                `;
-            });
+            list.innerHTML = students.map(s => `
+                <tr class="border-b border-slate-800/50 hover:bg-white/5 transition-colors">
+                    <td class="py-4 font-bold text-slate-200">${s.full_name}</td>
+                    <td class="py-4 text-center">
+                        <input type="number" id="grade-${s.id}" value="${s.grade || 0}" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1 text-center text-blue-400">
+                    </td>
+                    <td class="py-4 text-center">
+                        <button onclick="window.toggleStar('${s.id}', ${s.is_star})" class="text-2xl ${s.is_star ? '' : 'grayscale'} hover:grayscale-0 transition">⭐</button>
+                    </td>
+                    <td class="py-4 text-center">
+                        <button onclick="window.updateData('${s.id}')" class="bg-green-600/20 text-green-400 border border-green-500/30 px-3 py-1 rounded-lg text-sm hover:bg-green-600 hover:text-white transition">حفظ التعديل</button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        // تشغيل الوظائف عند الضغط
+        // تعديل البيانات (درجة أو نجمة)
+        window.updateData = async (id) => {
+            const grade = document.getElementById('grade-' + id).value;
+            const { error } = await supabase.from('students').update({ grade: parseInt(grade) }).eq('id', id);
+            if (error) alert(error.message);
+            else alert("تم تحديث الدرجة بنجاح! ✅");
+        };
+
+        window.toggleStar = async (id, currentStar) => {
+            const { error } = await supabase.from('students').update({ is_star: !currentStar }).eq('id', id);
+            if (error) alert(error.message);
+            else fetchStudents();
+        };
+
         document.getElementById('btnSaveStudent').onclick = saveStudent;
-        
-        // جلب البيانات فور فتح الصفحة
         window.onload = fetchStudents;
     </script>
-
 </body>
 </html>
