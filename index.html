@@ -1,19 +1,69 @@
-<script type="module">
-    import { supabase } from './supabaseClient.js';
-    document.getElementById('btnLogin').onclick = async () => {
-        const user = document.getElementById('loginUser').value;
-        const pass = document.getElementById('loginPass').value;
-        const { data, error } = await supabase.from('students').select('*').eq('username', user).eq('password', pass).single();
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>منصة أبطال الصف الأول "ب"</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background: #050505; color: white; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .neon-border { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid #3b82f6; }
+        .star-glow { filter: drop-shadow(0 0 10px #fbbf24); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+    <div id="loginSection" class="glass p-10 rounded-[3rem] w-full max-w-md text-center transition-all duration-700">
+        <h1 class="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">أهلاً يا بطل 🚀</h1>
+        <p class="text-slate-400 mb-8">أدخل بياناتك لترى نجومك اليوم</p>
+        <div class="space-y-4">
+            <input type="text" id="loginUser" placeholder="اسم المستخدم" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:neon-border outline-none transition-all">
+            <input type="password" id="loginPass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:neon-border outline-none transition-all">
+            <button id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-xl shadow-lg transition-all">دخول للمنصة</button>
+        </div>
+    </div>
+
+    <div id="studentCard" class="hidden glass p-8 rounded-[3rem] w-full max-w-2xl border-t-4 border-blue-500 animate-fade-in">
+        <div class="flex justify-between items-center mb-8">
+            <h2 id="welcomeMsg" class="text-2xl font-bold text-blue-300"></h2>
+            <div id="starBadge" class="hidden star-glow text-4xl">⭐</div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
+                <p class="text-slate-400 text-sm mb-2">درجتك في الاختبار 📝</p>
+                <span id="displayGrade" class="text-4xl font-black text-yellow-400">0</span>
+            </div>
+            <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
+                <p class="text-slate-400 text-sm mb-4">الوظيفة البيتية 🏠</p>
+                <p id="displayTask" class="text-blue-200 italic text-sm">لا يوجد وظائف حالياً</p>
+            </div>
+        </div>
+        <button onclick="location.reload()" class="mt-8 text-slate-500 hover:text-white text-sm">تسجيل خروج</button>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabaseClient.js';
         
-        if (data) {
-            // سنقوم بتحزين اسم الطالب لنعرضه له في الصفحة التالية
-            localStorage.setItem('studentName', data.full_name);
-            localStorage.setItem('studentGrade', data.grade);
-            localStorage.setItem('isStar', data.is_star);
+        document.getElementById('btnLogin').onclick = async () => {
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
             
-            alert("أهلاً بك يا بطل: " + data.full_name + "! 🌟 درجتك الحالية: " + data.grade);
-        } else {
-            alert("بيانات الدخول غير صحيحة، حاول مجدداً يا بطل!");
-        }
-    };
-</script>
+            const { data, error } = await supabase.from('students').select('*').eq('username', user).eq('password', pass).single();
+            
+            if (data) {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('studentCard').classList.remove('hidden');
+                document.getElementById('welcomeMsg').innerText = "مرحباً يا بطل، " + data.full_name;
+                document.getElementById('displayGrade').innerText = data.grade || 0;
+                if(data.is_star) document.getElementById('starBadge').classList.remove('hidden');
+                
+                // جلب آخر وظيفة
+                const { data: task } = await supabase.from('assignments').select('content').order('created_at', { ascending: false }).limit(1).single();
+                if(task) document.getElementById('displayTask').innerText = task.content;
+            } else {
+                alert("تأكد من اسم المستخدم وكلمة المرور يا بطل!");
+            }
+        };
+    </script>
+</body>
+</html>
