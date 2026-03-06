@@ -2,106 +2,130 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مركز القيادة | المعلمة لبنى سلامي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المعلمة لبنى</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; padding: 25px; color: #1e293b; }
-        .box { background: white; border-radius: 2.5rem; padding: 2.5rem; border: 1px solid #e2e8f0; height: 100%; transition: 0.3s; }
-        .box:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        input, textarea { width: 100%; padding: 1.2rem; border-radius: 1.5rem; border: 2px solid #f1f5f9; background: #f8fafc; font-weight: bold; margin-bottom: 1rem; outline: none; }
-        .btn { background: #6366f1; color: white; padding: 1.2rem; border-radius: 1.5rem; font-weight: 900; width: 100%; cursor: pointer; border: none; }
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding-bottom: 50px; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .shimmer-text {
+            background: linear-gradient(90deg, #818cf8, #f472b6, #fbbf24, #818cf8);
+            background-size: 200% auto; -webkit-background-clip: text; color: transparent;
+            animation: shimmer 5s linear infinite;
+        }
+        @keyframes shimmer { to { background-position: 200% center; } }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        input, textarea, select { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
     </style>
 </head>
-<body class="max-w-7xl mx-auto">
+<body>
 
-    <header class="flex justify-between items-center mb-12">
-        <h1 class="text-4xl font-black tracking-tighter">لوحة التحكم <span class="text-indigo-600">الشاملة</span></h1>
-        <div class="bg-indigo-600 text-white p-5 px-10 rounded-[2rem] shadow-xl font-black">المعلمة لبنى سلامي ✨</div>
+    <header class="p-6 glass sticky top-0 z-50 flex justify-between items-center border-b border-indigo-500/30">
+        <div>
+            <h1 class="text-xl font-900 shimmer-text font-black">لوحة التحكم الذكية</h1>
+            <p class="text-[10px] opacity-50 font-bold uppercase tracking-widest">المعلمة المبدعة: لبنى</p>
+        </div>
+        <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg">👑</div>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <main class="p-5 max-w-4xl mx-auto space-y-8">
         
-        <div class="box border-t-8 border-indigo-500">
-            <h2 class="text-xl font-black mb-6 flex items-center gap-2">📢 نشر إعلان سريع</h2>
-            <input id="nTitle" placeholder="نص الإعلان...">
-            <button onclick="addNews()" class="btn">نشر الآن ✅</button>
-            <div id="nList" class="mt-6 space-y-2 max-h-40 overflow-y-auto"></div>
+        <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            <button onclick="showTab('newsTab')" class="tab-btn bg-indigo-600 px-6 py-2 rounded-xl font-bold text-sm whitespace-nowrap">إعلان جديد</button>
+            <button onclick="showTab('hwTab')" class="tab-btn bg-white/5 px-6 py-2 rounded-xl font-bold text-sm whitespace-nowrap">إضافة وظيفة</button>
+            <button onclick="showTab('eventTab')" class="tab-btn bg-white/5 px-6 py-2 rounded-xl font-bold text-sm whitespace-nowrap">رفع فعالية</button>
+            <button onclick="showTab('starsTab')" class="tab-btn bg-white/5 px-6 py-2 rounded-xl font-bold text-sm whitespace-nowrap">تحديث النجوم</button>
         </div>
 
-        <div class="box border-t-8 border-orange-500">
-            <h2 class="text-xl font-black mb-6 flex items-center gap-2">📚 نشر وظيفة</h2>
-            <textarea id="hText" placeholder="اكتبي تفاصيل الوظيفة هنا..." rows="3"></textarea>
-            <button onclick="addHw()" class="btn bg-orange-500">نشر الوظيفة ✅</button>
-            <div id="hList" class="mt-6 space-y-2 max-h-40 overflow-y-auto"></div>
-        </div>
+        <section id="newsTab" class="tab-content active space-y-4">
+            <h2 class="text-2xl font-black">📢 نشر خبر هام</h2>
+            <div class="glass p-6 rounded-3xl space-y-4">
+                <input type="text" id="newsTitle" placeholder="اكتبي عنوان الخبر هنا..." class="w-full p-4 rounded-2xl outline-none font-bold">
+                <button onclick="postData('news')" class="w-full bg-indigo-600 p-4 rounded-2xl font-black shadow-xl">نشر الخبر الآن ✅</button>
+            </div>
+        </section>
 
-        <div class="box border-t-8 border-purple-600">
-            <h2 class="text-xl font-black mb-6 flex items-center gap-2">📸 معرض الفعاليات</h2>
-            <input id="eTitle" placeholder="عنوان الفعالية">
-            <input id="eUrl" placeholder="رابط الصورة أو الفيديو (YouTube/MP4)">
-            <button onclick="addEv()" class="btn bg-purple-600">نشر الفعالية ✅</button>
-            <div id="eList" class="mt-6 space-y-2 max-h-40 overflow-y-auto"></div>
-        </div>
+        <section id="hwTab" class="tab-content space-y-4">
+            <h2 class="text-2xl font-black">📚 توزيع المهام والوظائف</h2>
+            <div class="glass p-6 rounded-3xl space-y-4">
+                <textarea id="hwDesc" rows="4" placeholder="اكتبي تفاصيل الوظيفة أو المهمة..." class="w-full p-4 rounded-2xl outline-none font-bold"></textarea>
+                <button onclick="postData('hw')" class="w-full bg-purple-600 p-4 rounded-2xl font-black shadow-xl">تحديث ركن الوظائف ✅</button>
+            </div>
+        </section>
 
-        <div class="box border-t-8 border-emerald-500">
-            <h2 class="text-xl font-black mb-6 text-emerald-600">👤 إضافة طالب جديد</h2>
-            <input id="sFull" placeholder="الاسم الكامل">
-            <input id="sUser" placeholder="اسم المستخدم">
-            <input id="sPass" placeholder="كلمة المرور">
-            <button onclick="addS()" class="btn bg-emerald-600">حفظ الطالب +</button>
-        </div>
+        <section id="eventTab" class="tab-content space-y-4">
+            <h2 class="text-2xl font-black">📸 توثيق الفعاليات</h2>
+            <div class="glass p-6 rounded-3xl space-y-4">
+                <input type="text" id="eventTitle" placeholder="عنوان الفعالية (مثال: رحلة الطبيعة)" class="w-full p-4 rounded-2xl outline-none font-bold">
+                <input type="text" id="eventUrl" placeholder="رابط الصورة أو الفيديو..." class="w-full p-4 rounded-2xl outline-none font-bold">
+                <button onclick="postData('event')" class="w-full bg-pink-600 p-4 rounded-2xl font-black shadow-xl">إضافة للمعرض ✅</button>
+            </div>
+        </section>
 
-        <div class="box lg:col-span-2 border-t-8 border-slate-800">
-            <h2 class="text-xl font-black mb-8">👥 قائمة الطلاب (تعديل البيانات، النجوم، العلامات)</h2>
-            <div id="stdGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        </div>
-    </div>
+        <section id="starsTab" class="tab-content space-y-4">
+            <h2 class="text-2xl font-black">💎 إدارة نجوم الصف</h2>
+            <div class="glass p-6 rounded-3xl space-y-6">
+                <select id="studentSelect" class="w-full p-4 rounded-2xl font-bold outline-none"></select>
+                <div class="flex gap-4">
+                    <button onclick="updateStatus('is_star', true)" class="flex-1 bg-yellow-500 text-black font-black p-4 rounded-2xl">تتويج كنجم 💎</button>
+                    <button onclick="updateStatus('is_star', false)" class="flex-1 bg-white/10 font-black p-4 rounded-2xl">إزالة النجمة</button>
+                </div>
+                <hr class="opacity-10">
+                <input type="number" id="examScore" placeholder="رصد علامة جديدة..." class="w-full p-4 rounded-2xl outline-none font-bold">
+                <input type="text" id="examSubject" placeholder="الموضوع (عربي، حساب...)" class="w-full p-4 rounded-2xl outline-none font-bold">
+                <button onclick="postScore()" class="w-full bg-green-600 p-4 rounded-2xl font-black shadow-xl">حفظ العلامة 📊</button>
+            </div>
+        </section>
+
+    </main>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // وظائف الإضافة
-        window.addNews = async () => { await supabase.from('assignments').insert([{ title: document.getElementById('nTitle').value }]); location.reload(); };
-        window.addHw = async () => { await supabase.from('assignments').insert([{ description: document.getElementById('hText').value }]); location.reload(); };
-        window.addEv = async () => { await supabase.from('assignments').insert([{ title: document.getElementById('eTitle').value, image_url: document.getElementById('eUrl').value }]); location.reload(); };
-        window.addS = async () => { await supabase.from('students').insert([{ full_name: document.getElementById('sFull').value, username: document.getElementById('sUser').value, password: document.getElementById('sPass').value }]); location.reload(); };
-
-        async function load() {
-            const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
-            const { data: stds } = await supabase.from('students').select('*').order('full_name');
-
-            // تحديث قوائم الحذف السريع
-            document.getElementById('nList').innerHTML = ads.filter(a => a.title && !a.description).map(a => `<div class="text-[10px] p-2 bg-slate-100 rounded flex justify-between"><span>${a.title}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
-            document.getElementById('hList').innerHTML = ads.filter(a => a.description).map(a => `<div class="text-[10px] p-2 bg-slate-100 rounded flex justify-between"><span class="truncate w-32">${a.description}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
-            document.getElementById('eList').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="text-[10px] p-2 bg-slate-100 rounded flex justify-between"><span class="truncate w-32">${a.title}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
-
-            // شبكة إدارة الطلاب
-            document.getElementById('stdGrid').innerHTML = stds.map(s => `
-                <div class="bg-slate-50 p-6 rounded-[2rem] border relative group">
-                    <p class="font-black mb-4 text-indigo-600">${s.full_name}</p>
-                    <div class="grid grid-cols-2 gap-2 mb-4">
-                        <input value="${s.username}" onchange="upS('${s.id}', 'username', this.value)" class="p-2 mb-0 text-xs">
-                        <input value="${s.password}" onchange="upS('${s.id}', 'password', this.value)" class="p-2 mb-0 text-xs">
-                    </div>
-                    <div class="flex gap-3 items-center">
-                        <button onclick="addEx('${s.id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-[10px] font-black">+ علامة</button>
-                        <button onclick="tStar('${s.id}', ${s.is_star})" class="text-2xl">${s.is_star?'⭐':'☆'}</button>
-                        <button onclick="delS('${s.id}')" class="text-red-300 hover:text-red-600 mr-auto">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.del = async (id) => { await supabase.from('assignments').delete().eq('id', id); load(); };
-        window.delS = async (id) => { if(confirm("حذف الطالب نهائياً؟")) { await supabase.from('students').delete().eq('id', id); load(); } };
-        window.tStar = async (id, cur) => { await supabase.from('students').update({is_star: !cur}).eq('id', id); load(); };
-        window.upS = async (id, col, val) => { await supabase.from('students').update({[col]: val}).eq('id', id); };
-        window.addEx = async (sid) => {
-            const sub = prompt("المادة؟"), sc = prompt("العلامة؟");
-            if(sub && sc) await supabase.from('exams').insert([{student_id: sid, subject: sub, score: sc}]);
+        // تبديل التبويبات
+        window.showTab = (tabId) => {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.replace('bg-indigo-600', 'bg-white/5'));
+            event.target.classList.replace('bg-white/5', 'bg-indigo-600');
         };
-        load();
+
+        // تحميل قائمة الطلاب
+        async function loadStudents() {
+            const { data } = await supabase.from('students').select('*').order('full_name');
+            document.getElementById('studentSelect').innerHTML = data.map(s => `<option value="${s.id}">${s.full_name}</option>`).join('');
+        }
+        loadStudents();
+
+        // وظائف النشر العامة
+        window.postData = async (type) => {
+            let payload = {};
+            if(type === 'news') payload = { title: document.getElementById('newsTitle').value };
+            if(type === 'hw') payload = { description: document.getElementById('hwDesc').value };
+            if(type === 'event') payload = { title: document.getElementById('eventTitle').value, image_url: document.getElementById('eventUrl').value };
+
+            const { error } = await supabase.from('assignments').insert([payload]);
+            if(!error) { alert("تم النشر بنجاح يا أستاذة لبنى! ✨"); location.reload(); }
+        };
+
+        // تحديث حالة الطالب (نجم أم لا)
+        window.updateStatus = async (field, value) => {
+            const id = document.getElementById('studentSelect').value;
+            const { error } = await supabase.from('students').update({ [field]: value }).eq('id', id);
+            if(!error) alert("تم تحديث حالة البطل! 💎");
+        };
+
+        // رصد علامة
+        window.postScore = async () => {
+            const sid = document.getElementById('studentSelect').value;
+            const score = document.getElementById('examScore').value;
+            const sub = document.getElementById('examSubject').value;
+            const { error } = await supabase.from('exams').insert([{ student_id: sid, score: score, subject: sub }]);
+            if(!error) alert("تم رصد العلامة بنجاح! 📊");
+        };
     </script>
 </body>
 </html>
