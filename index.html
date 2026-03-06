@@ -2,38 +2,100 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الصف الأول "ب" | المنصة الذكية</title>
+    <title>لوحة تحكم المعلمة لبنى | إدارة النجوم</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #0f172a; color: white; }
-        .neon-border { border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
-    </style>
+    <style>body { font-family: 'Tajawal', sans-serif; background-color: #0b0f1a; color: white; }</style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 blur-[120px] rounded-full"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 blur-[120px] rounded-full"></div>
-    </div>
-
-    <div class="max-w-md w-full bg-slate-900/80 backdrop-blur-xl p-8 rounded-[2.5rem] neon-border text-center">
-        <h1 class="text-4xl font-black mb-2 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">الصف الأول "ب" 🌟</h1>
-        <p class="text-slate-400 mb-8 text-sm">مرحباً بكم في مدرستنا الرقمية</p>
-        
-        <div class="space-y-4">
-            <input type="text" id="username" placeholder="اسم المستخدم" class="w-full bg-slate-800 border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 transition-all text-white">
-            <input type="password" id="password" placeholder="كلمة المرور" class="w-full bg-slate-800 border border-slate-700 p-4 rounded-2xl outline-none focus:border-blue-500 transition-all text-white">
-            
-            <div class="flex items-center gap-2 px-2 text-sm text-slate-400">
-                <input type="checkbox" id="remember" class="w-4 h-4 rounded">
-                <label for="remember">تذكر جهازي</label>
-            </div>
-
-            <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-600/20 transition-all transform active:scale-95">دخول للمنصة</button>
+<body class="min-h-screen p-4 md:p-8">
+    <header class="max-w-6xl mx-auto flex justify-between items-center mb-10 bg-slate-800/50 p-6 rounded-3xl border border-blue-500/20 shadow-2xl">
+        <div>
+            <h1 class="text-2xl font-black text-blue-400">إدارة نجوم الصف الأول "ب" ⭐</h1>
+            <p class="text-slate-400 text-sm">أهلاً المعلمة لبنى سلامي</p>
         </div>
-        
-        <p class="mt-8 text-[10px] text-slate-500">بإشراف المعلمة: لبنى سلامي</p>
-    </div>
+        <button onclick="location.href='index.html'" class="bg-red-500/10 text-red-400 px-4 py-2 rounded-xl border border-red-500/30">خروج</button>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section class="bg-slate-800/50 p-6 rounded-[2rem] border-r-4 border-blue-500 shadow-xl">
+            <h3 class="text-xl font-bold mb-6 text-blue-400">👤 تسجيل طالب جديد</h3>
+            <div class="space-y-4">
+                <input type="text" id="studentName" placeholder="الاسم الكامل" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-blue-400">
+                <input type="text" id="studentUser" placeholder="اسم المستخدم (بالإنجليزي)" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl">
+                <input type="password" id="studentPass" placeholder="كلمة المرor" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl">
+                <button id="btnSaveStudent" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold shadow-lg shadow-blue-900/40 transition-all">حفظ الطالب</button>
+            </div>
+        </section>
+
+        <section class="lg:col-span-2 bg-slate-800/50 p-6 rounded-[2.5rem] shadow-2xl">
+            <h3 class="text-xl font-bold mb-6 text-yellow-400">📋 قائمة الطلاب وتعديل الدرجات</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right">
+                    <thead>
+                        <tr class="text-slate-500 border-b border-slate-800">
+                            <th class="pb-4">اسم الطالب</th>
+                            <th class="pb-4 text-center">الدرجة</th>
+                            <th class="pb-4 text-center">نجمة تميز</th>
+                            <th class="pb-4 text-center">حفظ التعديل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsList"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { supabase } from './supabaseClient.js';
+
+        // إضافة طالب جديد
+        async function saveStudent() {
+            const name = document.getElementById('studentName').value;
+            const user = document.getElementById('studentUser').value;
+            const pass = document.getElementById('studentPass').value;
+            if(!name || !user || !pass) return alert("يرجى ملء كافة الحقول");
+
+            const { error } = await supabase.from('students').insert([{ full_name: name, username: user, password: pass }]);
+            if (error) alert("خطأ: " + error.message);
+            else { alert("تم تسجيل الطالب بنجاح! 🎉"); location.reload(); }
+        }
+
+        // جلب الطلاب وعرضهم
+        async function fetchStudents() {
+            const { data: students } = await supabase.from('students').select('*').order('created_at', { ascending: false });
+            const list = document.getElementById('studentsList');
+            list.innerHTML = students.map(s => `
+                <tr class="border-b border-slate-800/50 hover:bg-white/5 transition-colors">
+                    <td class="py-4 font-bold text-slate-200">${s.full_name}</td>
+                    <td class="py-4 text-center">
+                        <input type="number" id="grade-${s.id}" value="${s.grade || 0}" class="w-16 bg-slate-900 border border-slate-700 rounded-lg p-1 text-center text-blue-400">
+                    </td>
+                    <td class="py-4 text-center">
+                        <button onclick="window.toggleStar('${s.id}', ${s.is_star})" class="text-2xl ${s.is_star ? '' : 'grayscale'} hover:grayscale-0 transition">⭐</button>
+                    </td>
+                    <td class="py-4 text-center">
+                        <button onclick="window.updateData('${s.id}')" class="bg-green-600/20 text-green-400 border border-green-500/30 px-3 py-1 rounded-lg text-sm hover:bg-green-600 hover:text-white transition">حفظ التعديل</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // تعديل البيانات (درجة أو نجمة)
+        window.updateData = async (id) => {
+            const grade = document.getElementById('grade-' + id).value;
+            const { error } = await supabase.from('students').update({ grade: parseInt(grade) }).eq('id', id);
+            if (error) alert(error.message);
+            else alert("تم تحديث الدرجة بنجاح! ✅");
+        };
+
+        window.toggleStar = async (id, currentStar) => {
+            const { error } = await supabase.from('students').update({ is_star: !currentStar }).eq('id', id);
+            if (error) alert(error.message);
+            else fetchStudents();
+        };
+
+        document.getElementById('btnSaveStudent').onclick = saveStudent;
+        window.onload = fetchStudents;
+    </script>
 </body>
 </html>
