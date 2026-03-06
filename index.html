@@ -7,175 +7,190 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; --s: #a855f7; --t: #ec4899; }
-        * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; scroll-behavior: smooth; margin: 0; }
+        :root { --p: #6366f1; --s: #a855f7; --t: #ec4899; --gold: #fbbf24; }
+        * { -webkit-tap-highlight-color: transparent; outline: none; }
+        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; margin: 0; transition: 0.5s; }
         
-        /* خلفية سحرية عميقة */
-        body.dark { background: radial-gradient(circle at top right, #1e1b4b, #020617); color: #f8fafc; }
-        body.light { background: radial-gradient(circle at top right, #e0e7ff, #f8fafc); color: #0f172a; }
+        body.dark { background: #020617; color: #f8fafc; }
+        body.light { background: #f1f5f9; color: #1e293b; }
 
-        /* تأثير الزجاج الفائق المطوّر */
-        .ultra-glass { 
-            backdrop-filter: blur(25px) saturate(180%); 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        /* تأثير النص اللامع المتحرك */
+        .shimmer-text {
+            background: linear-gradient(90deg, #6366f1, #ec4899, #fbbf24, #6366f1);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: shimmer 4s linear infinite;
         }
-        .light .ultra-glass { background: rgba(255, 255, 255, 0.65); border: 1px solid rgba(0,0,0,0.05); }
+        @keyframes shimmer { to { background-position: 200% center; } }
 
-        /* نيون العناوين */
-        .mega-title { 
-            background: linear-gradient(135deg, #818cf8, #f472b6, #fbbf24); 
-            -webkit-background-clip: text; color: transparent; 
-            animation: gradient-shift 6s infinite alternate;
+        /* زجاج كريستالي فخم */
+        .glass { 
+            backdrop-filter: blur(20px) saturate(160%); 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        @keyframes gradient-shift { 0% { filter: hue-rotate(0deg); transform: scale(1); } 100% { filter: hue-rotate(20deg); transform: scale(1.02); } }
+        .light .glass { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0,0,0,0.05); }
 
-        /* تحويم البطاقات */
-        .hover-card { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .hover-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 30px 60px rgba(99,102,241,0.25); }
+        /* تأثير البطاقات الثلاثية */
+        .hero-card {
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            perspective: 1000px;
+        }
+        .hero-card:active { transform: scale(0.95); }
 
+        /* شريط التنقل للهاتف */
+        .mobile-dock {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; padding: 10px; border-radius: 2rem;
+            display: flex; justify-content: space-around; z-index: 1000;
+        }
+        .nav-icon { transition: 0.3s; padding: 10px; border-radius: 1.2rem; }
+        .nav-icon.active { background: var(--p); color: white; transform: translateY(-10px) scale(1.2); box-shadow: 0 10px 20px rgba(99,102,241,0.4); }
+
+        /* الأنيميشن */
         .page { display: none; }
-        .active-page { display: block; animation: pageReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes pageReveal { from { opacity: 0; transform: translateY(30px) scale(0.95); filter: blur(10px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+        .active-page { display: block; animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* الـ Dock العائم المتطور */
-        .dock { 
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); 
-            width: fit-content; min-width: 280px; padding: 10px 20px;
-            border-radius: 2.5rem; z-index: 1000; display: flex; gap: 30px; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-        
-        .particles { position: fixed; inset: 0; pointer-events: none; z-index: -1; opacity: 0.4; }
-        
-        /* تخصيص للموبايل */
-        @media (max-width: 640px) {
-            .mega-title { font-size: 2.5rem !important; }
-            .dock { gap: 20px; min-width: 250px; padding: 8px 15px; }
-            .dock button { font-size: 1.8rem !important; }
-        }
+        .particles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
     </style>
 </head>
 <body class="dark">
 
-    <div class="particles" id="particles"></div>
+    <canvas class="particles" id="canvas"></canvas>
 
     <div id="loginGate" class="min-h-screen flex items-center justify-center p-6">
-        <div class="ultra-glass p-10 md:p-14 rounded-[3.5rem] w-full max-w-md text-center relative overflow-hidden">
-            <div class="absolute -top-10 -left-10 w-32 h-32 bg-indigo-500/20 blur-[60px]"></div>
-            <h1 class="text-4xl font-black mb-10 mega-title">موقع الصف الأول ب</h1>
-            
-            <div class="space-y-5">
-                <input type="text" id="userInput" placeholder="اسم البطل" class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 outline-none font-bold focus:ring-2 ring-indigo-500 transition-all text-center">
-                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 outline-none font-bold focus:ring-2 ring-indigo-500 transition-all text-center">
-                <button id="submitLogin" class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-5 rounded-2xl font-black text-xl shadow-2xl active:scale-95 transition-all">انطلاق 🚀</button>
+        <div class="glass p-10 rounded-[3rem] w-full max-w-sm text-center shadow-2xl">
+            <div class="w-20 h-20 bg-gradient-to-tr from-indigo-600 to-pink-500 rounded-3xl mx-auto mb-6 flex items-center justify-center text-4xl shadow-xl animate-bounce">✨</div>
+            <h1 class="text-3xl font-900 mb-8 shimmer-text font-black">موقع الصف الأول ب</h1>
+            <div class="space-y-4">
+                <input type="text" id="userInput" placeholder="اسمك الجميل" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 outline-none text-center font-bold focus:ring-2 ring-indigo-500 transition-all">
+                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 outline-none text-center font-bold focus:ring-2 ring-indigo-500 transition-all">
+                <button id="submitLogin" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-2xl font-black text-xl transition-all active:scale-90 shadow-lg">دخول الأبطال 🚀</button>
             </div>
-            <button onclick="toggleTheme()" class="mt-8 opacity-40 text-[10px] uppercase font-bold tracking-[0.3em]">تبديل المظهر 🌓</button>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <nav class="p-5 sticky top-0 z-50 ultra-glass border-b border-white/5">
-            <div class="max-w-6xl mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-4 cursor-pointer group" onclick="openProfile()">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 to-pink-600 flex items-center justify-center text-white text-xl shadow-lg transition-transform group-hover:scale-110">👤</div>
-                    <div class="text-right">
-                        <p id="navName" class="font-black text-base md:text-lg">بطل الصف</p>
-                        <p class="text-[8px] opacity-40 font-bold uppercase">ابن رشد الابتدائية</p>
-                    </div>
-                </div>
-                <h2 id="currentTitle" class="hidden md:block text-xl font-black opacity-80">الرئيسية</h2>
-                <button onclick="toggleTheme()" class="w-10 h-10 ultra-glass rounded-xl flex items-center justify-center text-xl">🌓</button>
+        <header class="p-4 flex justify-between items-center glass sticky top-0 z-50">
+            <div class="flex items-center gap-3" onclick="openProfile()">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 border-2 border-white/20 flex items-center justify-center">👤</div>
+                <span id="navName" class="font-bold text-sm"></span>
             </div>
-        </nav>
+            <button onclick="toggleTheme()" class="text-xl">🌓</button>
+        </header>
 
-        <main class="max-w-6xl mx-auto px-6 pt-10 pb-40">
-            <section id="homePage" class="page active-page space-y-16">
-                <div class="relative py-20 px-6 md:px-10 rounded-[4rem] overflow-hidden text-center ultra-glass">
-                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/10 via-transparent to-pink-600/10"></div>
-                    <h1 class="text-5xl md:text-8xl font-black mb-6 mega-title tracking-tighter">موقع الصف الأول ب</h1>
-                    <p class="text-xl md:text-2xl font-bold opacity-60">مدرسة ابن رشد الابتدائية</p>
+        <main class="p-6 pb-32 max-w-4xl mx-auto">
+            <section id="homePage" class="page active-page space-y-12">
+                <div class="text-center py-10">
+                    <h2 class="text-5xl font-900 shimmer-text font-black mb-4">أهلاً بك يا بطل!</h2>
+                    <p class="opacity-50 font-bold">استعد لمغامرة التعلم اليوم</p>
                 </div>
+                
+                <div id="newsGrid" class="space-y-4"></div>
 
-                <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
-
-                <div class="space-y-10">
-                    <h3 class="text-3xl font-black flex items-center gap-5 pr-2">💎 الطلاب المتميزون <span class="h-[1px] flex-1 bg-gradient-to-l from-white/20 to-transparent"></span></h3>
-                    <div id="starsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6"></div>
+                <div class="space-y-6">
+                    <h3 class="text-xl font-black flex items-center gap-2">💎 نجوم الأسبوع</h3>
+                    <div id="starsGrid" class="grid grid-cols-2 gap-4"></div>
                 </div>
             </section>
 
-            <section id="hwPage" class="page space-y-10 text-center">
-                <h2 class="text-6xl font-black mega-title">ركن الوظائف</h2>
-                <div id="hwArea" class="grid gap-8"></div>
+            <section id="hwPage" class="page space-y-6">
+                <h2 class="text-4xl font-900 shimmer-text text-center font-black">ركن الوظائف</h2>
+                <div id="hwArea" class="space-y-4"></div>
             </section>
 
-            <section id="eventsPage" class="page space-y-20">
-                <h2 class="text-6xl font-black text-center mega-title">معرض الفعاليات</h2>
-                <div id="eventsArea" class="space-y-24"></div>
+            <section id="eventsPage" class="page space-y-8">
+                <h2 class="text-4xl font-900 shimmer-text text-center font-black">صورنا وفرحتنا</h2>
+                <div id="eventsArea" class="space-y-12"></div>
             </section>
         </main>
 
-        <div class="dock ultra-glass">
-            <button onclick="changePage('homePage', 'الرئيسية', this)" class="text-4xl text-indigo-500 scale-125 transition-all">🏠</button>
-            <button onclick="changePage('hwPage', 'الوظائف', this)" class="text-4xl opacity-30 hover:opacity-100 transition-all">📚</button>
-            <button onclick="changePage('eventsPage', 'الفعاليات', this)" class="text-4xl opacity-30 hover:opacity-100 transition-all">📸</button>
-        </div>
+        <nav class="mobile-dock glass shadow-2xl">
+            <button onclick="changePage('homePage', this)" class="nav-icon active">🏠</button>
+            <button onclick="changePage('hwPage', this)" class="nav-icon text-2xl opacity-40">📚</button>
+            <button onclick="changePage('eventsPage', this)" class="nav-icon text-2xl opacity-40">📸</button>
+        </nav>
     </div>
 
-    <div id="profileModal" class="fixed inset-0 bg-black/95 hidden items-center justify-center p-4 z-[2000] backdrop-blur-[40px]">
-        <div class="ultra-glass w-full max-w-sm rounded-[3.5rem] overflow-hidden border-white/20">
-            <div class="h-36 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative">
-                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-28 h-28 rounded-3xl bg-slate-900 border-4 border-slate-900 flex items-center justify-center text-5xl shadow-2xl">👤</div>
+    <div id="profileModal" class="fixed inset-0 bg-slate-950/90 hidden z-[2000] backdrop-blur-xl p-6 overflow-y-auto">
+        <div class="max-w-md mx-auto space-y-6 pt-10">
+            <div class="glass p-8 rounded-[3rem] text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4" onclick="closeProfile()">✕</div>
+                <div class="w-24 h-24 rounded-3xl bg-indigo-600 mx-auto mb-4 flex items-center justify-center text-4xl shadow-2xl border-4 border-white/10">👤</div>
+                <h2 id="pFullName" class="text-2xl font-black shimmer-text"></h2>
+                <p class="text-xs opacity-50 font-bold">طالب متميز في الصف الأول ب</p>
+                
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <div class="bg-white/5 p-4 rounded-2xl">
+                        <p class="text-[10px] opacity-40">النجوم</p>
+                        <p class="text-xl font-black text-yellow-400">180 ⭐</p>
+                    </div>
+                    <div class="bg-white/5 p-4 rounded-2xl">
+                        <p class="text-[10px] opacity-40">المستوى</p>
+                        <p class="text-xl font-black text-green-400">ممتاز 🏆</p>
+                    </div>
+                </div>
             </div>
-            <div class="pt-16 pb-10 px-10 text-center">
-                <h2 id="pFullName" class="text-2xl font-black mb-1"></h2>
-                <p class="text-indigo-400 font-bold text-[10px] uppercase tracking-widest mb-8">بطاقة الطالب الرقمية</p>
-                <div id="pExams" class="space-y-2 max-h-48 overflow-y-auto pr-2 text-right"></div>
-                <button onclick="logout()" class="mt-10 text-red-500 font-black text-[10px] tracking-widest opacity-40 hover:opacity-100 transition-all">تسجيل الخروج</button>
-                <button onclick="closeProfile()" class="block w-full mt-4 font-bold opacity-10">إغلاق</button>
+
+            <div class="glass p-6 rounded-[2.5rem] space-y-4">
+                <h3 class="font-black text-sm flex items-center gap-2">📊 نتائج الاختبارات</h3>
+                <div id="pExams" class="space-y-3"></div>
             </div>
+
+            <button onclick="logout()" class="w-full p-4 rounded-2xl bg-red-500/10 text-red-500 font-bold text-sm">تسجيل الخروج</button>
         </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // تأثير الجزيئات
-        const pContainer = document.getElementById('particles');
-        for(let i=0; i<25; i++) {
-            const p = document.createElement('div');
-            p.style.cssText = `position:absolute; width:3px; height:3px; background:white; border-radius:50%; top:${Math.random()*100}%; left:${Math.random()*100}%; opacity:${Math.random()*0.5}; filter:blur(1px); animation: float ${15+Math.random()*15}s infinite linear;`;
-            pContainer.appendChild(p);
+        // أنيميشن الخلفية (Canvas)
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let dots = [];
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            dots = [];
+            for(let i=0; i<50; i++) dots.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*2, s: Math.random()*0.5 });
         }
+        function animate() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255,255,255,0.3)";
+            dots.forEach(d => {
+                ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
+                d.y += d.s; if(d.y > canvas.height) d.y = -10;
+            });
+            requestAnimationFrame(animate);
+        }
+        initCanvas(); animate();
+        window.onresize = initCanvas;
 
         window.toggleTheme = () => {
             const isD = document.body.classList.toggle('dark');
             document.body.classList.toggle('light');
-            localStorage.setItem('ibn_theme_v5', isD ? 'dark' : 'light');
+            localStorage.setItem('v7_theme', isD ? 'dark' : 'light');
         };
-        if(localStorage.getItem('ibn_theme_v5') === 'light') toggleTheme();
 
-        window.changePage = (id, title, btn) => {
+        window.changePage = (id, btn) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
-            document.getElementById('currentTitle').innerText = title;
-            document.querySelectorAll('.dock button').forEach(b => { b.classList.add('opacity-30'); b.classList.remove('scale-125', 'text-indigo-500'); });
-            btn.classList.remove('opacity-30'); btn.classList.add('scale-125', 'text-indigo-500');
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active', 'opacity-40'));
+            btn.classList.add('active');
+            window.scrollTo({top:0, behavior:'smooth'});
         };
 
-        const session = JSON.parse(localStorage.getItem('ibn_session_v5'));
+        const session = JSON.parse(localStorage.getItem('v7_session'));
         if(session) loginOk(session);
 
         document.getElementById('submitLogin').onclick = async () => {
             const u = document.getElementById('userInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
             const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).maybeSingle();
-            if(data) { localStorage.setItem('ibn_session_v5', JSON.stringify(data)); loginOk(data); }
-            else alert("عذراً.. تأكد من بياناتك!");
+            if(data) { localStorage.setItem('v7_session', JSON.stringify(data)); loginOk(data); }
+            else alert("اسم البطل أو كلمة السر خطأ!");
         };
 
         function loginOk(user) {
@@ -190,49 +205,47 @@
             const { data: stds } = await supabase.from('students').select('*').order('full_name');
 
             document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `
-                <div class="ultra-glass p-8 md:p-12 rounded-[3rem] border-r-8 border-indigo-500 hover-card">
-                    <p class="text-2xl md:text-3xl font-black leading-tight">${a.title}</p>
+                <div class="glass p-6 rounded-[2rem] border-r-4 border-indigo-500 hero-card">
+                    <p class="font-black text-lg">${a.title}</p>
                 </div>
             `).join('');
 
             document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `
-                <div class="ultra-glass p-10 md:p-16 rounded-[4rem] hover-card">
-                    <p class="text-3xl md:text-4xl font-black leading-relaxed">${a.description}</p>
+                <div class="glass p-8 rounded-[2.5rem] hero-card">
+                    <p class="text-xl font-bold leading-relaxed">${a.description}</p>
                 </div>
             `).join('');
 
-            document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => {
-                const isV = a.image_url.includes('mp4') || a.image_url.includes('youtu');
-                return `
-                <div class="max-w-4xl mx-auto space-y-8">
-                    <h4 class="text-3xl md:text-5xl font-black text-center mega-title">${a.title || ''}</h4>
-                    <div class="rounded-[3rem] md:rounded-[5rem] overflow-hidden ultra-glass p-3 md:p-6 shadow-2xl">
-                        ${isV ? `<video src="${a.image_url}" controls class="w-full rounded-[2.5rem] md:rounded-[4rem]"></video>` : `<img src="${a.image_url}" class="w-full rounded-[2.5rem] md:rounded-[4rem]">`}
+            document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => `
+                <div class="space-y-4">
+                    <h4 class="text-xl font-black pr-4">${a.title || ''}</h4>
+                    <div class="glass p-2 rounded-[2.5rem] overflow-hidden">
+                        <img src="${a.image_url}" class="w-full rounded-[2rem]">
                     </div>
-                </div>`;
-            }).join('');
+                </div>
+            `).join('');
 
             document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `
-                <div class="ultra-glass p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] text-center hover-card group">
-                    <div class="text-4xl md:text-5xl mb-3 group-hover:animate-bounce">💎</div>
-                    <p class="font-black text-xs md:text-sm tracking-tighter">${s.full_name.split(' ')[0]}</p>
+                <div class="glass p-6 rounded-[2rem] text-center hero-card">
+                    <div class="text-3xl mb-2">💎</div>
+                    <p class="text-xs font-black">${s.full_name.split(' ')[0]}</p>
                 </div>
             `).join('');
         }
 
         window.openProfile = async () => {
-            const u = JSON.parse(localStorage.getItem('ibn_session_v5'));
-            document.getElementById('profileModal').classList.replace('hidden', 'flex');
+            const u = JSON.parse(localStorage.getItem('v7_session'));
+            document.getElementById('profileModal').classList.remove('hidden');
             document.getElementById('pFullName').innerText = u.full_name;
             const { data } = await supabase.from('exams').select('*').eq('student_id', u.id).order('created_at', {ascending: false});
             document.getElementById('pExams').innerHTML = data.map(e => `
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 mb-2">
-                    <span class="font-black text-[10px] opacity-40">${e.subject}</span>
-                    <span class="bg-indigo-600/20 text-indigo-400 px-4 py-1 rounded-full font-black text-xs">${e.score}</span>
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl">
+                    <span class="text-xs font-bold opacity-50">${e.subject}</span>
+                    <span class="font-black text-indigo-400">${e.score}</span>
                 </div>
-            `).join('') || '<p class="text-center opacity-20 text-xs italic">لا نتائج</p>';
+            `).join('') || '<p class="text-center opacity-20">لا يوجد بيانات</p>';
         };
-        window.closeProfile = () => document.getElementById('profileModal').classList.replace('flex', 'hidden');
+        window.closeProfile = () => document.getElementById('profileModal').classList.add('hidden');
         window.logout = () => { localStorage.clear(); location.reload(); };
     </script>
 </body>
