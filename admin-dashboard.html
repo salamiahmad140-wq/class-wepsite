@@ -7,142 +7,95 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; transition: 0.3s; }
-        .light-mode { background: #f8fafc; color: #1e293b; }
-        .dark-mode { background: #0f172a; color: #f1f5f9; }
-        .admin-card { border-radius: 2rem; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .dark-mode .admin-card { background: #1e293b; border: 1px solid #334155; }
-        input, textarea { border: 1px solid #e2e8f0; border-radius: 1rem; padding: 12px; width: 100%; color: #000; }
-        .dark-mode input, .dark-mode textarea { background: #0f172a; border-color: #334155; color: #fff; }
+        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; }
+        .admin-card { background: white; border-radius: 2rem; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        input, textarea { border: 2px solid #e2e8f0; border-radius: 1rem; padding: 12px; width: 100%; outline-color: #6366f1; margin-bottom: 10px; }
     </style>
 </head>
-<body class="light-mode p-4 pb-20">
+<body class="p-4 pb-24">
 
-    <header class="flex justify-between items-center mb-8">
-        <h1 class="text-xl font-black text-indigo-600">لوحة تحكم المعلمة لبنى 👩‍🏫</h1>
-        <button id="themeToggle" class="text-2xl">🌓</button>
+    <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-3xl shadow-sm">
+        <h1 class="text-xl font-black text-indigo-600">لوحة تحكم الأستاذة لبنى 👩‍🏫</h1>
+        <button onclick="location.href='index.html'" class="bg-indigo-600 text-white px-4 py-2 rounded-full text-xs">معاينة</button>
     </header>
 
-    <div class="grid grid-cols-1 gap-6 max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto space-y-6">
         
-        <div class="admin-card p-6">
-            <h3 class="font-black mb-4 text-red-500">📢 الإعلانات والوظائف</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="text-xs font-bold block mb-1">عنوان الإعلان (هام جداً):</label>
-                    <input id="advTitle" placeholder="مثلاً: اختبار لغة عربية يوم الثلاثاء">
-                </div>
-                <div>
-                    <label class="text-xs font-bold block mb-1">تفاصيل الوظيفة البيتية:</label>
-                    <textarea id="homeworkContent" placeholder="مثلاً: حل صفحة 10 في كتاب الحساب"></textarea>
-                </div>
-                <button onclick="publishContent()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold">نشر الآن ✅</button>
+        <section class="admin-card">
+            <h3 class="font-black mb-4 text-green-600 underline">+ إضافة طالب جديد</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <input id="new_name" placeholder="الاسم الكامل">
+                <input id="new_user" placeholder="اسم الدخول">
+                <input id="new_pass" placeholder="كلمة السر">
             </div>
-        </div>
+            <button onclick="addStudent()" class="w-full bg-green-500 text-white font-black py-3 rounded-xl mt-2 shadow-lg">إضافة البطل 🎉</button>
+        </section>
 
-        <div class="admin-card p-6 overflow-x-auto">
-            <h3 class="font-black mb-4 text-indigo-600">👥 إدارة الطلاب والاختبارات</h3>
-            <table class="w-full text-right text-sm">
-                <thead>
-                    <tr class="border-b">
-                        <th class="pb-2">الطالب</th>
-                        <th class="pb-2 text-center">بطل؟</th>
-                        <th class="pb-2 text-center">درجة</th>
-                        <th class="pb-2 text-center">إجراء</th>
-                    </tr>
-                </thead>
-                <tbody id="studentRows">
-                    </tbody>
-            </table>
-        </div>
-    </div>
+        <section class="admin-card border-r-8 border-indigo-600">
+            <h3 class="font-black mb-4 text-indigo-600 italic">📢 نشر محتوى للطلاب</h3>
+            <input id="pub_title" placeholder="عنوان الإعلان (يظهر في هام)">
+            <textarea id="pub_hw" placeholder="تفاصيل الوظيفة (تظهر في صفحة الوظائف)"></textarea>
+            <input id="pub_img" placeholder="رابط صورة للفعاليات (URL)">
+            <button onclick="publish()" class="w-full bg-indigo-600 text-white font-black py-3 rounded-xl mt-2">نشر المحتوى ✅</button>
+        </section>
 
-    <div class="fixed bottom-0 left-0 w-full bg-white dark:bg-slate-800 p-4 border-t flex justify-around">
-        <a href="index.html" class="text-xs font-bold">🏠 عرض الموقع</a>
-        <button onclick="location.reload()" class="text-xs font-bold">🔄 تحديث البيانات</button>
+        <section class="admin-card">
+            <h3 class="font-black mb-6 border-b pb-2 text-slate-400">👥 إدارة الطلاب والاختبارات</h3>
+            <div id="studentsAdminList" class="space-y-4"></div>
+        </section>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // تغيير الطابع
-        document.getElementById('themeToggle').onclick = () => {
-            document.body.classList.toggle('dark-mode');
-        };
-
-        // نشر الإعلانات والوظائف
-        window.publishContent = async () => {
-            const title = document.getElementById('advTitle').value;
-            const desc = document.getElementById('homeworkContent').value;
-            
-            if(!title && !desc) return alert("يرجى كتابة شيء لنشره!");
-
-            const { error } = await supabase.from('assignments').insert([{ 
-                title: title || null, 
-                description: desc || null 
-            }]);
-
-            if(!error) {
-                alert("تم النشر بنجاح! سيراها الطلاب الآن.");
-                document.getElementById('advTitle').value = "";
-                document.getElementById('homeworkContent').value = "";
-            } else {
-                alert("حدث خطأ: " + error.message);
+        window.addStudent = async () => {
+            const n = document.getElementById('new_name').value;
+            const u = document.getElementById('new_user').value;
+            const p = document.getElementById('new_pass').value;
+            if(n && u && p) {
+                await supabase.from('students').insert([{ full_name: n, username: u, password: p }]);
+                alert("تمت الإضافة!"); location.reload();
             }
         };
 
-        // تحميل قائمة الطلاب
-        async function loadStudents() {
-            const { data, error } = await supabase.from('students').select('*').order('full_name');
-            const tbody = document.getElementById('studentRows');
-            
-            tbody.innerHTML = data.map(s => `
-                <tr class="border-b last:border-0">
-                    <td class="py-4 font-bold text-xs">${s.full_name}</td>
-                    <td class="py-4 text-center">
-                        <button onclick="toggleStar('${s.id}', ${s.is_star})" class="text-xl ${s.is_star ? '' : 'grayscale'}">⭐</button>
-                    </td>
-                    <td class="py-4 text-center">
-                        <input id="g-${s.id}" type="number" value="${s.grade || 0}" class="w-12 p-1 text-center bg-slate-100 rounded-lg text-xs">
-                    </td>
-                    <td class="py-4 text-center space-y-1">
-                        <button onclick="saveGrade('${s.id}')" class="bg-green-500 text-white px-3 py-1 rounded-lg text-[10px] block w-full">حفظ</button>
-                        <button onclick="addNewExam('${s.id}')" class="bg-purple-600 text-white px-3 py-1 rounded-lg text-[10px] block w-full">+ اختبار</button>
-                    </td>
-                </tr>
+        window.publish = async () => {
+            const t = document.getElementById('pub_title').value;
+            const d = document.getElementById('pub_hw').value;
+            const i = document.getElementById('pub_img').value;
+            await supabase.from('assignments').insert([{ title: t || null, description: d || null, image_url: i || null }]);
+            alert("تم النشر بنجاح!");
+        };
+
+        async function loadAdmin() {
+            const { data } = await supabase.from('students').select('*').order('full_name');
+            document.getElementById('studentsAdminList').innerHTML = data.map(s => `
+                <div class="flex flex-col md:flex-row justify-between items-center p-4 bg-slate-50 rounded-2xl border gap-4">
+                    <div class="text-right">
+                        <p class="font-black text-sm">${s.full_name}</p>
+                        <p class="text-[10px] text-slate-400">العلامة: ${s.grade || 0}</p>
+                    </div>
+                    <div class="flex gap-2 flex-wrap justify-center">
+                        <button onclick="addEx('${s.id}')" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-[10px]">+ علامة اختبار</button>
+                        <button onclick="toggleS('${s.id}', ${s.is_star})" class="text-xl ${s.is_star ? '' : 'grayscale'}">⭐</button>
+                        <button onclick="delSt('${s.id}')" class="bg-red-100 text-red-500 px-3 py-1 rounded-lg text-[10px]">حذف 🗑️</button>
+                    </div>
+                </div>
             `).join('');
         }
 
-        // تحديث الدرجة الأساسية
-        window.saveGrade = async (id) => {
-            const grade = document.getElementById('g-'+id).value;
-            await supabase.from('students').update({ grade: parseInt(grade) }).eq('id', id);
-            alert("تم تحديث الدرجة!");
-        };
-
-        // تبديل حالة بطل الأسبوع
-        window.toggleStar = async (id, current) => {
-            await supabase.from('students').update({ is_star: !current }).eq('id', id);
-            loadStudents();
-        };
-
-        // إضافة اختبار جديد (اختياري - يتطلب جدول exams)
-        window.addNewExam = async (studentId) => {
-            const subject = prompt("أدخل اسم المادة (مثلاً: إملاء، حساب):");
-            const score = prompt("أدخل العلامة:");
-            if(subject && score) {
-                // ملاحظة: تأكدي من إنشاء جدول باسم exams في Supabase ليعمل هذا الزر
-                const { error } = await supabase.from('exams').insert([{ 
-                    student_id: studentId, 
-                    subject: subject, 
-                    score: parseInt(score) 
-                }]);
-                if(!error) alert("تمت إضافة الاختبار بنجاح!");
-                else alert("يجب إنشاء جدول exams أولاً في قاعدة البيانات.");
+        window.delSt = async (id) => { if(confirm("حذف الطالب نهائياً؟")) { await supabase.from('students').delete().eq('id', id); loadAdmin(); } };
+        window.toggleS = async (id, cur) => { await supabase.from('students').update({ is_star: !cur }).eq('id', id); loadAdmin(); };
+        window.addEx = async (id) => {
+            const sub = prompt("اسم المادة:");
+            const sc = prompt("العلامة:");
+            if(sub && sc) {
+                await supabase.from('exams').insert([{ student_id: id, subject: sub, score: parseInt(sc) }]);
+                await supabase.from('students').update({ grade: parseInt(sc) }).eq('id', id); // تحديث آخر علامة
+                alert("تم الحفظ!");
             }
         };
 
-        window.onload = loadStudents;
+        loadAdmin();
     </script>
 </body>
 </html>
