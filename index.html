@@ -31,47 +31,59 @@
     <div id="loginGate" class="min-h-screen flex items-center justify-center p-6 dark:bg-slate-950">
         <div class="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md border-b-8 border-indigo-600 text-center">
             <h1 class="text-4xl font-black text-indigo-900 mb-8">دخول الأبطال ⭐</h1>
-            <input type="text" id="u" placeholder="اسم المستخدم" class="w-full p-5 mb-4 rounded-2xl border-2 font-bold dark:text-slate-900">
-            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-5 mb-8 rounded-2xl border-2 font-bold dark:text-slate-900">
+            <input type="text" id="u" placeholder="اسم المستخدم" class="w-full p-5 mb-4 rounded-2xl border-2 font-bold dark:text-slate-900 bg-slate-50">
+            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-5 mb-8 rounded-2xl border-2 font-bold dark:text-slate-900 bg-slate-50">
             <button id="loginBtn" class="w-full header-home text-white py-5 rounded-2xl font-black text-2xl shadow-xl btn-click">انطلق 🚀</button>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <nav id="topNav" class="p-4 flex justify-between items-center sticky top-0 z-50 header-home shadow-lg transition-all duration-500">
+        <nav id="topNav" class="p-5 flex justify-between items-center sticky top-0 z-50 header-home shadow-lg transition-all duration-500">
             <button onclick="toggleDarkMode()" class="text-3xl btn-click">🌓</button>
-            <div class="flex items-center gap-3 bg-white/20 p-2 px-5 rounded-full border border-white/30 btn-click" onclick="showProfile()">
-                <span id="userName" class="font-black text-white">البطل</span>
-                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-indigo-600 text-xl font-bold">👤</div>
+            <h2 id="pageTitle" class="text-white font-black text-xl">الرئيسية ✨</h2>
+            <div class="flex items-center gap-3 bg-white/20 p-1 px-4 rounded-full border border-white/30 btn-click" onclick="showProfile()">
+                <span id="userName" class="font-black text-white text-sm">البطل</span>
+                <div class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-indigo-600 text-lg font-bold">👤</div>
             </div>
         </nav>
 
         <div id="homePage" class="page active-page p-5">
             <div class="text-center py-10 bg-white rounded-[3rem] shadow-xl mb-8 border-2 border-indigo-100">
-                <h2 class="text-3xl font-black text-indigo-800 dark:text-indigo-400">نجوم أول "ب" المبدعين</h2>
+                <h2 class="text-3xl font-black text-indigo-800 dark:text-indigo-400">نجوم أول "ب"</h2>
                 <p class="font-bold text-slate-500 italic mt-2">المعلمة لبنى سلامي</p>
             </div>
+            <h3 class="text-2xl font-black mb-4 text-red-600">📢 أخبار الصف:</h3>
             <div id="newsList" class="space-y-4 mb-10"></div>
-            <h3 class="text-2xl font-black mb-4">🏆 متميزو الأسبوع:</h3>
+            <h3 class="text-2xl font-black mb-4 text-indigo-600">🏆 المتميزون:</h3>
             <div id="starsGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
-        <div id="homeworkPage" class="page p-5 text-center">
+        <div id="homeworkPage" class="page p-5">
             <div id="hwList" class="space-y-6"></div>
         </div>
 
-        <div id="eventsPage" class="page p-5">
+        <div id="eventsPage" class="page p-5 text-center">
             <div id="eventsGrid" class="grid grid-cols-1 gap-8"></div>
         </div>
 
+        <div id="profileModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-6 z-[110] backdrop-blur-md">
+            <div class="bg-white p-8 rounded-[3.5rem] text-center shadow-2xl border-t-8 border-indigo-600 w-full max-w-sm">
+                <h2 id="profName" class="text-2xl font-black text-indigo-900 mb-6"></h2>
+                <div id="examsList" class="space-y-3 mb-6"></div>
+                <button onclick="hideProfile()" class="text-red-500 font-black btn-click">إغلاق ❌</button>
+                <br><br>
+                <button onclick="logout()" class="text-xs text-slate-400 underline">تسجيل الخروج</button>
+            </div>
+        </div>
+
         <div class="nav-bottom">
-            <button onclick="showPage('homePage', 'header-home')" class="nav-btn text-indigo-700 dark:text-indigo-400 flex flex-col items-center btn-click">
+            <button onclick="showPage('homePage', 'header-home', 'الرئيسية ✨')" class="nav-btn text-indigo-700 dark:text-indigo-400 flex flex-col items-center btn-click">
                 <span class="text-3xl">🏠</span><span class="text-xs font-black">الرئيسية</span>
             </button>
-            <button onclick="showPage('homeworkPage', 'header-hw')" class="nav-btn text-slate-400 flex flex-col items-center btn-click">
+            <button onclick="showPage('homeworkPage', 'header-hw', 'واجباتي 📚')" class="nav-btn text-slate-400 flex flex-col items-center btn-click">
                 <span class="text-3xl">📚</span><span class="text-xs font-black">الوظائف</span>
             </button>
-            <button onclick="showPage('eventsPage', 'header-event')" class="nav-btn text-slate-400 flex flex-col items-center btn-click">
+            <button onclick="showPage('eventsPage', 'header-event', 'فعالياتنا 📸')" class="nav-btn text-slate-400 flex flex-col items-center btn-click">
                 <span class="text-3xl">📸</span><span class="text-xs font-black">الفعاليات</span>
             </button>
         </div>
@@ -79,52 +91,58 @@
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
-        let currentUser = JSON.parse(localStorage.getItem('user'));
-
-        // التذكر التلقائي للوضع الداكن
+        
+        // التذكر التلقائي
         if(localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+        let user = JSON.parse(localStorage.getItem('user'));
 
         window.toggleDarkMode = () => {
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         };
 
-        window.showPage = (pid, headerClass) => {
+        window.showPage = (pid, hClass, title) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(pid).classList.add('active-page');
-            const nav = document.getElementById('topNav');
-            nav.className = `p-4 flex justify-between items-center sticky top-0 z-50 shadow-lg transition-all duration-500 ${headerClass}`;
-            
+            document.getElementById('topNav').className = `p-5 flex justify-between items-center sticky top-0 z-50 shadow-lg transition-all duration-500 ${hClass}`;
+            document.getElementById('pageTitle').innerText = title;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-indigo-700', 'text-slate-400'));
             event.currentTarget.classList.replace('text-slate-400', 'text-indigo-700');
         };
 
-        if(currentUser) { loginSuccess(currentUser); }
-
-        document.getElementById('loginBtn').onclick = async () => {
+        const login = async () => {
             const u = document.getElementById('u').value, p = document.getElementById('p').value;
             const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).single();
-            if(data) {
-                localStorage.setItem('user', JSON.stringify(data));
-                loginSuccess(data);
-            } else alert("بيانات خاطئة!");
+            if(data) { localStorage.setItem('user', JSON.stringify(data)); start(data); } else alert("خطأ!");
         };
+        document.getElementById('loginBtn').onclick = login;
 
-        function loginSuccess(user) {
+        function start(u) {
             document.getElementById('loginGate').style.display = 'none';
             document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('userName').innerText = user.full_name.split(' ')[0];
-            loadAll();
+            document.getElementById('userName').innerText = u.full_name.split(' ')[0];
+            load();
         }
 
-        async function loadAll() {
+        async function load() {
             const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
             document.getElementById('newsList').innerHTML = ads.filter(a => a.title && !a.image_url && !a.description).map(a => `<div class="bg-white p-6 rounded-2xl border-r-8 border-red-600 shadow-md font-black text-red-900">${a.title}</div>`).join('');
-            document.getElementById('hwList').innerHTML = ads.filter(a => a.description).map(a => `<div class="bg-white p-8 rounded-[2.5rem] border-b-8 border-orange-500 shadow-lg font-black text-slate-800 text-xl">${a.description}</div>`).join('');
-            document.getElementById('eventsGrid').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="bg-white p-4 rounded-[2.5rem] shadow-xl border-2 border-pink-100"><img src="${a.image_url}" class="w-full h-64 object-cover rounded-[2rem] mb-4 shadow-md"><p class="font-black text-pink-700 text-2xl text-center">${a.title || 'جمالنا'}</p></div>`).join('');
+            document.getElementById('hwList').innerHTML = ads.filter(a => a.description).map(a => `<div class="bg-white p-8 rounded-[2.5rem] border-b-8 border-orange-500 shadow-lg font-black text-slate-800 text-xl text-center">${a.description}</div>`).join('');
+            document.getElementById('eventsGrid').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="bg-white p-4 rounded-[2.5rem] shadow-xl border-2 border-pink-100"><img src="${a.image_url}" class="w-full h-64 object-cover rounded-[2rem] mb-4 shadow-md"><p class="font-black text-pink-700 text-xl">${a.title || 'جمالنا'}</p></div>`).join('');
             const { data: stars } = await supabase.from('students').select('*').eq('is_star', true);
             document.getElementById('starsGrid').innerHTML = stars.map(s => `<div class="bg-white p-6 rounded-[2rem] text-center shadow-md border-2 border-indigo-200">⭐<p class="font-black text-indigo-900">${s.full_name.split(' ')[0]}</p></div>`).join('');
         }
+
+        window.showProfile = async () => {
+            const u = JSON.parse(localStorage.getItem('user'));
+            document.getElementById('profileModal').classList.replace('hidden', 'flex');
+            document.getElementById('profName').innerText = u.full_name;
+            const { data } = await supabase.from('exams').select('*').eq('student_id', u.id);
+            document.getElementById('examsList').innerHTML = data.map(e => `<div class="flex justify-between bg-indigo-50 p-3 rounded-xl font-bold"><span>${e.subject}</span><span class="text-indigo-600">${e.score}</span></div>`).join('');
+        };
+        window.hideProfile = () => document.getElementById('profileModal').classList.replace('flex', 'hidden');
+        window.logout = () => { localStorage.clear(); location.reload(); };
+        if(user) start(user);
     </script>
 </body>
 </html>
