@@ -3,110 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مركز القيادة | لبنى سلامي</title>
+    <title>إدارة المنصة | لبنى سلامي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; transition: 0.4s; }
-        .dark body { background: #020617; color: white; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid white; }
-        .dark .glass { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.05); }
-        .card { border-radius: 2rem; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .dark .card { border-color: #334155; }
-        input, textarea, select { border-radius: 1.2rem; padding: 1rem; width: 100%; border: 1px solid #e2e8f0; background: white; font-weight: bold; margin-bottom: 1rem; color: #1e293b; }
-        .dark input, .dark textarea, .dark select { background: #0f172a; border-color: #334155; color: white; }
-        .btn-grad { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border-radius: 1.2rem; padding: 1.2rem; font-weight: 900; width: 100%; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
+        .admin-card { background: white; border-radius: 2.5rem; border: 1px solid #e2e8f0; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        input, textarea, select { width: 100%; padding: 1.2rem; border-radius: 1.5rem; border: 2px solid #f1f5f9; background: #f8fafc; font-weight: bold; outline: none; transition: 0.3s; margin-bottom: 1rem; }
+        input:focus { border-color: #6366f1; background: white; }
+        .btn-primary { background: #6366f1; color: white; padding: 1.2rem; border-radius: 1.5rem; font-weight: 900; width: 100%; shadow: 0 10px 15px rgba(99, 102, 241, 0.2); }
     </style>
 </head>
-<body class="p-4 md:p-10">
-    <header class="flex justify-between items-center mb-12 max-w-5xl mx-auto glass p-6 rounded-[2.5rem]">
-        <button onclick="document.documentElement.classList.toggle('dark')" class="text-3xl">🌓</button>
-        <h1 class="text-2xl font-black bg-gradient-to-l from-indigo-600 to-purple-600 bg-clip-text text-transparent">لوحة إدارة النجوم 👩‍🏫</h1>
+<body class="p-6 md:p-12">
+    <header class="max-w-6xl mx-auto flex justify-between items-center mb-12">
+        <h1 class="text-3xl font-black text-slate-800 tracking-tighter">مركز التحكم <span class="text-indigo-600">بالمنصة</span></h1>
+        <div class="bg-indigo-600 text-white p-4 px-8 rounded-3xl font-black shadow-xl">المعلمة لبنى سلامي</div>
     </header>
 
-    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="card glass">
-            <h2 class="text-xl font-black mb-6 text-indigo-600">🚀 نشر محتوى جديد</h2>
-            <select id="p_type">
-                <option value="news">إعلان سريع 📢</option>
-                <option value="hw">وظيفة بيتية 📚</option>
-                <option value="event">فعالية مصورة 📸</option>
-            </select>
-            <input id="p_title" placeholder="عنوان المنشور">
-            <textarea id="p_desc" placeholder="التفاصيل..." rows="3"></textarea>
-            <input id="p_img" placeholder="رابط الصورة (URL)">
-            <button onclick="publish()" class="btn-grad">تأكيد النشر ✅</button>
-        </div>
-
-        <div class="card glass">
-            <h2 class="text-xl font-black mb-6 text-purple-600">👥 الطلاب الجدد</h2>
-            <div class="grid grid-cols-2 gap-2">
-                <input id="s_name" placeholder="الاسم الكامل">
-                <input id="s_user" placeholder="اليوزر">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="admin-card lg:col-span-2">
+            <h2 class="text-xl font-black mb-6 text-indigo-600">📢 إضافة محتوى جديد (فيديو/صور/مهام)</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <select id="type">
+                    <option value="news">إعلان رسمي</option>
+                    <option value="hw">وظيفة جديدة</option>
+                    <option value="video">فعالية (فيديو)</option>
+                    <option value="photo">فعالية (صور)</option>
+                </select>
+                <input id="title" placeholder="عنوان الفعالية أو الإعلان">
             </div>
-            <input id="s_pass" placeholder="كلمة السر">
-            <button onclick="addS()" class="btn-grad bg-slate-800">إضافة طالب +</button>
+            <textarea id="desc" placeholder="اكتبي تفاصيل الوظيفة أو الإعلان هنا..." rows="4"></textarea>
+            <input id="url" placeholder="رابط الصورة أو رابط الفيديو (MP4/YouTube)">
+            <p class="text-[10px] text-slate-400 mb-4">* لرفع الفيديو: ضعي رابط الفيديو المباشر أو رابط من الدرايف/يوتيوب.</p>
+            <button onclick="publish()" class="btn-primary">نشر الآن على الموقع ✅</button>
         </div>
 
-        <div class="card glass lg:col-span-2">
-            <h2 class="text-xl font-black mb-8 border-b pb-4">🌟 التحكم بطلاب الصف</h2>
-            <div id="stdList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <div class="admin-card">
+            <h2 class="text-xl font-black mb-6 text-slate-700">👤 إضافة طالب جديد</h2>
+            <input id="sName" placeholder="الاسم الكامل">
+            <input id="sUser" placeholder="اسم المستخدم">
+            <input id="sPass" placeholder="كلمة المرور">
+            <button onclick="addStudent()" class="btn-primary bg-slate-800">حفظ الطالب +</button>
         </div>
-    </div>
 
-    <div id="m" class="fixed inset-0 bg-black/50 hidden items-center justify-center backdrop-blur-md z-50">
-        <div class="glass p-10 rounded-[3rem] w-full max-w-sm">
-            <h3 class="font-black text-xl mb-4">إضافة علامة</h3>
-            <input id="sub" placeholder="المادة">
-            <input id="sc" placeholder="الدرجة">
-            <button onclick="save()" class="btn-grad mb-4">حفظ</button>
-            <button onclick="document.getElementById('m').classList.add('hidden')" class="w-full font-bold">إلغاء</button>
+        <div class="admin-card lg:col-span-3">
+            <h2 class="text-xl font-black mb-8 border-b pb-4">إدارة طلاب صف أول "ب"</h2>
+            <div id="studentGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
         </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
-        let sid = null;
-
+        
         window.publish = async () => {
-            const t = document.getElementById('p_type').value;
-            await supabase.from('assignments').insert([{
-                title: document.getElementById('p_title').value || null,
-                description: (t==='hw')?document.getElementById('p_desc').value:null,
-                image_url: (t==='event')?document.getElementById('p_img').value:null
+            const { error } = await supabase.from('assignments').insert([{
+                title: document.getElementById('title').value,
+                description: document.getElementById('desc').value,
+                image_url: document.getElementById('url').value
             }]);
-            location.reload();
+            if(!error) { alert("تم النشر بنجاح!"); location.reload(); }
         };
 
-        window.addS = async () => {
+        window.addStudent = async () => {
             await supabase.from('students').insert([{
-                full_name: document.getElementById('s_name').value,
-                username: document.getElementById('s_user').value,
-                password: document.getElementById('s_pass').value
+                full_name: document.getElementById('sName').value,
+                username: document.getElementById('sUser').value,
+                password: document.getElementById('sPass').value
             }]);
             location.reload();
         };
 
         async function load() {
             const { data } = await supabase.from('students').select('*').order('full_name');
-            document.getElementById('stdList').innerHTML = data.map(s => `
-                <div class="glass p-6 rounded-[2rem] flex flex-col items-center">
+            document.getElementById('studentGrid').innerHTML = data.map(s => `
+                <div class="border-2 border-f1f5f9 p-6 rounded-[2rem] text-center hover:border-indigo-200 transition-all">
                     <p class="font-black mb-4">${s.full_name}</p>
-                    <div class="flex gap-2">
-                        <button onclick="sid='${s.id}';document.getElementById('m').classList.remove('hidden')" class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-xl text-xs font-black">+ علامة</button>
-                        <button onclick="tStar('${s.id}',${s.is_star})" class="text-2xl">${s.is_star?'⭐':'☆'}</button>
-                        <button onclick="del('${s.id}')" class="opacity-30">🗑️</button>
+                    <div class="flex justify-center gap-3">
+                        <button onclick="toggleStar('${s.id}', ${s.is_star})" class="text-2xl">${s.is_star?'⭐':'☆'}</button>
+                        <button onclick="deleteS('${s.id}')" class="text-red-400">🗑️</button>
                     </div>
                 </div>
             `).join('');
         }
-        window.tStar = async (id, cur) => { await supabase.from('students').update({is_star:!cur}).eq('id',id); load(); };
-        window.save = async () => {
-            await supabase.from('exams').insert([{student_id:sid, subject:document.getElementById('sub').value, score:document.getElementById('sc').value}]);
-            document.getElementById('m').classList.add('hidden');
-            alert("تم!");
-        };
-        window.del = async (id) => { if(confirm("حذف؟")) { await supabase.from('students').delete().eq('id',id); load(); } };
+        window.toggleStar = async (id, cur) => { await supabase.from('students').update({is_star:!cur}).eq('id',id); load(); };
+        window.deleteS = async (id) => { if(confirm("حذف الطالب نهائياً؟")) { await supabase.from('students').delete().eq('id',id); load(); } };
         load();
     </script>
 </body>
