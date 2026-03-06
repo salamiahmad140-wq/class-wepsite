@@ -10,17 +10,15 @@
         body { font-family: 'Cairo', sans-serif; background: #eef2f7; color: #1e293b; transition: 0.4s; }
         .dark body { background: #0f172a; color: #f1f5f9; }
         
-        /* كلاسات الألوان المتغيرة للهيدر */
         .nav-main { background: white; border-bottom: 2px solid #e2e8f0; color: #4f46e5; }
         .dark .nav-main { background: #1e293b; border-color: #334155; color: #818cf8; }
         
-        /* تدرجات البطاقات */
         .bg-main-grade { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); }
         .bg-hw-grade { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
         .bg-event-grade { background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); }
 
         .dark .bg-white { background: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
-        .nav-bottom { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 80px; border-radius: 30px; display: flex; justify-content: space-around; align-items: center; z-index: 100; background: white; border: 3px solid #4f46e5; transition: 0.4s; }
+        .nav-bottom { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 80px; border-radius: 30px; display: flex; justify-content: space-around; align-items: center; z-index: 100; background: white; border: 3px solid #4f46e5; transition: 0.4s; shadow: 0 -5px 20px rgba(0,0,0,0.1); }
         .dark .nav-bottom { background: #1e293b; border-color: #6366f1; }
         
         .page { display: none; animation: popIn 0.4s ease-out; padding-bottom: 120px; }
@@ -28,51 +26,68 @@
         @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         
         .btn-click:active { transform: scale(0.85); }
+        .star-anim { animation: starJump 1s infinite alternate; }
+        @keyframes starJump { from { transform: translateY(0); } to { transform: translateY(-10px); } }
     </style>
 </head>
 <body>
 
     <div id="loginGate" class="min-h-screen flex items-center justify-center p-6 dark:bg-slate-950">
         <div class="bg-white p-10 rounded-[3.5rem] shadow-2xl w-full max-w-md border-b-8 border-indigo-600 text-center">
-            <h1 class="text-4xl font-black text-indigo-900 mb-6">أهلاً يا بطل! ⭐</h1>
-            <input type="text" id="u" placeholder="اسم المستخدم" class="w-full p-5 mb-4 rounded-2xl border-2 font-bold dark:text-slate-900">
-            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-5 mb-8 rounded-2xl border-2 font-bold dark:text-slate-900">
-            <button id="loginBtn" class="w-full bg-main-grade text-white py-5 rounded-2xl font-black text-2xl shadow-xl btn-click">دخول 🚀</button>
+            <div class="text-7xl mb-4 star-anim">⭐</div>
+            <h1 class="text-4xl font-black text-indigo-900 mb-6">دخول الأبطال!</h1>
+            <input type="text" id="u" placeholder="اسم المستخدم" class="w-full p-5 mb-4 rounded-2xl border-2 font-bold dark:text-slate-900 bg-slate-50">
+            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-5 mb-8 rounded-2xl border-2 font-bold dark:text-slate-900 bg-slate-50">
+            <button id="loginBtn" class="w-full bg-main-grade text-white py-5 rounded-2xl font-black text-2xl shadow-xl btn-click">انطلق 🚀</button>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
         <nav id="topNav" class="p-4 flex justify-between items-center sticky top-0 z-50 nav-main shadow-md transition-all">
             <button onclick="toggleDarkMode()" class="text-3xl btn-click">🌓</button>
-            <h2 id="pageHeaderTitle" class="font-black text-xl">منصة النجوم</h2>
-            <div class="flex items-center gap-3 bg-indigo-50 dark:bg-slate-800 p-2 px-4 rounded-full border-2 border-indigo-200 btn-click" onclick="showProfile()">
+            <h2 id="pageHeaderTitle" class="font-black text-xl">الرئيسية ✨</h2>
+            <div class="flex items-center gap-3 bg-indigo-50 dark:bg-slate-800 p-2 px-4 rounded-full border-2 border-indigo-200 btn-click cursor-pointer" onclick="showProfile()">
                 <span id="userName" class="font-black text-sm">البطل</span>
-                <div class="w-8 h-8 bg-main-grade rounded-full flex items-center justify-center text-white text-sm">👤</div>
+                <div class="w-8 h-8 bg-main-grade rounded-full flex items-center justify-center text-white text-sm shadow-md">👤</div>
             </div>
         </nav>
 
-        <div id="homePage" class="page active-page p-5">
-            <div class="bg-main-grade p-10 rounded-[3rem] text-white text-center mb-8 shadow-xl border-4 border-white">
-                <h2 class="text-3xl font-black mb-2">نجوم أول "ب" المبدعين</h2>
-                <p class="font-bold opacity-90 italic">مع الأستاذة لبنى سلامي</p>
+        <div id="homePage" class="page active-page p-5 text-center">
+            <div class="bg-main-grade p-10 rounded-[3rem] text-white mb-8 shadow-xl border-4 border-white">
+                <h2 class="text-3xl font-black mb-2">نجوم أول "ب"</h2>
+                <p class="font-bold opacity-90 italic">مدرسة ابن رشد الابتدائية</p>
             </div>
-            <div id="newsList" class="space-y-4 mb-10 text-center"></div>
+            <div id="newsList" class="space-y-4 mb-10"></div>
             <h3 class="text-2xl font-black text-indigo-900 dark:text-indigo-300 mb-4 px-2">🏆 أبطال الأسبوع:</h3>
             <div id="starsGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
         <div id="homeworkPage" class="page p-5">
             <div class="bg-hw-grade p-10 rounded-[3rem] text-white text-center mb-8 shadow-xl border-4 border-white">
-                <h2 class="text-4xl font-black italic">واجباتي اليومية 📚</h2>
+                <h2 class="text-4xl font-black italic"></h2>
             </div>
             <div id="hwList" class="space-y-6"></div>
         </div>
 
         <div id="eventsPage" class="page p-5">
             <div class="bg-event-grade p-10 rounded-[3rem] text-white text-center mb-8 shadow-xl border-4 border-white">
-                <h2 class="text-4xl font-black">ذكرياتنا الجميلة 📸</h2>
+                <h2 class="text-4xl font-black"></h2>
             </div>
             <div id="eventsGrid" class="grid grid-cols-1 gap-8"></div>
+        </div>
+
+        <div id="profileModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-6 z-[110] backdrop-blur-md">
+            <div class="bg-white dark:bg-slate-900 p-10 rounded-[3.5rem] text-center shadow-2xl border-t-8 border-indigo-600 w-full max-w-sm">
+                <div class="text-7xl mb-4 star-anim">👑</div>
+                <h2 id="profName" class="text-3xl font-black text-indigo-900 dark:text-indigo-300 mb-6"></h2>
+                <div class="bg-indigo-50 dark:bg-slate-800 p-6 rounded-3xl mb-6 border-2 border-indigo-100 dark:border-slate-700">
+                    <p class="text-sm font-black text-indigo-900 dark:text-indigo-400 mb-4 underline italic">نتائجي وعلاماتي:</p>
+                    <div id="examsList" class="space-y-3 text-right"></div>
+                </div>
+                <button onclick="hideProfile()" class="font-black text-red-600 text-xl btn-click">إغلاق ❌</button>
+                <br><br>
+                <button onclick="logout()" class="text-xs text-slate-400 underline italic">تسجيل الخروج</button>
+            </div>
         </div>
 
         <div class="nav-bottom">
@@ -91,12 +106,12 @@
     <script type="module">
         import { supabase } from './supabaseClient.js';
         
-        // تذكر الوضع الداكن
-        if(localStorage.getItem('dark') === 'true') document.documentElement.classList.add('dark');
+        // التذكر التلقائي للوضع
+        if(localStorage.getItem('dark_mode') === 'true') document.documentElement.classList.add('dark');
         
         window.toggleDarkMode = () => {
             const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('dark', isDark);
+            localStorage.setItem('dark_mode', isDark);
         };
 
         window.showPage = (pid, title) => {
@@ -107,17 +122,17 @@
             event.currentTarget.classList.replace('text-slate-400', 'text-indigo-700');
         };
 
-        // تذكر المستخدم
-        const savedUser = JSON.parse(localStorage.getItem('user'));
+        // التذكر التلقائي للمستخدم
+        const savedUser = JSON.parse(localStorage.getItem('current_student'));
         if(savedUser) loginOk(savedUser);
 
         document.getElementById('loginBtn').onclick = async () => {
             const u = document.getElementById('u').value, p = document.getElementById('p').value;
             const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).single();
             if(data) {
-                localStorage.setItem('user', JSON.stringify(data));
+                localStorage.setItem('current_student', JSON.stringify(data));
                 loginOk(data);
-            } else alert("تأكد من بياناتك! ❌");
+            } else alert("تأكد من بياناتك يا بطل! ❌");
         };
 
         function loginOk(user) {
@@ -131,10 +146,29 @@
             const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
             document.getElementById('newsList').innerHTML = ads.filter(a => a.title && !a.image_url && !a.description).map(a => `<div class="bg-white p-6 rounded-2xl border-r-8 border-red-600 shadow-md font-black text-red-900">${a.title}</div>`).join('');
             document.getElementById('hwList').innerHTML = ads.filter(a => a.description).map(a => `<div class="bg-white p-8 rounded-[2.5rem] border-b-8 border-orange-500 shadow-lg font-black text-slate-800 text-xl text-center">${a.description}</div>`).join('');
-            document.getElementById('eventsGrid').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="bg-white p-4 rounded-[2.5rem] shadow-xl border-2 border-pink-100 text-center"><img src="${a.image_url}" class="w-full h-64 object-cover rounded-[2rem] mb-4 shadow-md"><p class="font-black text-pink-700 text-2xl">${a.title || 'لحظة رائعة'}</p></div>`).join('');
+            document.getElementById('eventsGrid').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="bg-white p-4 rounded-[2.5rem] shadow-xl border-2 border-pink-100 text-center"><img src="${a.image_url}" class="w-full h-64 object-cover rounded-[2rem] mb-4 shadow-md border-2 border-white"><p class="font-black text-pink-700 text-2xl">${a.title || 'جمالنا'}</p></div>`).join('');
             const { data: stars } = await supabase.from('students').select('*').eq('is_star', true);
-            document.getElementById('starsGrid').innerHTML = stars.map(s => `<div class="bg-white p-6 rounded-[2rem] text-center shadow-md border-2 border-indigo-200">⭐<p class="font-black text-indigo-900">${s.full_name.split(' ')[0]}</p></div>`).join('');
+            document.getElementById('starsGrid').innerHTML = stars.map(s => `<div class="bg-white p-6 rounded-[2rem] text-center shadow-md border-2 border-indigo-200"><div class="text-4xl star-anim">⭐</div><p class="font-black text-indigo-900">${s.full_name.split(' ')[0]}</p></div>`).join('');
         }
+
+        // دالة عرض الملف الشخصي
+        window.showProfile = async () => {
+            const user = JSON.parse(localStorage.getItem('current_student'));
+            document.getElementById('profileModal').classList.replace('hidden', 'flex');
+            document.getElementById('profName').innerText = user.full_name;
+            
+            // جلب علامات الطالب من جدول exams
+            const { data } = await supabase.from('exams').select('*').eq('student_id', user.id).order('created_at', {ascending: false});
+            document.getElementById('examsList').innerHTML = data.map(e => `
+                <div class="flex justify-between items-center bg-white dark:bg-slate-700 p-4 rounded-2xl border-2 border-indigo-50 dark:border-slate-600 shadow-sm">
+                    <span class="font-black text-indigo-900 dark:text-indigo-200 text-sm">${e.subject}</span>
+                    <span class="bg-indigo-600 text-white px-5 py-1 rounded-full font-black text-sm shadow-md">${e.score}</span>
+                </div>
+            `).join('') || '<p class="text-center text-slate-400 font-bold italic">لا توجد علامات مضافة حالياً</p>';
+        };
+
+        window.hideProfile = () => document.getElementById('profileModal').classList.replace('flex', 'hidden');
+        window.logout = () => { localStorage.clear(); location.reload(); };
     </script>
 </body>
 </html>
