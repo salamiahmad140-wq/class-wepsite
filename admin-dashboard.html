@@ -2,108 +2,105 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم الشاملة | لبنى سلامي</title>
+    <title>مركز القيادة | المعلمة لبنى سلامي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; padding: 20px; }
-        .box { background: white; border-radius: 2rem; padding: 2rem; border: 1px solid #e2e8f0; height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.3s; }
-        .box:hover { box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1); }
-        input, textarea, select { width: 100%; padding: 1rem; border-radius: 1.2rem; border: 2px solid #f1f5f9; background: #f8fafc; font-weight: bold; margin-bottom: 0.8rem; outline: none; }
-        input:focus { border-color: #6366f1; }
-        .btn { background: #6366f1; color: white; padding: 1rem; border-radius: 1.2rem; font-weight: 900; width: 100%; transition: 0.3s; cursor: pointer; }
-        .btn:active { transform: scale(0.95); }
+        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; padding: 25px; color: #1e293b; }
+        .box { background: white; border-radius: 2.5rem; padding: 2.5rem; border: 1px solid #e2e8f0; height: 100%; transition: 0.3s; }
+        .box:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        input, textarea { width: 100%; padding: 1.2rem; border-radius: 1.5rem; border: 2px solid #f1f5f9; background: #f8fafc; font-weight: bold; margin-bottom: 1rem; outline: none; }
+        .btn { background: #6366f1; color: white; padding: 1.2rem; border-radius: 1.5rem; font-weight: 900; width: 100%; cursor: pointer; border: none; }
     </style>
 </head>
 <body class="max-w-7xl mx-auto">
 
-    <header class="flex justify-between items-center mb-10">
-        <h1 class="text-3xl font-black text-slate-800">مركز القيادة <span class="text-indigo-600">الرقمي</span></h1>
-        <div class="bg-white p-4 px-8 rounded-3xl shadow-sm border font-black">المعلمة لبنى سلامي ✨</div>
+    <header class="flex justify-between items-center mb-12">
+        <h1 class="text-4xl font-black tracking-tighter">لوحة التحكم <span class="text-indigo-600">الشاملة</span></h1>
+        <div class="bg-indigo-600 text-white p-5 px-10 rounded-[2rem] shadow-xl font-black">المعلمة لبنى سلامي ✨</div>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         
-        <div class="box">
-            <h2 class="text-xl font-black mb-4 text-indigo-600">📢 الإعلانات</h2>
-            <input id="news" placeholder="اكتبي الإعلان هنا...">
-            <button onclick="addNews()" class="btn">نشر الإعلان ✅</button>
-            <div id="newsList" class="mt-4 space-y-2 max-h-40 overflow-y-auto"></div>
+        <div class="box border-t-8 border-indigo-500">
+            <h2 class="text-xl font-black mb-6 flex items-center gap-2">📢 نشر إعلان سريع</h2>
+            <input id="nTitle" placeholder="نص الإعلان...">
+            <button onclick="addNews()" class="btn">نشر الآن ✅</button>
+            <div id="nList" class="mt-6 space-y-2 max-h-40 overflow-y-auto"></div>
         </div>
 
-        <div class="box">
-            <h2 class="text-xl font-black mb-4 text-orange-600">📚 الوظائف</h2>
-            <textarea id="hw" placeholder="نص الوظيفة..." rows="3"></textarea>
+        <div class="box border-t-8 border-orange-500">
+            <h2 class="text-xl font-black mb-6 flex items-center gap-2">📚 نشر وظيفة</h2>
+            <textarea id="hText" placeholder="اكتبي تفاصيل الوظيفة هنا..." rows="3"></textarea>
             <button onclick="addHw()" class="btn bg-orange-500">نشر الوظيفة ✅</button>
-            <div id="hwList" class="mt-4 space-y-2 max-h-40 overflow-y-auto"></div>
+            <div id="hList" class="mt-6 space-y-2 max-h-40 overflow-y-auto"></div>
         </div>
 
-        <div class="box">
-            <h2 class="text-xl font-black mb-4 text-purple-600">📸 الفعاليات</h2>
-            <input id="evTitle" placeholder="العنوان">
-            <input id="evUrl" placeholder="رابط الصورة أو الفيديو">
+        <div class="box border-t-8 border-purple-600">
+            <h2 class="text-xl font-black mb-6 flex items-center gap-2">📸 معرض الفعاليات</h2>
+            <input id="eTitle" placeholder="عنوان الفعالية">
+            <input id="eUrl" placeholder="رابط الصورة أو الفيديو (YouTube/MP4)">
             <button onclick="addEv()" class="btn bg-purple-600">نشر الفعالية ✅</button>
-            <div id="evList" class="mt-4 space-y-2 max-h-40 overflow-y-auto"></div>
+            <div id="eList" class="mt-6 space-y-2 max-h-40 overflow-y-auto"></div>
         </div>
 
-        <div class="box">
-            <h2 class="text-xl font-black mb-4 text-emerald-600">👤 إضافة طالب</h2>
-            <input id="sName" placeholder="الاسم الكامل">
+        <div class="box border-t-8 border-emerald-500">
+            <h2 class="text-xl font-black mb-6 text-emerald-600">👤 إضافة طالب جديد</h2>
+            <input id="sFull" placeholder="الاسم الكامل">
             <input id="sUser" placeholder="اسم المستخدم">
             <input id="sPass" placeholder="كلمة المرور">
-            <button onclick="addStudent()" class="btn bg-emerald-600">حفظ الطالب +</button>
+            <button onclick="addS()" class="btn bg-emerald-600">حفظ الطالب +</button>
         </div>
 
-        <div class="box lg:col-span-2">
-            <h2 class="text-xl font-black mb-6">👥 قائمة الطلاب (تعديل، نجوم، علامات)</h2>
-            <div id="studentsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <div class="box lg:col-span-2 border-t-8 border-slate-800">
+            <h2 class="text-xl font-black mb-8">👥 قائمة الطلاب (تعديل البيانات، النجوم، العلامات)</h2>
+            <div id="stdGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // وظائف النشر الشاملة
-        window.addNews = async () => { await supabase.from('assignments').insert([{ title: document.getElementById('news').value }]); location.reload(); };
-        window.addHw = async () => { await supabase.from('assignments').insert([{ description: document.getElementById('hw').value }]); location.reload(); };
-        window.addEv = async () => { await supabase.from('assignments').insert([{ title: document.getElementById('evTitle').value, image_url: document.getElementById('evUrl').value }]); location.reload(); };
-        window.addStudent = async () => { await supabase.from('students').insert([{ full_name: document.getElementById('sName').value, username: document.getElementById('sUser').value, password: document.getElementById('sPass').value }]); location.reload(); };
+        // وظائف الإضافة
+        window.addNews = async () => { await supabase.from('assignments').insert([{ title: document.getElementById('nTitle').value }]); location.reload(); };
+        window.addHw = async () => { await supabase.from('assignments').insert([{ description: document.getElementById('hText').value }]); location.reload(); };
+        window.addEv = async () => { await supabase.from('assignments').insert([{ title: document.getElementById('eTitle').value, image_url: document.getElementById('eUrl').value }]); location.reload(); };
+        window.addS = async () => { await supabase.from('students').insert([{ full_name: document.getElementById('sFull').value, username: document.getElementById('sUser').value, password: document.getElementById('sPass').value }]); location.reload(); };
 
         async function load() {
             const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
             const { data: stds } = await supabase.from('students').select('*').order('full_name');
 
-            // الأرشيف في المربعات
-            document.getElementById('newsList').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `<div class="text-xs p-2 bg-slate-50 rounded flex justify-between"><span>${a.title}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
-            document.getElementById('hwList').innerHTML = ads.filter(a => a.description).map(a => `<div class="text-xs p-2 bg-slate-50 rounded flex justify-between"><span class="truncate w-32">${a.description}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
-            document.getElementById('evList').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="text-xs p-2 bg-slate-50 rounded flex justify-between"><span class="truncate w-32">${a.title}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
+            // تحديث قوائم الحذف السريع
+            document.getElementById('nList').innerHTML = ads.filter(a => a.title && !a.description).map(a => `<div class="text-[10px] p-2 bg-slate-100 rounded flex justify-between"><span>${a.title}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
+            document.getElementById('hList').innerHTML = ads.filter(a => a.description).map(a => `<div class="text-[10px] p-2 bg-slate-100 rounded flex justify-between"><span class="truncate w-32">${a.description}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
+            document.getElementById('eList').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="text-[10px] p-2 bg-slate-100 rounded flex justify-between"><span class="truncate w-32">${a.title}</span><button onclick="del('${a.id}')" class="text-red-500">حذف</button></div>`).join('');
 
-            // شبكة الطلاب
-            document.getElementById('studentsGrid').innerHTML = stds.map(s => `
-                <div class="border p-4 rounded-2xl">
-                    <p class="font-black text-sm mb-2">${s.full_name}</p>
-                    <div class="grid grid-cols-2 gap-1 mb-3 text-[10px]">
-                        <input value="${s.username}" onchange="upS('${s.id}', 'username', this.value)" class="p-1 mb-0">
-                        <input value="${s.password}" onchange="upS('${s.id}', 'password', this.value)" class="p-1 mb-0">
+            // شبكة إدارة الطلاب
+            document.getElementById('stdGrid').innerHTML = stds.map(s => `
+                <div class="bg-slate-50 p-6 rounded-[2rem] border relative group">
+                    <p class="font-black mb-4 text-indigo-600">${s.full_name}</p>
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <input value="${s.username}" onchange="upS('${s.id}', 'username', this.value)" class="p-2 mb-0 text-xs">
+                        <input value="${s.password}" onchange="upS('${s.id}', 'password', this.value)" class="p-2 mb-0 text-xs">
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="addExam('${s.id}')" class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg text-[10px] font-black">+ علامة</button>
-                        <button onclick="tStar('${s.id}', ${s.is_star})" class="text-lg">${s.is_star?'⭐':'☆'}</button>
-                        <button onclick="delS('${s.id}')" class="text-red-300">🗑️</button>
+                    <div class="flex gap-3 items-center">
+                        <button onclick="addEx('${s.id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-[10px] font-black">+ علامة</button>
+                        <button onclick="tStar('${s.id}', ${s.is_star})" class="text-2xl">${s.is_star?'⭐':'☆'}</button>
+                        <button onclick="delS('${s.id}')" class="text-red-300 hover:text-red-600 mr-auto">🗑️</button>
                     </div>
                 </div>
             `).join('');
         }
 
         window.del = async (id) => { await supabase.from('assignments').delete().eq('id', id); load(); };
-        window.delS = async (id) => { if(confirm("حذف الطالب؟")) { await supabase.from('students').delete().eq('id', id); load(); } };
+        window.delS = async (id) => { if(confirm("حذف الطالب نهائياً؟")) { await supabase.from('students').delete().eq('id', id); load(); } };
         window.tStar = async (id, cur) => { await supabase.from('students').update({is_star: !cur}).eq('id', id); load(); };
         window.upS = async (id, col, val) => { await supabase.from('students').update({[col]: val}).eq('id', id); };
-        window.addExam = async (sid) => {
+        window.addEx = async (sid) => {
             const sub = prompt("المادة؟"), sc = prompt("العلامة؟");
             if(sub && sc) await supabase.from('exams').insert([{student_id: sid, subject: sub, score: sc}]);
         };
-
         load();
     </script>
 </body>
