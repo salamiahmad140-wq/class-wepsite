@@ -1,0 +1,15 @@
+<section class="p-6">
+    <h2 class="text-2xl font-black text-indigo-600 mb-6 italic underline">📚 وظائفنا اليومية:</h2>
+    <div id="hwList" class="space-y-4"></div>
+</section>
+
+<script type="module">
+    import { supabase } from './supabaseClient.js';
+    async function loadHW() {
+        const { data } = await supabase.from('assignments').select('description').not('description', 'is', null);
+        document.getElementById('hwList').innerHTML = data.map(h => `
+            <div class="bg-yellow-100 p-6 rounded-[2rem] border-2 border-yellow-200 shadow-sm font-bold text-yellow-900">${h.description}</div>
+        `).join('');
+    }
+    loadHW();
+</script>
