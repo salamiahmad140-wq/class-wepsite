@@ -3,140 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نجوم أول "ب" | الرئيسية</title>
+    <title>منصة نجوم أول "ب"</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        body { font-family: 'Cairo', sans-serif; transition: 0.3s; overflow-x: hidden; }
         .light { background: #fdf2f8; color: #1e293b; }
         .dark { background: #0f172a; color: #f1f5f9; }
-        .hero-gradient { background: linear-gradient(135deg, #6366f1, #a855f7); }
-        .nav-bottom { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 50; }
+        .nav-bottom { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100; border-radius: 2rem 2rem 0 0; }
         .dark .nav-bottom { background: #1e293b; border-top: 1px solid #334155; }
-        .modal-bg { background: rgba(0,0,0,0.6); backdrop-blur: 4px; }
+        .page { display: none; animation: fadeIn 0.4s ease; padding-bottom: 80px; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-gradient { background: linear-gradient(135deg, #6366f1, #a855f7); }
     </style>
 </head>
-<body class="light pb-24" id="bodyTag">
+<body class="light" id="bodyTag">
 
-    <div id="loginGate" class="min-h-screen flex items-center justify-center p-6">
+    <div id="loginGate" class="min-h-screen flex items-center justify-center p-6 bg-indigo-50 dark:bg-slate-900">
         <div class="bg-white dark:bg-slate-800 p-8 rounded-[3rem] shadow-2xl w-full max-w-md border-b-8 border-indigo-600">
             <h1 class="text-3xl font-black text-center text-indigo-600 mb-8">مرحباً يا بطل! 🚀</h1>
-            <input type="text" id="u" placeholder="اسم المستخدم" class="w-full p-4 mb-4 rounded-2xl bg-slate-100 dark:bg-slate-700 dark:text-white border-none outline-indigo-500">
-            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-4 mb-4 rounded-2xl bg-slate-100 dark:bg-slate-700 dark:text-white border-none outline-indigo-500">
+            <input type="text" id="u" placeholder="اسم المستخدم" class="w-full p-4 mb-4 rounded-2xl bg-slate-100 dark:bg-slate-700 dark:text-white border-none focus:ring-2 focus:ring-indigo-500">
+            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-4 mb-4 rounded-2xl bg-slate-100 dark:bg-slate-700 dark:text-white border-none focus:ring-2 focus:ring-indigo-500">
             <div class="flex items-center gap-2 mb-6">
-                <input type="checkbox" id="rememberMe" class="w-5 h-5">
-                <label for="rememberMe" class="text-sm font-bold dark:text-white">تذكرني على هذا الجهاز 💾</label>
+                <input type="checkbox" id="rememberMe" class="w-5 h-5 rounded-lg text-indigo-600">
+                <label for="rememberMe" class="text-sm font-bold dark:text-slate-300">تذكرني على هذا الجهاز 💾</label>
             </div>
-            <button id="loginBtn" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg hover:bg-indigo-700">دخول للمنصة 🎈</button>
+            <button id="loginBtn" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg hover:scale-95 transition">دخول للمنصة 🎈</button>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden">
-        <nav class="p-4 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+    <div id="mainContent" class="hidden">
+        <nav class="p-4 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
             <button onclick="toggleTheme()" class="text-2xl">🌓</button>
             <div class="flex items-center gap-2 cursor-pointer" onclick="showProfile()">
-                <span id="userName" class="font-black text-indigo-600 underline dark:text-indigo-400">البطل</span>
-                <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">👤</div>
+                <span id="userName" class="font-black text-indigo-600 dark:text-indigo-400 underline">البطل</span>
+                <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-xl">👤</div>
             </div>
         </nav>
 
-        <div class="p-6">
+        <div id="homePage" class="page active-page p-6">
             <header class="hero-gradient p-10 rounded-[3rem] text-white text-center mb-8 shadow-xl">
-                <h2 class="text-3xl font-black mb-2">أهلاً بكم في موقع صفنا! 🌟</h2>
-                <p class="opacity-90">مساحة الإبداع والمرح مع المعلمة لبنى سلامي</p>
+                <h2 class="text-2xl font-black mb-2">أهلاً بكم في صفنا! 🌟</h2>
+                <p class="text-sm opacity-90">مساحة الإبداع مع المعلمة لبنى سلامي</p>
             </header>
-
-            <section class="mb-10">
-                <h3 class="text-xl font-black text-red-500 mb-4 flex items-center gap-2 italic">⚠️ هام جداً:</h3>
-                <div id="newsList" class="space-y-4"></div>
-            </section>
-
-            <section>
-                <h3 class="text-xl font-black text-indigo-600 dark:text-indigo-400 mb-6 underline">🏆 أبطال الأسبوع المتميزون:</h3>
-                <div id="starsGrid" class="grid grid-cols-2 gap-4"></div>
-            </section>
+            <h3 class="text-xl font-black text-red-500 mb-4 italic">⚠️ هام جداً:</h3>
+            <div id="newsList" class="space-y-4 mb-10"></div>
+            <h3 class="text-xl font-black text-indigo-600 dark:text-indigo-400 mb-6 underline">🏆 أبطال الأسبوع:</h3>
+            <div id="starsGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
-        <div id="profileModal" class="fixed inset-0 modal-bg hidden items-center justify-center p-6 z-[60]">
-            <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-[3rem] p-8 text-center relative shadow-2xl">
-                <div class="text-5xl mb-4">⭐</div>
-                <h2 id="profFullName" class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mb-1"></h2>
-                <p id="profCode" class="text-slate-400 text-xs mb-6"></p>
-                <div class="bg-slate-100 dark:bg-slate-700 p-4 rounded-2xl mb-4">
-                    <p class="text-xs font-bold mb-1 dark:text-slate-300">آخر علامة حصلت عليها:</p>
-                    <p id="profGrade" class="text-3xl font-black text-yellow-500">0</p>
+        <div id="homeworkPage" class="page p-6">
+            <header class="bg-yellow-400 p-8 rounded-[3rem] text-indigo-900 text-center mb-8 shadow-lg">
+                <h2 class="text-2xl font-black italic">وظائفنا اليومية ✏️</h2>
+            </header>
+            <div id="hwList" class="space-y-4"></div>
+        </div>
+
+        <div id="eventsPage" class="page p-6">
+            <header class="bg-purple-600 p-8 rounded-[3rem] text-white text-center mb-8 shadow-lg">
+                <h2 class="text-2xl font-black">لحظاتنا الجميلة 📸</h2>
+            </header>
+            <div id="eventsGrid" class="grid grid-cols-1 gap-6"></div>
+        </div>
+
+        <div id="profileModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-6 z-[110] backdrop-blur-sm">
+            <div class="bg-white dark:bg-slate-800 w-full max-w-sm rounded-[3rem] p-8 text-center shadow-2xl relative border-t-8 border-indigo-600">
+                <h2 id="profName" class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mb-4"></h2>
+                <div class="bg-indigo-50 dark:bg-slate-700 p-4 rounded-2xl mb-6">
+                    <p class="text-xs font-bold dark:text-slate-300 mb-1">سجل الاختبارات والعلامات 📋</p>
+                    <div id="examsList" class="space-y-2 max-h-48 overflow-y-auto"></div>
                 </div>
-                <div class="text-right">
-                    <p class="font-bold text-sm mb-2 dark:text-white">📋 سجل اختباراتي ونتائجي:</p>
-                    <div id="examsList" class="space-y-2 max-h-40 overflow-y-auto p-1"></div>
-                </div>
-                <button onclick="hideProfile()" class="mt-6 font-bold text-red-400">إغلاق ❌</button>
+                <button onclick="hideProfile()" class="font-bold text-red-400">إغلاق ❌</button>
             </div>
         </div>
-    </div>
 
-    <div class="nav-bottom">
-        <a href="index.html" class="flex flex-col items-center gap-1 text-indigo-600"><span class="text-xl">🏠</span><span class="text-[10px] font-bold">الرئيسية</span></a>
-        <a href="homework.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="text-xl">📚</span><span class="text-[10px] font-bold">الوظائف</span></a>
-        <a href="events.html" class="flex flex-col items-center gap-1 text-slate-400"><span class="text-xl">📸</span><span class="text-[10px] font-bold">الفعاليات</span></a>
+        <div class="nav-bottom">
+            <button onclick="showPage('homePage')" class="nav-btn text-indigo-600 flex flex-col items-center">
+                <span class="text-2xl">🏠</span><span class="text-[10px] font-bold">الرئيسية</span>
+            </button>
+            <button onclick="showPage('homeworkPage')" class="nav-btn text-slate-400 flex flex-col items-center">
+                <span class="text-2xl">📚</span><span class="text-[10px] font-bold">الوظائف</span>
+            </button>
+            <button onclick="showPage('eventsPage')" class="nav-btn text-slate-400 flex flex-col items-center">
+                <span class="text-2xl">📸</span><span class="text-[10px] font-bold">الفعاليات</span>
+            </button>
+        </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
         let currentUser = null;
 
-        window.toggleTheme = () => {
-            const b = document.getElementById('bodyTag');
-            b.classList.toggle('light');
-            b.classList.toggle('dark');
+        // نظام التبديل بين الصفحات
+        window.showPage = (pid) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(pid).classList.add('active-page');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-indigo-600', 'text-slate-400'));
+            event.currentTarget.classList.replace('text-slate-400', 'text-indigo-600');
         };
 
-        const init = async () => {
-            const saved = localStorage.getItem('savedUser');
-            if(saved) {
-                const {u, p} = JSON.parse(saved);
-                attemptLogin(u, p);
-            }
-        };
+        window.toggleTheme = () => document.getElementById('bodyTag').classList.toggle('dark');
 
-        const attemptLogin = async (user, pass) => {
+        // نظام الدخول
+        document.getElementById('loginBtn').onclick = async () => {
+            const user = document.getElementById('u').value;
+            const pass = document.getElementById('p').value;
             const { data } = await supabase.from('students').select('*').eq('username', user).eq('password', pass).single();
             if(data) {
                 currentUser = data;
+                if(document.getElementById('rememberMe').checked) localStorage.setItem('user_session', JSON.stringify({u:user, p:pass}));
                 document.getElementById('loginGate').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
                 document.getElementById('userName').innerText = data.full_name.split(' ')[0];
-                loadContent();
-            }
+                loadAllData();
+            } else alert("تأكد من بياناتك يا بطل!");
         };
 
-        document.getElementById('loginBtn').onclick = () => {
-            const u = document.getElementById('u').value;
-            const p = document.getElementById('p').value;
-            if(document.getElementById('rememberMe').checked) localStorage.setItem('savedUser', JSON.stringify({u, p}));
-            attemptLogin(u, p);
-        };
-
-        async function loadContent() {
-            const { data: news } = await supabase.from('assignments').select('*').not('title', 'is', null).order('created_at', {ascending: false});
-            document.getElementById('newsList').innerHTML = news.map(n => `<div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border-r-8 border-red-500 shadow-sm font-bold text-lg dark:text-white">${n.title}</div>`).join('');
-
+        async function loadAllData() {
+            // تحميل الإعلانات (هام جداً)
+            const { data: news } = await supabase.from('assignments').select('*').not('title', 'is', null).is('image_url', null).order('created_at', {ascending:false});
+            document.getElementById('newsList').innerHTML = news.map(n => `<div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border-r-8 border-red-500 shadow-sm font-bold dark:text-white">${n.title}</div>`).join('');
+            
+            // تحميل أبطال الأسبوع
             const { data: stars } = await supabase.from('students').select('*').eq('is_star', true);
-            document.getElementById('starsGrid').innerHTML = stars.map(s => `<div class="bg-white dark:bg-slate-800 p-6 rounded-[2rem] text-center shadow-md border border-indigo-100 dark:border-slate-700">
-                <div class="text-3xl mb-2">⭐</div><p class="font-black text-indigo-600 dark:text-indigo-400 text-sm">${s.full_name.split(' ')[0]}</p></div>`).join('');
+            document.getElementById('starsGrid').innerHTML = stars.map(s => `<div class="bg-white dark:bg-slate-800 p-4 rounded-[2rem] text-center shadow-md">⭐<p class="font-black text-xs mt-1 dark:text-indigo-300">${s.full_name.split(' ')[0]}</p></div>`).join('');
+
+            // تحميل الوظائف
+            const { data: hws } = await supabase.from('assignments').select('*').not('description', 'is', null).order('created_at', {ascending:false});
+            document.getElementById('hwList').innerHTML = hws.map(h => `<div class="bg-yellow-50 dark:bg-slate-800 p-6 rounded-[2.5rem] border-2 border-yellow-200 dark:border-yellow-900 shadow-sm font-bold dark:text-white">${h.description}</div>`).join('');
+
+            // تحميل الفعاليات
+            const { data: evs } = await supabase.from('assignments').select('*').not('image_url', 'is', null).order('created_at', {ascending:false});
+            document.getElementById('eventsGrid').innerHTML = evs.map(e => `<div class="bg-white dark:bg-slate-800 p-2 rounded-[2rem] shadow-lg"><img src="${e.image_url}" class="w-full h-48 object-cover rounded-[1.5rem]"><p class="p-3 text-center font-bold text-purple-600">${e.title || 'فعالية ممتعة'}</p></div>`).join('');
         }
 
         window.showProfile = async () => {
             document.getElementById('profileModal').classList.replace('hidden', 'flex');
-            document.getElementById('profFullName').innerText = currentUser.full_name;
-            document.getElementById('profCode').innerText = "كودك: #" + currentUser.id.slice(0,5);
-            document.getElementById('profGrade').innerText = currentUser.grade || 0;
-            const { data: ex } = await supabase.from('exams').select('*').eq('student_id', currentUser.id).order('created_at', {ascending: false});
-            document.getElementById('examsList').innerHTML = ex.length ? ex.map(e => `<div class="flex justify-between bg-slate-50 dark:bg-slate-900 p-3 rounded-xl text-xs dark:text-white border-b dark:border-slate-700"><span>${e.subject}</span><span class="font-bold text-indigo-600">${e.score}</span></div>`).join('') : '<p class="text-center text-xs text-slate-400">لا يوجد اختبارات بعد</p>';
+            document.getElementById('profName').innerText = currentUser.full_name;
+            const { data: ex } = await supabase.from('exams').select('*').eq('student_id', currentUser.id).order('created_at', {ascending:false});
+            document.getElementById('examsList').innerHTML = ex.map(e => `
+                <div class="flex justify-between bg-white dark:bg-slate-900 p-3 rounded-xl border-b dark:border-slate-700">
+                    <span class="font-bold text-xs dark:text-white">${e.subject}</span>
+                    <span class="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs">${e.score}</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-400 py-4">لا توجد اختبارات مسجلة</p>';
         };
 
         window.hideProfile = () => document.getElementById('profileModal').classList.replace('flex', 'hidden');
-        window.onload = init;
+
+        // التحقق من الجلسة المحفوظة
+        window.onload = () => {
+            const s = localStorage.getItem('user_session');
+            if(s) { const {u, p} = JSON.parse(s); document.getElementById('u').value=u; document.getElementById('p').value=p; }
+        };
     </script>
 </body>
 </html>
