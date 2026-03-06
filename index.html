@@ -3,118 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة النجوم | مدرسة ابن رشد</title>
+    <title>موقع الصف الأول ب</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
         :root { --p: #6366f1; --s: #a855f7; --t: #ec4899; }
-        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; scroll-behavior: smooth; margin: 0; }
         
-        /* تأثير النيون المتنفس */
-        @keyframes breathing { 0%, 100% { box-shadow: 0 0 20px rgba(99,102,241,0.2); } 50% { box-shadow: 0 0 40px rgba(168,85,247,0.4); } }
+        /* خلفية سحرية متحركة */
+        body.dark { background: radial-gradient(circle at top right, #1e1b4b, #020617); color: #f8fafc; }
+        body.light { background: radial-gradient(circle at top right, #e0e7ff, #f8fafc); color: #0f172a; }
+
+        /* تأثير الزجاج الفائق */
+        .ultra-glass { 
+            backdrop-filter: blur(30px) saturate(200%); 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .light .ultra-glass { background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(0,0,0,0.05); }
+
+        /* عناوين نيون متغيرة */
+        .mega-title { 
+            background: linear-gradient(to right, #818cf8, #f472b6, #fbbf24); 
+            -webkit-background-clip: text; 
+            color: transparent; 
+            animation: gradient-shift 8s infinite alternate;
+        }
+        @keyframes gradient-shift { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(45deg); } }
+
+        /* تأثير التحويم للبطاقات */
+        .hover-card { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+        .hover-card:hover { transform: translateY(-15px) scale(1.03); box-shadow: 0 20px 40px rgba(99,102,241,0.3); }
+
+        .page { display: none; }
+        .active-page { display: block; animation: fadeInScale 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9) translateY(30px); filter: blur(10px); } to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
+
+        /* شريط التنقل (The Dock) */
+        .dock { 
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            width: fit-content; min-width: 300px; padding: 12px 25px;
+            border-radius: 3rem; z-index: 1000; display: flex; gap: 40px; justify-content: center;
+        }
         
-        body.dark { background: #020617; color: #e2e8f0; }
-        body.light { background: #f0f4f8; color: #1e293b; }
-
-        .glass-panel { backdrop-filter: blur(25px) saturate(180%); background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); }
-        .light .glass-panel { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0,0,0,0.05); }
-
-        .hero-title { background: linear-gradient(to right, #818cf8, #c084fc, #f472b6); -webkit-background-clip: text; color: transparent; animation: hue 5s infinite linear; }
-        @keyframes hue { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
-
-        .btn-premium { background: linear-gradient(45deg, var(--p), var(--s)); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
-        .btn-premium:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 40px rgba(99,102,241,0.4); }
-        
-        .page { display: none; transform-origin: top; }
-        .active-page { display: block; animation: zoomIn 0.6s ease-out forwards; }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        .star-card { position: relative; border-radius: 2rem; padding: 2rem; transition: 0.5s; cursor: pointer; }
-        .star-card::before { content: ''; position: absolute; inset: -2px; background: linear-gradient(45deg, var(--p), var(--s), var(--t)); border-radius: 2.1rem; z-index: -1; opacity: 0; transition: 0.5s; }
-        .star-card:hover::before { opacity: 1; filter: blur(10px); }
-        
-        /* شريط التنقل السفلي الاحترافي */
-        .dock { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border-radius: 2.5rem; display: flex; justify-content: space-between; padding: 10px 30px; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        /* تأثير الجسيمات في الخلفية */
+        .particles { position: fixed; inset: 0; pointer-events: none; z-index: -1; opacity: 0.5; }
     </style>
 </head>
 <body class="dark">
 
-    <div id="loginGate" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass-panel p-12 rounded-[3.5rem] w-full max-w-md border-white/5 text-center relative overflow-hidden">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-purple-600/20 blur-[100px]"></div>
-            <h1 class="text-4xl font-black mb-2 hero-title">منصة النجوم</h1>
-            <p class="text-indigo-400 font-bold mb-10 text-xs tracking-[0.3em] uppercase">ابن رشد الابتدائية</p>
+    <div class="particles" id="particles"></div>
+
+    <div id="loginGate" class="min-h-screen flex items-center justify-center p-6">
+        <div class="ultra-glass p-14 rounded-[4rem] w-full max-w-md text-center relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 w-32 h-32 bg-indigo-500/20 blur-[60px]"></div>
+            <h1 class="text-4xl font-black mb-10 mega-title">موقع الصف الأول ب</h1>
             
-            <div class="space-y-4">
-                <input type="text" id="userInput" placeholder="اسم البطل" class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 outline-none font-bold focus:border-indigo-500 transition-all text-center">
-                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 outline-none font-bold focus:border-indigo-500 transition-all text-center">
-                <button id="submitLogin" class="btn-premium w-full text-white py-5 rounded-2xl font-black text-xl shadow-xl">انطلاق 🚀</button>
+            <div class="space-y-6">
+                <input type="text" id="userInput" placeholder="اسم المستخدم" class="w-full p-5 rounded-3xl bg-white/5 border border-white/10 outline-none font-bold focus:ring-2 ring-indigo-500 transition-all text-center">
+                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-5 rounded-3xl bg-white/5 border border-white/10 outline-none font-bold focus:ring-2 ring-indigo-500 transition-all text-center">
+                <button id="submitLogin" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 rounded-3xl font-black text-xl shadow-2xl active:scale-95 transition-all">دخول الأبطال 🚀</button>
             </div>
-            <p class="mt-8 text-[10px] opacity-30 font-bold">الصف الأول ب - نسخة 2026</p>
+            <button onclick="toggleTheme()" class="mt-8 opacity-30 text-[10px] uppercase font-bold tracking-widest">تغيير المظهر 🌓</button>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <header class="p-6 sticky top-0 z-50 glass-panel border-b border-white/5">
+        <nav class="p-6 sticky top-0 z-50 ultra-glass border-b border-white/5">
             <div class="max-w-6xl mx-auto flex justify-between items-center">
-                <div class="flex items-center gap-4 group cursor-pointer" onclick="openProfile()">
-                    <div class="w-12 h-12 rounded-xl btn-premium flex items-center justify-center text-white text-xl">👤</div>
+                <div class="flex items-center gap-5 cursor-pointer group" onclick="openProfile()">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-600 to-pink-600 flex items-center justify-center text-white text-2xl shadow-lg group-hover:rotate-12 transition-all">👤</div>
                     <div class="text-right">
-                        <p id="navName" class="font-black text-sm">البطل المبدع</p>
-                        <p class="text-[8px] opacity-50 uppercase tracking-tighter">الحساب الشخصي</p>
+                        <p id="navName" class="font-black text-lg">بطل الصف</p>
+                        <p class="text-[9px] opacity-40 font-bold">ابن رشد الابتدائية</p>
                     </div>
                 </div>
-                <button onclick="toggleTheme()" class="w-12 h-12 glass-panel rounded-xl flex items-center justify-center text-xl">🌓</button>
+                <h2 id="currentTitle" class="text-xl font-black opacity-80">الرئيسية</h2>
+                <button onclick="toggleTheme()" class="w-12 h-12 ultra-glass rounded-2xl flex items-center justify-center text-xl">🌓</button>
             </div>
-        </header>
+        </nav>
 
-        <main class="max-w-6xl mx-auto px-6 pt-10 pb-40">
-            <section id="homePage" class="page active-page space-y-20">
-                <div class="relative py-20 px-10 rounded-[4rem] overflow-hidden text-center glass-panel">
-                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-purple-600/20"></div>
-                    <h1 class="text-5xl md:text-7xl font-black mb-6 hero-title leading-tight">فضاء الصف الأول "ب"</h1>
-                    <p class="text-xl font-bold opacity-70">مدرسة ابن رشد الابتدائية - بإشراف لبنى سلامي</p>
+        <main class="max-w-6xl mx-auto px-6 pt-12 pb-44">
+            <section id="homePage" class="page active-page space-y-24">
+                <div class="relative py-28 px-10 rounded-[5rem] overflow-hidden text-center ultra-glass">
+                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/10 via-transparent to-pink-600/10"></div>
+                    <h1 class="text-6xl md:text-8xl font-black mb-8 mega-title tracking-tighter">موقع الصف الأول ب</h1>
+                    <p class="text-2xl font-bold opacity-60">مدرسة ابن رشد الابتدائية</p>
                 </div>
 
-                <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+                <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div>
 
-                <div class="space-y-10">
-                    <h3 class="text-3xl font-black flex items-center gap-4">💎 الطلاب المتميزون <span class="h-px flex-1 bg-white/10"></span></h3>
-                    <div id="starsGrid" class="grid grid-cols-2 md:grid-cols-5 gap-6"></div>
+                <div class="space-y-12">
+                    <h3 class="text-4xl font-black flex items-center gap-6">💎 الطلاب المتميزون <span class="h-[2px] flex-1 bg-gradient-to-r from-white/20 to-transparent"></span></h3>
+                    <div id="starsGrid" class="grid grid-cols-2 md:grid-cols-5 gap-8"></div>
                 </div>
             </section>
 
             <section id="hwPage" class="page space-y-10 text-center">
-                <h2 class="text-6xl font-black hero-title">ركن الوظائف</h2>
-                <div id="hwArea" class="grid gap-8 text-right"></div>
+                <h2 class="text-7xl font-black mega-title mb-20">ركن الوظائف</h2>
+                <div id="hwArea" class="grid gap-10"></div>
             </section>
 
             <section id="eventsPage" class="page space-y-20">
-                <h2 class="text-6xl font-black text-center hero-title">معرض الصور</h2>
-                <div id="eventsArea" class="space-y-32"></div>
+                <h2 class="text-7xl font-black text-center mega-title mb-20">معرض الفعاليات</h2>
+                <div id="eventsArea" class="space-y-40"></div>
             </section>
         </main>
 
-        <div class="dock">
-            <button onclick="changePage('homePage', 'الرئيسية', this)" class="text-3xl text-indigo-500 transition-all scale-125">🏠</button>
-            <button onclick="changePage('hwPage', 'الوظائف', this)" class="text-3xl opacity-30 transition-all hover:scale-110">📚</button>
-            <button onclick="changePage('eventsPage', 'الفعاليات', this)" class="text-3xl opacity-30 transition-all hover:scale-110">📸</button>
+        <div class="dock ultra-glass border-white/10">
+            <button onclick="changePage('homePage', 'الرئيسية', this)" class="text-4xl text-indigo-500 scale-150 transition-all">🏠</button>
+            <button onclick="changePage('hwPage', 'الوظائف', this)" class="text-4xl opacity-20 hover:opacity-100 transition-all">📚</button>
+            <button onclick="changePage('eventsPage', 'الفعاليات', this)" class="text-4xl opacity-20 hover:opacity-100 transition-all">📸</button>
         </div>
     </div>
 
-    <div id="profileModal" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-4 z-[2000] backdrop-blur-2xl">
-        <div class="glass-panel w-full max-w-sm rounded-[4rem] overflow-hidden border-white/20">
-            <div class="h-40 bg-gradient-to-br from-indigo-600 to-purple-700 relative">
-                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-28 h-28 rounded-3xl bg-slate-900 border-4 border-slate-900 flex items-center justify-center text-5xl shadow-2xl">👤</div>
+    <div id="profileModal" class="fixed inset-0 bg-black/95 hidden items-center justify-center p-4 z-[2000] backdrop-blur-[50px]">
+        <div class="ultra-glass w-full max-w-sm rounded-[4rem] overflow-hidden">
+            <div class="h-44 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative">
+                <div class="absolute -bottom-12 left-1/2 -translate-x-1/2 w-32 h-32 rounded-[3rem] bg-slate-950 border-[6px] border-slate-950 flex items-center justify-center text-5xl shadow-2xl">👤</div>
             </div>
-            <div class="pt-16 pb-12 px-10 text-center">
-                <h2 id="pFullName" class="text-2xl font-black mb-8"></h2>
-                <div class="space-y-3 text-right">
-                    <p class="text-xs font-black text-indigo-400 border-r-2 border-indigo-500 pr-2">آخر العلامات:</p>
-                    <div id="pExams" class="space-y-2 max-h-48 overflow-y-auto pr-2"></div>
-                </div>
-                <button onclick="logout()" class="mt-12 text-red-400 font-black text-[10px] tracking-widest opacity-50 hover:opacity-100">تسجيل الخروج</button>
-                <button onclick="closeProfile()" class="block w-full mt-4 font-bold opacity-20">إغلاق</button>
+            <div class="pt-20 pb-12 px-12 text-center">
+                <h2 id="pFullName" class="text-3xl font-black mb-2"></h2>
+                <p class="text-indigo-400 font-bold text-xs uppercase tracking-[0.4em] mb-10">بطاقة الطالب الرقمية</p>
+                <div id="pExams" class="space-y-3 max-h-48 overflow-y-auto custom-scroll text-right"></div>
+                <button onclick="logout()" class="mt-12 text-red-500 font-black text-[10px] tracking-widest opacity-40 hover:opacity-100 transition-all">تسجيل الخروج</button>
+                <button onclick="closeProfile()" class="block w-full mt-4 font-bold opacity-10">إغلاق</button>
             </div>
         </div>
     </div>
@@ -122,33 +136,39 @@
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // نظام المظهر
-        window.toggleTheme = () => {
-            const d = document.body.classList.toggle('dark');
-            document.body.classList.toggle('light');
-            localStorage.setItem('lubna_theme', d ? 'dark' : 'light');
-        };
-        if(localStorage.getItem('lubna_theme') === 'light') toggleTheme();
+        // تأثير الجزيئات في الخلفية
+        const pContainer = document.getElementById('particles');
+        for(let i=0; i<30; i++) {
+            const p = document.createElement('div');
+            p.style.cssText = `position:absolute; width:4px; height:4px; background:white; border-radius:50%; top:${Math.random()*100}%; left:${Math.random()*100}%; opacity:${Math.random()}; filter:blur(1px); animation: float ${10+Math.random()*20}s infinite linear;`;
+            pContainer.appendChild(p);
+        }
 
-        // التنقل السلس
+        window.toggleTheme = () => {
+            const isD = document.body.classList.toggle('dark');
+            document.body.classList.toggle('light');
+            localStorage.setItem('ibn_theme_v4', isD ? 'dark' : 'light');
+        };
+        if(localStorage.getItem('ibn_theme_v4') === 'light') toggleTheme();
+
         window.changePage = (id, title, btn) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
-            document.querySelectorAll('.dock button').forEach(b => { b.classList.add('opacity-30'); b.classList.remove('scale-125', 'text-indigo-500'); });
-            btn.classList.remove('opacity-30'); btn.classList.add('scale-125', 'text-indigo-500');
-            window.scrollTo(0,0);
+            document.getElementById('currentTitle').innerText = title;
+            document.querySelectorAll('.dock button').forEach(b => { b.classList.add('opacity-20'); b.classList.remove('scale-150', 'text-indigo-500'); });
+            btn.classList.remove('opacity-20'); btn.classList.add('scale-150', 'text-indigo-500');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         };
 
-        // الدخول الذكي
-        const sess = JSON.parse(localStorage.getItem('lubna_session'));
-        if(sess) loginOk(sess);
+        const session = JSON.parse(localStorage.getItem('ibn_session_v4'));
+        if(session) loginOk(session);
 
         document.getElementById('submitLogin').onclick = async () => {
             const u = document.getElementById('userInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
-            const { data, error } = await supabase.from('students').select('*').eq('username', u).eq('password', p).maybeSingle();
-            if(data) { localStorage.setItem('lubna_session', JSON.stringify(data)); loginOk(data); }
-            else alert("عذراً بطلنا.. تأكد من اسم المستخدم وكلمة السر");
+            const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).maybeSingle();
+            if(data) { localStorage.setItem('ibn_session_v4', JSON.stringify(data)); loginOk(data); }
+            else alert("تأكد من بياناتك يا بطل!");
         };
 
         function loginOk(user) {
@@ -163,48 +183,48 @@
             const { data: stds } = await supabase.from('students').select('*').order('full_name');
 
             document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `
-                <div class="glass-panel p-10 rounded-[3rem] border-r-8 border-indigo-500 hover:rotate-1 transition-all">
-                    <span class="text-indigo-400 font-black text-[10px] block mb-2 uppercase">إعلان هام</span>
-                    <p class="text-2xl font-black">${a.title}</p>
+                <div class="ultra-glass p-12 rounded-[4rem] border-r-8 border-indigo-500 hover-card">
+                    <span class="text-indigo-400 font-black text-[10px] block mb-4 uppercase tracking-[0.2em]">تنبيه جديد</span>
+                    <p class="text-3xl font-black leading-tight">${a.title}</p>
                 </div>
             `).join('');
 
             document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `
-                <div class="glass-panel p-12 rounded-[4rem] hover:bg-white/5 transition-colors">
-                    <p class="text-3xl font-black leading-relaxed">${a.description}</p>
+                <div class="ultra-glass p-16 rounded-[5rem] hover-card">
+                    <p class="text-4xl font-black leading-snug">${a.description}</p>
                 </div>
             `).join('');
 
             document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => {
                 const isV = a.image_url.includes('mp4') || a.image_url.includes('youtu');
                 return `
-                <div class="max-w-4xl mx-auto space-y-8">
-                    <h4 class="text-4xl font-black text-center hero-title">${a.title || ''}</h4>
-                    <div class="rounded-[4rem] overflow-hidden shadow-2xl glass-panel p-4">
-                        ${isV ? `<video src="${a.image_url}" controls class="w-full rounded-[3rem]"></video>` : `<img src="${a.image_url}" class="w-full rounded-[3rem]">`}
+                <div class="max-w-5xl mx-auto space-y-12">
+                    <h4 class="text-5xl font-black text-center mega-title">${a.title || ''}</h4>
+                    <div class="rounded-[5rem] overflow-hidden ultra-glass p-6 shadow-[0_50px_100px_rgba(0,0,0,0.4)]">
+                        ${isV ? `<video src="${a.image_url}" controls class="w-full rounded-[4rem]"></video>` : `<img src="${a.image_url}" class="w-full rounded-[4rem]">`}
                     </div>
                 </div>`;
             }).join('');
 
             document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `
-                <div class="glass-panel p-8 rounded-[2.5rem] text-center star-card">
-                    <div class="text-4xl mb-2">💎</div>
-                    <p class="font-black text-xs">${s.full_name.split(' ')[0]}</p>
+                <div class="ultra-glass p-10 rounded-[3.5rem] text-center hover-card group">
+                    <div class="text-5xl mb-4 group-hover:animate-bounce">💎</div>
+                    <p class="font-black text-sm tracking-tighter">${s.full_name.split(' ')[0]}</p>
                 </div>
             `).join('');
         }
 
         window.openProfile = async () => {
-            const u = JSON.parse(localStorage.getItem('lubna_session'));
+            const u = JSON.parse(localStorage.getItem('ibn_session_v4'));
             document.getElementById('profileModal').classList.replace('hidden', 'flex');
             document.getElementById('pFullName').innerText = u.full_name;
             const { data } = await supabase.from('exams').select('*').eq('student_id', u.id).order('created_at', {ascending: false});
             document.getElementById('pExams').innerHTML = data.map(e => `
-                <div class="flex justify-between items-center glass-panel p-4 rounded-2xl">
+                <div class="flex justify-between items-center ultra-glass p-5 rounded-3xl">
                     <span class="font-black text-xs opacity-50">${e.subject}</span>
-                    <span class="bg-indigo-600 text-white px-5 py-1 rounded-full font-black text-xs">${e.score}</span>
+                    <span class="bg-gradient-to-r from-indigo-600 to-pink-600 text-white px-6 py-2 rounded-full font-black text-xs shadow-lg">${e.score}</span>
                 </div>
-            `).join('') || '<p class="text-center opacity-20 text-xs italic">لا توجد بيانات</p>';
+            `).join('') || '<p class="text-center opacity-20 text-xs italic">لا توجد اختبارات مسجلة</p>';
         };
         window.closeProfile = () => document.getElementById('profileModal').classList.replace('flex', 'hidden');
         window.logout = () => { localStorage.clear(); location.reload(); };
