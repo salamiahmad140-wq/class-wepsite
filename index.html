@@ -2,68 +2,135 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة أبطال الصف الأول "ب"</title>
+    <title>مدرسة النجوم | الصف الأول "ب"</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tajawal', sans-serif; background: #050505; color: white; overflow-x: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .neon-border { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); border: 1px solid #3b82f6; }
-        .star-glow { filter: drop-shadow(0 0 10px #fbbf24); }
+        body { font-family: 'Cairo', sans-serif; background: #f0f9ff; color: #1e293b; }
+        .hero-bg { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
+        .card-fun { background: white; border-radius: 2rem; border-bottom: 5px solid #e2e8f0; transition: 0.3s; }
+        .card-fun:hover { transform: translateY(-5px); border-bottom-color: #3b82f6; }
+        .student-profile { background: #ffffff; border-radius: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .honor-star { filter: drop-shadow(0 0 8px #fbbf24); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6">
-    <div id="loginSection" class="glass p-10 rounded-[3rem] w-full max-w-md text-center transition-all duration-700">
-        <h1 class="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">أهلاً يا بطل 🚀</h1>
-        <p class="text-slate-400 mb-8">أدخل بياناتك لترى نجومك اليوم</p>
-        <div class="space-y-4">
-            <input type="text" id="loginUser" placeholder="اسم المستخدم" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:neon-border outline-none transition-all">
-            <input type="password" id="loginPass" placeholder="كلمة المرور" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:neon-border outline-none transition-all">
-            <button id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-bold text-xl shadow-lg transition-all">دخول للمنصة</button>
+<body>
+    <div id="loginGate" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-[3rem] shadow-2xl w-full max-w-md text-center border-t-8 border-blue-500">
+            <h1 class="text-4xl font-black text-blue-600 mb-2">مرحباً يا بطل! 🚀</h1>
+            <p class="text-slate-500 mb-6">ادخل إلى صفك الممتع</p>
+            <input type="text" id="u" placeholder="اسمك الجميل" class="w-full p-4 mb-3 rounded-2xl bg-slate-100 border-none outline-blue-500 text-center text-xl">
+            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-4 mb-6 rounded-2xl bg-slate-100 border-none outline-blue-500 text-center text-xl">
+            <button id="loginBtn" class="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 py-4 rounded-2xl font-black text-xl shadow-lg transition-all">هيا بنا! 🎈</button>
         </div>
     </div>
 
-    <div id="studentCard" class="hidden glass p-8 rounded-[3rem] w-full max-w-2xl border-t-4 border-blue-500 animate-fade-in">
-        <div class="flex justify-between items-center mb-8">
-            <h2 id="welcomeMsg" class="text-2xl font-bold text-blue-300"></h2>
-            <div id="starBadge" class="hidden star-glow text-4xl">⭐</div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
-                <p class="text-slate-400 text-sm mb-2">درجتك في الاختبار 📝</p>
-                <span id="displayGrade" class="text-4xl font-black text-yellow-400">0</span>
+    <div id="mainPlatform" class="hidden min-h-screen">
+        <nav class="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-50">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🏫</span>
+                <span class="font-bold text-blue-600">الصف الأول "ب"</span>
             </div>
-            <div class="bg-white/5 p-6 rounded-3xl border border-white/5">
-                <p class="text-slate-400 text-sm mb-4">الوظيفة البيتية 🏠</p>
-                <p id="displayTask" class="text-blue-200 italic text-sm">لا يوجد وظائف حالياً</p>
+            <div class="relative group">
+                <button class="bg-blue-100 p-2 px-4 rounded-full flex items-center gap-2 hover:bg-blue-200 transition">
+                    <span id="navName" class="font-bold">البطل</span>
+                    <span class="text-xl">👤</span>
+                </button>
+                <div class="absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border p-4 hidden group-hover:block animate-fade-in">
+                    <p class="text-xs text-slate-400 mb-1">بياناتي التعليمية:</p>
+                    <p id="profName" class="font-bold text-blue-700"></p>
+                    <p id="profCode" class="text-sm text-slate-500 mb-3"></p>
+                    <hr class="mb-3">
+                    <p class="text-sm font-bold text-green-600">آخر علاماتي: <span id="profGrade">0</span>/100</p>
+                    <button onclick="location.reload()" class="w-full mt-4 text-red-400 text-xs">تسجيل خروج</button>
+                </div>
             </div>
+        </nav>
+
+        <header id="teacherAlert" class="m-6 hero-bg p-10 rounded-[3rem] shadow-xl text-center relative overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="text-2xl font-bold mb-2">📢 إعلان هام من المعلمة لبنى</h2>
+                <p id="announcementText" class="text-4xl font-black">أهلاً بكم في يومنا الدراسي الجديد! 🌟</p>
+            </div>
+            <div class="absolute -top-10 -right-10 text-9xl opacity-20">🎈</div>
+        </header>
+
+        <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-8">
+                <section>
+                    <h3 class="text-2xl font-black mb-4 flex items-center gap-2">✨ أبطال الأسبوع المتميزون ✨</h3>
+                    <div id="honorRoll" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        </div>
+                </section>
+
+                <section>
+                    <h3 class="text-2xl font-black mb-4">📸 آخر فعالياتنا الممتعة</h3>
+                    <div id="photoGallery" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card-fun overflow-hidden h-48 bg-slate-200 flex items-center justify-center text-slate-400 italic">بانتظار صور المعلمة... 📷</div>
+                    </div>
+                </section>
+            </div>
+
+            <aside>
+                <div class="bg-yellow-50 p-6 rounded-[2.5rem] border-2 border-yellow-200">
+                    <h3 class="text-2xl font-black text-yellow-700 mb-4 flex items-center gap-2">🏠 واجباتي المنزلية</h3>
+                    <div id="tasksList" class="space-y-4">
+                        <p class="text-slate-500 italic">لا يوجد وظائف اليوم، استمتعوا باللعب! ✨</p>
+                    </div>
+                </div>
+            </aside>
         </div>
-        <button onclick="location.reload()" class="mt-8 text-slate-500 hover:text-white text-sm">تسجيل خروج</button>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
-        
-        document.getElementById('btnLogin').onclick = async () => {
-            const user = document.getElementById('loginUser').value;
-            const pass = document.getElementById('loginPass').value;
-            
+
+        const loginBtn = document.getElementById('loginBtn');
+        loginBtn.onclick = async () => {
+            const user = document.getElementById('u').value;
+            const pass = document.getElementById('p').value;
             const { data, error } = await supabase.from('students').select('*').eq('username', user).eq('password', pass).single();
-            
+
             if (data) {
-                document.getElementById('loginSection').classList.add('hidden');
-                document.getElementById('studentCard').classList.remove('hidden');
-                document.getElementById('welcomeMsg').innerText = "مرحباً يا بطل، " + data.full_name;
-                document.getElementById('displayGrade').innerText = data.grade || 0;
-                if(data.is_star) document.getElementById('starBadge').classList.remove('hidden');
+                document.getElementById('loginGate').classList.add('hidden');
+                document.getElementById('mainPlatform').classList.remove('hidden');
                 
-                // جلب آخر وظيفة
-                const { data: task } = await supabase.from('assignments').select('content').order('created_at', { ascending: false }).limit(1).single();
-                if(task) document.getElementById('displayTask').innerText = task.content;
+                // ملء بيانات الطالب
+                document.getElementById('navName').innerText = data.full_name.split(' ')[0];
+                document.getElementById('profName').innerText = data.full_name;
+                document.getElementById('profCode').innerText = "كود الطالب: #" + data.id.slice(0,5);
+                document.getElementById('profGrade').innerText = data.grade || 0;
+
+                loadContent();
             } else {
-                alert("تأكد من اسم المستخدم وكلمة المرور يا بطل!");
+                alert("تأكد من اسمك وكلمة السر يا بطل! ❌");
             }
         };
+
+        async function loadContent() {
+            // جلب الإعلان والوظائف
+            const { data: assignments } = await supabase.from('assignments').select('*').order('created_at', { ascending: false });
+            if(assignments && assignments.length > 0) {
+                document.getElementById('announcementText').innerText = assignments[0].title || "أهلاً بكم يا أبطال!";
+                document.getElementById('tasksList').innerHTML = assignments.map(a => `
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border-r-4 border-yellow-400">
+                        <p class="font-bold text-yellow-800">${a.content}</p>
+                        <span class="text-[10px] text-slate-400">${new Date(a.created_at).toLocaleDateString('ar-EG')}</span>
+                    </div>
+                `).join('');
+            }
+
+            // جلب المتميزين
+            const { data: stars } = await supabase.from('students').select('*').eq('is_star', true);
+            document.getElementById('honorRoll').innerHTML = stars.map(s => `
+                <div class="card-fun p-4 text-center">
+                    <div class="text-4xl mb-2 honor-star">⭐</div>
+                    <p class="font-black text-blue-600">${s.full_name.split(' ')[0]}</p>
+                    <p class="text-[10px] text-slate-400">بطل متميز</p>
+                </div>
+            `).join('');
+        }
     </script>
 </body>
 </html>
