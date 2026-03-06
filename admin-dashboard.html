@@ -3,76 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة لبنى سلامي</title>
+    <title>الإدارة الكاملة | لبنى سلامي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; transition: 0.4s; padding: 15px; }
         .dark body { background: #0f172a; color: #f1f5f9; }
-        .admin-card { background: white; border-radius: 2.5rem; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; border: 3px solid white; transition: 0.4s; }
+        
+        /* البطاقات */
+        .admin-card { background: white; border-radius: 2rem; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; border: 2px solid white; }
         .dark .admin-card { background: #1e293b; border-color: #334155; }
         
-        /* إصلاح ألوان المدخلات في الداكن */
-        input, textarea, select { border: 3px solid #e2e8f0; border-radius: 1.5rem; padding: 15px; width: 100%; margin-bottom: 12px; font-weight: 900; color: #1e293b; }
-        .dark input, .dark textarea, .dark select { background: #0f172a !important; border-color: #475569 !important; color: #f8fafc !important; }
+        /* إصلاح ألوان المدخلات */
+        input, textarea, select { border: 2px solid #e2e8f0; border-radius: 1.2rem; padding: 12px; width: 100%; margin-bottom: 10px; font-weight: 700; color: #1e293b; outline: none; }
+        .dark input, .dark textarea, .dark select { background: #0f172a !important; border-color: #475569 !important; color: #ffffff !important; }
+        .dark input::placeholder { color: #94a3b8; }
+
+        .btn-add { background: #4f46e5; color: white; padding: 12px; border-radius: 1rem; font-weight: 900; width: 100%; transition: 0.3s; }
+        .btn-add:hover { background: #4338ca; transform: translateY(-2px); }
         
-        .btn-main { background: #4f46e5; color: white; padding: 15px; border-radius: 1.5rem; font-weight: 900; width: 100%; cursor: pointer; border: none; }
+        .tab-title { font-black text-xl mb-4 flex items-center gap-2; }
     </style>
 </head>
 <body>
 
-    <header class="flex justify-between items-center mb-8 px-4">
-        <button onclick="toggleDark()" class="text-3xl">🌓</button>
-        <h1 class="text-2xl font-black text-indigo-700 dark:text-indigo-400">لوحة تحكم الأستاذة لبنى 👩‍🏫</h1>
+    <header class="flex justify-between items-center mb-8 bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm">
+        <button onclick="toggleDark()" class="text-3xl btn-click">🌓</button>
+        <h1 class="text-xl font-black text-indigo-700 dark:text-indigo-400">لوحة تحكم المعلمة لبنى ✨</h1>
     </header>
 
-    <div class="max-w-xl mx-auto">
+    <div class="max-w-2xl mx-auto">
+        
         <div class="admin-card border-r-8 border-green-500">
-            <h3 class="font-black text-green-700 mb-4 italic">✨ إضافة محتوى جديد:</h3>
+            <h3 class="text-green-600 font-black text-lg mb-4">📢 إضافة منشور جديد (إعلان/وظيفة/فعالية)</h3>
             <select id="p_type">
-                <option value="news">📢 إعلان</option>
-                <option value="hw">📚 وظيفة</option>
-                <option value="event">📸 فعالية</option>
+                <option value="news">📢 إعلان جديد (يظهر بالرئيسية)</option>
+                <option value="hw">📚 وظيفة بيتية (يظهر بصفحة الوظائف)</option>
+                <option value="event">📸 صورة فعالية (يظهر بصفحة الفعاليات)</option>
             </select>
-            <input id="p_title" placeholder="العنوان">
-            <textarea id="p_desc" placeholder="نص الوظيفة"></textarea>
-            <input id="p_img" placeholder="رابط الصورة">
-            <button onclick="publish()" class="btn-main bg-green-600">نشر ✅</button>
+            <input id="p_title" placeholder="العنوان (اختياري)">
+            <textarea id="p_desc" placeholder="اكتبي نص الوظيفة هنا..." rows="3"></textarea>
+            <input id="p_img" placeholder="رابط الصورة (إذا كانت فعالية)">
+            <button onclick="publish()" class="btn-add bg-green-600">نشر المحتوى الآن ✅</button>
         </div>
 
-        <div id="contentList" class="space-y-4 mb-10"></div>
+        <div class="admin-card border-r-8 border-indigo-600">
+            <h3 class="text-indigo-600 font-black text-lg mb-4">👥 إضافة طالب جديد للصف</h3>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <input id="s_name" placeholder="اسم الطالب الكامل">
+                <input id="s_user" placeholder="اسم المستخدم (Username)">
+            </div>
+            <input id="s_pass" placeholder="كلمة المرور">
+            <button onclick="addStudent()" class="btn-add">إضافة الطالب للقائمة +</button>
+            
+            <hr class="my-6 border-slate-200 dark:border-slate-700">
+            
+            <h3 class="text-indigo-600 font-black mb-4 underline">قائمة أبطال أول "ب":</h3>
+            <div id="studentsList" class="space-y-3"></div>
+        </div>
+
+        <div class="admin-card border-r-8 border-orange-500">
+            <h3 class="text-orange-600 font-black text-lg mb-4 text-center">🗑️ إدارة المنشورات السابقة</h3>
+            <div id="contentList" class="space-y-3"></div>
+        </div>
+
+    </div>
+
+    <div id="scoreModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[100] p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-[2.5rem] w-full max-w-sm">
+            <h2 class="font-black text-xl mb-4 text-indigo-600">إضافة علامة للطالب</h2>
+            <input id="m_subject" placeholder="المادة (مثلاً: حساب)">
+            <input id="m_score" placeholder="العلامة">
+            <button onclick="saveScore()" class="btn-add mb-2">حفظ العلامة 💾</button>
+            <button onclick="closeModal()" class="w-full text-slate-400 font-bold py-2">إلغاء</button>
+        </div>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
-        
-        if(localStorage.getItem('dark') === 'true') document.documentElement.classList.add('dark');
-        
+
+        let targetStudentId = null;
+
+        // التذكر التلقائي للوضع الداكن
+        if(localStorage.getItem('admin_dark') === 'true') document.documentElement.classList.add('dark');
         window.toggleDark = () => {
             const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('dark', isDark);
+            localStorage.setItem('admin_dark', isDark);
         };
 
+        // 1. النشر
         window.publish = async () => {
             const t = document.getElementById('p_type').value;
-            await supabase.from('assignments').insert([{
+            const { error } = await supabase.from('assignments').insert([{
                 title: (t!=='hw') ? document.getElementById('p_title').value : null,
                 description: (t==='hw') ? document.getElementById('p_desc').value : null,
                 image_url: (t==='event') ? document.getElementById('p_img').value : null
             }]);
-            location.reload();
+            if(!error) { alert("تم النشر بنجاح! 🎉"); location.reload(); }
         };
 
+        // 2. إدارة الطلاب
+        window.addStudent = async () => {
+            const n = document.getElementById('s_name').value, u = document.getElementById('s_user').value, p = document.getElementById('s_pass').value;
+            if(n && u && p) {
+                await supabase.from('students').insert([{ full_name: n, username: u, password: p }]);
+                location.reload();
+            } else alert("يرجى تعبئة كل بيانات الطالب");
+        };
+
+        // 3. التحميل والعرض
         async function load() {
-            const { data } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
-            document.getElementById('contentList').innerHTML = data.map(i => `
-                <div class="admin-card flex justify-between items-center p-4">
-                    <span class="font-bold truncate w-40">${i.title || i.description}</span>
-                    <button onclick="del('${i.id}')" class="text-red-500 font-black">حذف 🗑️</button>
+            // تحميل المنشورات
+            const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
+            document.getElementById('contentList').innerHTML = ads.map(i => `
+                <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <span class="font-bold text-sm truncate w-40">${i.title || i.description}</span>
+                    <button onclick="del('assignments', '${i.id}')" class="text-red-500 font-black text-xs">حذف 🗑️</button>
+                </div>
+            `).join('');
+
+            // تحميل الطلاب
+            const { data: stds } = await supabase.from('students').select('*').order('full_name');
+            document.getElementById('studentsList').innerHTML = stds.map(s => `
+                <div class="flex justify-between items-center bg-indigo-50 dark:bg-slate-900 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-900">
+                    <span class="font-bold text-indigo-900 dark:text-indigo-300">${s.full_name}</span>
+                    <div class="flex gap-3 items-center">
+                        <button onclick="openScore('${s.id}')" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-[10px] font-black">+ علامة</button>
+                        <button onclick="toggleStar('${s.id}', ${s.is_star})" class="text-2xl ${s.is_star?'':'grayscale'}">⭐</button>
+                        <button onclick="del('students', '${s.id}')" class="text-slate-400">🗑️</button>
+                    </div>
                 </div>
             `).join('');
         }
-        window.del = async (id) => { if(confirm("حذف؟")) { await supabase.from('assignments').delete().eq('id', id); load(); } };
+
+        // الحذف العام
+        window.del = async (table, id) => {
+            if(confirm("هل أنتِ متأكدة من الحذف؟ لا يمكن التراجع")) {
+                await supabase.from(table).delete().eq('id', id);
+                load();
+            }
+        };
+
+        // النجوم
+        window.toggleStar = async (id, current) => {
+            await supabase.from('students').update({ is_star: !current }).eq('id', id);
+            load();
+        };
+
+        // العلامات
+        window.openScore = (id) => { targetStudentId = id; document.getElementById('scoreModal').classList.replace('hidden', 'flex'); };
+        window.closeModal = () => document.getElementById('scoreModal').classList.replace('flex', 'hidden');
+        window.saveScore = async () => {
+            const sub = document.getElementById('m_subject').value, sc = document.getElementById('m_score').value;
+            if(sub && sc) {
+                await supabase.from('exams').insert([{ student_id: targetStudentId, subject: sub, score: parseInt(sc) }]);
+                alert("تمت إضافة العلامة ✅");
+                closeModal();
+            }
+        };
+
         load();
     </script>
 </body>
