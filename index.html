@@ -7,111 +7,104 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; transition: 0.5s; background: #f0f4f8; overflow-x: hidden; }
+        body { font-family: 'Cairo', sans-serif; background: #f0f4f8; overflow-x: hidden; transition: 0.5s; }
         .dark { background: #0f172a; color: #f1f5f9; }
         
         /* تأثيرات فخمة و"فرفشني" */
         .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); }
         .dark .glass { background: rgba(30, 41, 59, 0.7); border-color: rgba(255,255,255,0.1); }
         
+        /* حركة الأزرار */
         .btn-click { transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .btn-click:active { transform: scale(0.9) rotate(-3deg); }
-        .btn-click:hover { transform: scale(1.05); }
-
+        .btn-click:active { transform: scale(0.9); }
+        
+        /* نظام التنقل السفلي */
         .nav-bottom { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 75px; border-radius: 25px; display: flex; justify-content: space-around; align-items: center; z-index: 100; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 2px solid rgba(255,255,255,0.3); }
         
-        .page { display: none; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1); padding-bottom: 100px; }
+        /* الأنيميشن عند التنقل */
+        .page { display: none; animation: slideUp 0.5s ease-out; padding-bottom: 100px; }
         .active-page { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
-        .hero-gradient { background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%); } /* وردي مبهج */
-        .hw-gradient { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); } /* برتقالي مبهج */
-        .event-gradient { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); } /* بنفسجي مبهج */
+        /* تدرجات ألوان مبهجة */
+        .bg-home { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .bg-work { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+        .bg-event { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
         
-        .star-anim { animation: pulseStar 1.5s infinite; }
-        @keyframes pulseStar { 0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; } 50% { transform: scale(1.2) rotate(10deg); opacity: 0.8; } }
-        
-        .card-pop { transition: 0.3s; }
-        .card-pop:hover { transform: translateY(-10px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .star-anim { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
     </style>
 </head>
 <body class="light" id="bodyTag">
 
     <div id="loginGate" class="min-h-screen flex items-center justify-center p-6 bg-indigo-50 dark:bg-slate-950">
         <div class="glass p-12 rounded-[3.5rem] shadow-2xl w-full max-w-md border-t-8 border-indigo-600 animate-slideUp">
-            <h1 class="text-5xl font-black text-center text-indigo-600 mb-3 star-anim">👋 أهلاً!</h1>
-            <p class="text-center text-slate-500 mb-10 font-bold">ادخل عالم النجوم والمرح</p>
-            <input type="text" id="u" placeholder="اسمك الجميل" class="w-full p-5 mb-5 rounded-2xl bg-white/50 dark:bg-slate-700 dark:text-white outline-none focus:ring-4 ring-indigo-200 transition">
-            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-5 mb-8 rounded-2xl bg-white/50 dark:bg-slate-700 dark:text-white outline-none focus:ring-4 ring-indigo-200 transition">
-            <div class="flex items-center gap-3 mb-8 cursor-pointer btn-click">
-                <input type="checkbox" id="rememberMe" class="w-6 h-6 rounded-lg text-indigo-600 border-none bg-slate-200">
-                <label for="rememberMe" class="text-sm font-bold dark:text-slate-300">تذكرني يا بطل 💾</label>
-            </div>
-            <button id="loginBtn" class="w-full hero-gradient text-white py-5 rounded-2xl font-black text-2xl shadow-xl btn-click hover:shadow-indigo-300">انطلق للنجوم 🚀</button>
+            <h1 class="text-4xl font-black text-center text-indigo-600 mb-8 star-anim">دخول الأبطال ⭐</h1>
+            <input type="text" id="u" placeholder="اسمك الجميل" class="w-full p-5 mb-4 rounded-2xl border-none shadow-inner bg-white/50 dark:bg-slate-700 dark:text-white focus:ring-4 ring-indigo-200 outline-none transition">
+            <input type="password" id="p" placeholder="كلمة السر" class="w-full p-5 mb-8 rounded-2xl border-none shadow-inner bg-white/50 dark:bg-slate-700 dark:text-white focus:ring-4 ring-indigo-200 outline-none transition">
+            <button id="loginBtn" class="w-full bg-home text-white py-5 rounded-2xl font-black text-2xl shadow-xl btn-click">انطلق الآن 🚀</button>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden relative">
+    <div id="mainApp" class="hidden">
         <nav class="p-6 flex justify-between items-center sticky top-0 z-50 glass">
             <button onclick="document.body.classList.toggle('dark')" class="text-3xl btn-click">🌓</button>
-            <div class="flex items-center gap-3 glass p-2 px-5 rounded-full btn-click shadow-inner" onclick="showProfile()">
+            <div class="flex items-center gap-3 glass p-2 px-5 rounded-full btn-click" onclick="showProfile()">
                 <span id="userName" class="font-black text-indigo-600 dark:text-indigo-400">البطل</span>
-                <div class="w-10 h-10 hero-gradient rounded-full flex items-center justify-center text-white shadow-lg text-xl border-2 border-white">👤</div>
+                <div class="w-10 h-10 bg-home rounded-full flex items-center justify-center text-white shadow-lg text-xl border-2 border-white">👤</div>
             </div>
         </nav>
 
         <div id="homePage" class="page active-page p-6">
-            <div class="hero-gradient p-12 rounded-[3.5rem] text-white text-center mb-10 shadow-2xl relative overflow-hidden border-4 border-white/50 card-pop">
+            <div class="bg-home p-12 rounded-[3.5rem] text-white text-center mb-10 shadow-2xl relative overflow-hidden border-4 border-white">
                 <div class="absolute top-0 right-0 opacity-10 text-9xl">✨</div>
                 <h2 class="text-4xl font-black mb-4 animate-pulse">مرحباً يا نجوم أول "ب"</h2>
-                <p class="text-lg opacity-90 font-bold">مساحة الإبداع والمرح مع المعلمة لبنى سلامي</p>
+                <p class="text-lg opacity-90 font-bold italic">مع المعلمة لبنى سلامي</p>
             </div>
             
-            <h3 class="text-2xl font-black text-red-500 mb-6 flex items-center gap-3 italic">⚠️ أخبار عاجلة وهامة:</h3>
-            <div id="newsList" class="space-y-5 mb-12"></div>
+            <h3 class="text-2xl font-black text-red-500 mb-6 flex items-center gap-2 italic">⚠️ أخبار عاجلة:</h3>
+            <div id="newsList" class="space-y-4 mb-12"></div>
             
-            <h3 class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mb-6 underline">🏆 متميزو الأسبوع المتألقون:</h3>
-            <div id="starsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
+            <h3 class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mb-6 underline">🏆 أبطال الأسبوع المتألقون:</h3>
+            <div id="starsGrid" class="grid grid-cols-2 gap-6"></div>
         </div>
 
         <div id="homeworkPage" class="page p-6">
-            <div class="hw-gradient p-10 rounded-[3rem] text-white text-center mb-10 shadow-xl border-4 border-white card-pop">
+            <div class="bg-work p-10 rounded-[3rem] text-white text-center mb-10 shadow-xl border-4 border-white">
                 <h2 class="text-4xl font-black italic animate-bounce">واجباتي اليومية ✏️</h2>
-                <p class="opacity-80 mt-2 font-bold">همة عالية للوصول للقمة!</p>
+                <p class="opacity-80 mt-2 font-bold">بهمتي أصل للقمة!</p>
             </div>
             <div id="hwList" class="space-y-6"></div>
         </div>
 
         <div id="eventsPage" class="page p-6">
-            <div class="event-gradient p-10 rounded-[3rem] text-white text-center mb-10 shadow-xl border-4 border-white card-pop">
-                <h2 class="text-4xl font-black">ذكرياتنا الجميلة 📸</h2>
-                <p class="opacity-80 mt-2 font-bold">صور ضحكاتنا وإبداعنا</p>
+            <div class="bg-event p-10 rounded-[3rem] text-white text-center mb-10 shadow-xl border-4 border-white">
+                <h2 class="text-4xl font-black">لحظاتنا الجميلة 📸</h2>
+                <p class="opacity-80 mt-2 font-bold">صور إبداعاتنا ومرحنا</p>
             </div>
             <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         </div>
 
         <div id="profileModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-6 z-[110] backdrop-blur-md">
-            <div class="glass w-full max-w-sm rounded-[4rem] p-10 text-center shadow-2xl border-t-8 border-indigo-600 animate-slideUp relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 text-9xl opacity-10 text-indigo-300">⭐</div>
+            <div class="glass w-full max-w-sm rounded-[4rem] p-10 text-center shadow-2xl border-t-8 border-indigo-600 animate-slideUp">
                 <div class="text-7xl mb-6 star-anim">🏆</div>
-                <h2 id="profName" class="text-3xl font-black text-indigo-600 dark:text-indigo-400 mb-2"></h2>
-                <p class="text-xs text-slate-400 mb-6 font-bold">كود النجم الخاص بك</p>
-                <div class="bg-indigo-600/10 dark:bg-slate-700 p-6 rounded-[2.5rem] mb-6 shadow-inner border border-indigo-100 dark:border-slate-600">
-                    <p class="text-sm font-black dark:text-slate-300 mb-4 flex items-center justify-center gap-2">📋 سجل نتائجك المبهرة:</p>
-                    <div id="examsList" class="space-y-3 max-h-60 overflow-y-auto pr-2 scrollbar-thin"></div>
+                <h2 id="profName" class="text-3xl font-black text-indigo-600 dark:text-indigo-400 mb-6"></h2>
+                <div class="bg-white/50 dark:bg-slate-800 p-6 rounded-[2.5rem] mb-6 shadow-inner border border-white">
+                    <p class="text-sm font-black dark:text-slate-300 mb-4 flex items-center justify-center gap-2">📋 سجل نتائجك:</p>
+                    <div id="examsList" class="space-y-3 max-h-60 overflow-y-auto"></div>
                 </div>
-                <button onclick="hideProfile()" class="font-black text-red-500 text-lg btn-click">إغلاق النافذة ❌</button>
+                <button onclick="hideProfile()" class="font-black text-red-500 text-lg btn-click">إغلاق ❌</button>
             </div>
         </div>
 
         <div class="nav-bottom glass border-2 border-white/50">
-            <button onclick="showPage('homePage')" class="nav-btn text-indigo-600 flex flex-col items-center btn-click gap-1 p-2 rounded-xl">
+            <button onclick="showPage('homePage')" class="nav-btn text-indigo-600 flex flex-col items-center btn-click gap-1">
                 <span class="text-3xl">🏠</span><span class="text-[10px] font-black">الرئيسية</span>
             </button>
-            <button onclick="showPage('homeworkPage')" class="nav-btn text-slate-400 flex flex-col items-center btn-click gap-1 p-2 rounded-xl">
+            <button onclick="showPage('homeworkPage')" class="nav-btn text-slate-400 flex flex-col items-center btn-click gap-1">
                 <span class="text-3xl">📚</span><span class="text-[10px] font-black">الوظائف</span>
             </button>
-            <button onclick="showPage('eventsPage')" class="nav-btn text-slate-400 flex flex-col items-center btn-click gap-1 p-2 rounded-xl">
+            <button onclick="showPage('eventsPage')" class="nav-btn text-slate-400 flex flex-col items-center btn-click gap-1">
                 <span class="text-3xl">📸</span><span class="text-[10px] font-black">الفعاليات</span>
             </button>
         </div>
@@ -121,78 +114,63 @@
         import { supabase } from './supabaseClient.js';
         let currentUser = null;
 
-        // نظام التبديل الفخم بين الصفحات
         window.showPage = (pid) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(pid).classList.add('active-page');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-indigo-600', 'text-slate-400'));
             event.currentTarget.classList.replace('text-slate-400', 'text-indigo-600');
-            // اهتزاز خفيف عند الضغط للهواتف
-            if (window.navigator.vibrate) window.navigator.vibrate(50); 
         };
 
-        // الدخول مع تذكرني
         document.getElementById('loginBtn').onclick = async () => {
-            const u = document.getElementById('u').value;
-            const p = document.getElementById('p').value;
+            const u = document.getElementById('u').value, p = document.getElementById('p').value;
             const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).single();
             if(data) {
                 currentUser = data;
-                if(document.getElementById('rememberMe').checked) localStorage.setItem('saved_star', JSON.stringify({u, p}));
                 document.getElementById('loginGate').style.display = 'none';
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userName').innerText = data.full_name.split(' ')[0];
-                loadAllData();
-            } else alert("تأكد من بياناتك يا بطل! ❌");
+                loadData();
+            } else alert("حاول مرة أخرى يا بطل! ❌");
         };
 
-        async function loadAllData() {
-            // الأخبار (هام جداً)
-            const { data: news } = await supabase.from('assignments').select('*').not('title', 'is', null).is('image_url', null).order('created_at', {ascending:false});
-            document.getElementById('newsList').innerHTML = news.map(n => `<div class="glass p-6 rounded-[2rem] border-r-8 border-red-500 shadow-lg font-black text-lg dark:text-white card-pop animation-pop">${n.title}</div>`).join('');
+        async function loadData() {
+            const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
             
-            // الوظائف بتصميم كروت مبهجة
-            const { data: hws } = await supabase.from('assignments').select('*').not('description', 'is', null).order('created_at', {ascending:false});
-            document.getElementById('hwList').innerHTML = hws.map(h => `<div class="bg-yellow-50 dark:bg-slate-800 p-8 rounded-[3rem] border-b-8 border-yellow-400 shadow-xl font-black dark:text-white relative card-pop overflow-hidden">
-                <div class="absolute -top-5 -left-5 text-6xl opacity-10 text-yellow-600">✏️</div>${h.description}</div>`).join('');
+            // 📢 الأخبار (عنوان بدون صورة وبدون وصف طويل)
+            document.getElementById('newsList').innerHTML = ads.filter(a => a.title && !a.image_url && !a.description).map(a => 
+                `<div class="glass p-6 rounded-[2rem] border-r-8 border-red-500 shadow-lg font-black text-lg dark:text-white">${a.title}</div>`
+            ).join('');
+            
+            // 📚 الوظائف (وصف فقط)
+            document.getElementById('hwList').innerHTML = ads.filter(a => a.description).map(a => 
+                `<div class="bg-yellow-50 dark:bg-slate-800 p-8 rounded-[3rem] border-b-8 border-yellow-400 shadow-xl font-black dark:text-white relative overflow-hidden">
+                <div class="absolute -top-5 -left-5 text-6xl opacity-10 text-yellow-600">✏️</div>${a.description}</div>`
+            ).join('');
+            
+            // 📸 الفعاليات (عنوان وصورة)
+            document.getElementById('eventsGrid').innerHTML = ads.filter(a => a.image_url).map(a => 
+                `<div class="glass p-5 rounded-[3rem] shadow-2xl border-4 border-white"><img src="${a.image_url}" class="w-full h-64 object-cover rounded-[2.5rem] mb-4 shadow-lg"><p class="text-center font-black text-purple-600 text-xl">${a.title || 'فعالية ممتعة'}</p></div>`
+            ).join('');
 
-            // الفعاليات بتصميم إنستجرام فخم
-            const { data: evs } = await supabase.from('assignments').select('*').not('image_url', 'is', null).order('created_at', {ascending:false});
-            document.getElementById('eventsGrid').innerHTML = evs.map(e => `<div class="glass p-5 rounded-[3rem] shadow-2xl card-pop border-4 border-white"><img src="${e.image_url}" class="w-full h-72 object-cover rounded-[2.5rem] mb-5 shadow-lg"><p class="text-center font-black text-purple-600 dark:text-purple-300 text-2xl">${e.title || 'فعالية ممتعة'}</p></div>`).join('');
-
-            // أبطال الأسبوع
+            // 🏆 الأبطال
             const { data: stars } = await supabase.from('students').select('*').eq('is_star', true);
-            document.getElementById('starsGrid').innerHTML = stars.map(s => `<div class="glass p-6 rounded-[2.5rem] text-center shadow-lg border-2 border-indigo-100 dark:border-slate-700 card-pop">
-                <div class="text-5xl mb-3 star-anim">⭐</div><p class="font-black text-indigo-600 dark:text-indigo-300">${s.full_name.split(' ')[0]}</p></div>`).join('');
+            document.getElementById('starsGrid').innerHTML = stars.map(s => 
+                `<div class="glass p-6 rounded-[2.5rem] text-center shadow-lg border-2 border-indigo-100 dark:border-slate-700">
+                <div class="text-5xl mb-3 star-anim">⭐</div><p class="font-black text-indigo-600 dark:text-indigo-300">${s.full_name.split(' ')[0]}</p></div>`
+            ).join('');
         }
 
         window.showProfile = async () => {
             document.getElementById('profileModal').classList.replace('hidden', 'flex');
             document.getElementById('profName').innerText = currentUser.full_name;
-            const { data: ex } = await supabase.from('exams').select('*').eq('student_id', currentUser.id).order('created_at', {ascending:false});
-            document.getElementById('examsList').innerHTML = ex.map(e => `
-                <div class="flex justify-between items-center bg-white dark:bg-slate-900/50 p-4 rounded-2xl border border-white/30 backdrop-blur-sm card-pop">
-                    <div class="flex flex-col text-right">
-                        <span class="font-black text-sm dark:text-white">${e.subject}</span>
-                        <span class="text-[9px] text-slate-400 italic">${new Date(e.created_at).toLocaleDateString('ar-EG')}</span>
-                    </div>
-                    <span class="bg-indigo-600 text-white px-5 py-2 rounded-full font-black shadow-lg text-xs">${e.score}</span>
-                </div>
-            `).join('') || '<p class="text-xs opacity-60 dark:text-slate-400">لا يوجد علامات بعد</p>';
+            const { data } = await supabase.from('exams').select('*').eq('student_id', currentUser.id).order('created_at', {ascending: false});
+            document.getElementById('examsList').innerHTML = data.map(e => 
+                `<div class="flex justify-between items-center bg-indigo-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-white">
+                <span class="font-black text-sm dark:text-white">${e.subject}</span>
+                <span class="bg-indigo-600 text-white px-4 py-1 rounded-full font-black text-xs shadow-md">${e.score}</span></div>`
+            ).join('') || '<p class="text-xs opacity-50 italic">لا يوجد نتائج بعد</p>';
         };
-
         window.hideProfile = () => document.getElementById('profileModal').classList.replace('flex', 'hidden');
-
-        // التحقق من تذكرني عند الفتح
-        window.onload = () => {
-            const saved = localStorage.getItem('saved_star');
-            if(saved) {
-                const {u, p} = JSON.parse(saved);
-                document.getElementById('u').value = u;
-                document.getElementById('p').value = p;
-                // يمكنك تفعيل الدخول التلقائي هنا إذا أردتِ
-            }
-        };
     </script>
 </body>
 </html>
