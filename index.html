@@ -10,34 +10,39 @@
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { font-family: 'Cairo', sans-serif; overflow-x: hidden; margin: 0; transition: background 0.8s ease; min-height: 100vh; }
         
-        /* الأنظمة اللونية */
         body.dark { background: #020617; color: #f8fafc; }
-        body.light { background: #f1f5f9; color: #0f172a; }
+        body.light { background: #f8fafc; color: #0f172a; }
 
-        /* النجوم الهادئة */
+        /* النجوم الهادئة جداً */
         .stars-container { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.3; animation: fall linear infinite; }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.2; animation: fall linear infinite; }
         @keyframes fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
 
-        /* زر تبديل اللون الذكي */
-        #themeSection { 
-            position: fixed; bottom: 100px; left: -200px; /* مخفي جهة اليسار */
-            z-index: 3000; transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; gap: 10px;
+        /* زر تبديل اللون الثابت والتنبيه */
+        #themeWrapper { 
+            position: fixed; bottom: 100px; left: 20px; 
+            z-index: 5000; display: flex; align-items: center; gap: 10px;
         }
-        #themeSection.show { left: 20px; }
-        .theme-bubble { background: #6366f1; color: white; padding: 8px 15px; border-radius: 15px; font-size: 10px; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .theme-btn { 
+            width: 50px; h-50px; background: #6366f1; color: white; border-radius: 18px; 
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4); transition: 0.3s;
+        }
+        .theme-btn:active { transform: scale(0.9); }
+        
+        #themeTip { 
+            background: #6366f1; color: white; padding: 10px 15px; border-radius: 15px; 
+            font-size: 11px; font-weight: 800; white-space: nowrap;
+            animation: bounceIn 0.8s ease; display: none;
+        }
+        @keyframes bounceIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 
-        .glass { backdrop-filter: blur(15px); background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass { backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); }
         .light .glass { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0,0,0,0.05); }
 
         .page { display: none; width: 100%; }
-        .active-page { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* حل مشكلة السواد في المنتصف */
-        main { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        .content-card { width: 100%; max-width: 500px; margin-bottom: 20px; }
+        .active-page { display: block; animation: fadeInUp 0.6s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .shimmer { background: linear-gradient(90deg, #818cf8, #f472b6, #fbbf24, #818cf8); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: s 5s linear infinite; }
         @keyframes s { to { background-position: 200% center; } }
@@ -47,78 +52,78 @@
 
     <div class="stars-container" id="stars"></div>
 
-    <div id="themeSection">
-        <div class="theme-bubble">يمكنك تغيير الألوان من هنا! ✨</div>
-        <button onclick="handleThemeClick()" class="w-12 h-12 glass rounded-full flex items-center justify-center text-xl shadow-2xl">🌓</button>
+    <div id="themeWrapper">
+        <button onclick="toggleTheme()" class="theme-btn shadow-xl">🌓</button>
+        <div id="themeTip">غير الألوان من هنا! ✨</div>
     </div>
 
     <div id="loginGate" class="min-h-screen flex items-center justify-center p-6">
-        <div class="glass p-10 rounded-[3rem] w-full max-w-sm text-center">
-            <h1 class="text-3xl font-black mb-8 shimmer">الصف الأول ب</h1>
-            <input type="text" id="userInput" placeholder="اسم البطل" class="w-full p-4 mb-4 rounded-2xl bg-white/5 border border-white/10 text-center font-bold outline-none">
-            <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-4 mb-6 rounded-2xl bg-white/5 border border-white/10 text-center font-bold outline-none">
-            <button id="submitLogin" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all">دخول 🚀</button>
+        <div class="glass p-10 rounded-[3.5rem] w-full max-w-sm text-center shadow-2xl">
+            <h1 class="text-4xl font-black mb-10 shimmer">الصف الأول ب</h1>
+            <input type="text" id="userInput" placeholder="اسم البطل" class="w-full p-4 mb-4 rounded-2xl bg-white/5 border border-white/10 text-center font-bold outline-none text-white">
+            <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-4 mb-8 rounded-2xl bg-white/5 border border-white/10 text-center font-bold outline-none text-white">
+            <button id="submitLogin" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xl shadow-lg active:scale-95 transition-all">دخول 🚀</button>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
         <header class="p-5 flex justify-between items-center glass sticky top-0 z-50">
             <div class="flex items-center gap-3" onclick="openProfile()">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white">👤</div>
-                <span id="navName" class="font-bold text-sm"></span>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md">👤</div>
+                <span id="navName" class="font-bold text-sm tracking-wide"></span>
             </div>
-            <h1 class="font-black text-lg shimmer">الصف الأول ب</h1>
+            <h1 class="font-black text-xl shimmer">الصف الأول ب</h1>
             <div class="w-10"></div>
         </header>
 
-        <main class="p-6 pb-32">
-            <section id="homePage" class="page active-page space-y-8">
-                <div class="text-center py-4"><h2 class="text-3xl font-black">أهلاً بك يا بطل! 👋</h2></div>
-                <div class="space-y-4">
-                    <h3 class="font-black text-xl pr-2">📢 أخبارنا الهامة</h3>
-                    <div id="newsGrid" class="space-y-3"></div>
+        <main class="p-6 pb-40 max-w-2xl mx-auto w-full">
+            <section id="homePage" class="page active-page space-y-12">
+                <div class="text-center py-8"><h2 class="text-4xl font-black">أهلاً بك يا بطل! 👋</h2></div>
+                <div class="space-y-6">
+                    <h3 class="font-black text-2xl flex items-center gap-3">📢 أخبارنا الهامة</h3>
+                    <div id="newsGrid" class="space-y-4"></div>
                 </div>
-                <div class="space-y-4">
-                    <h3 class="font-black text-xl pr-2">💎 نجوم الصف</h3>
-                    <div id="starsGrid" class="grid grid-cols-2 gap-3"></div>
+                <div class="space-y-6">
+                    <h3 class="font-black text-2xl flex items-center gap-3">💎 نجوم الصف</h3>
+                    <div id="starsGrid" class="grid grid-cols-2 gap-4"></div>
                 </div>
             </section>
 
-            <section id="hwPage" class="page space-y-6">
-                <h2 class="text-center text-3xl font-black shimmer">ركن الوظائف</h2>
-                <div id="hwArea" class="w-full space-y-4"></div>
+            <section id="hwPage" class="page space-y-8">
+                <h2 class="text-center text-4xl font-black shimmer">ركن الوظائف</h2>
+                <div id="hwArea" class="space-y-6"></div>
             </section>
 
-            <section id="eventsPage" class="page space-y-10">
-                <h2 class="text-center text-3xl font-black shimmer">معرض الفعاليات</h2>
-                <div id="eventsArea" class="w-full space-y-12"></div>
+            <section id="eventsPage" class="page space-y-12">
+                <h2 class="text-center text-4xl font-black shimmer">معرض الفعاليات</h2>
+                <div id="eventsArea" class="space-y-20"></div>
             </section>
         </main>
 
-        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[380px] glass p-3 rounded-[2.5rem] flex justify-around z-[1000]">
-            <button onclick="changePage('homePage', this)" class="text-2xl">🏠</button>
-            <button onclick="changePage('hwPage', this)" class="text-2xl opacity-30">📚</button>
-            <button onclick="changePage('eventsPage', this)" class="text-2xl opacity-30">📸</button>
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[85%] max-w-[400px] glass p-4 rounded-[2.5rem] flex justify-around items-center z-[4000] shadow-2xl">
+            <button onclick="changePage('homePage', this)" class="text-3xl">🏠</button>
+            <button onclick="changePage('hwPage', this)" class="text-3xl opacity-20">📚</button>
+            <button onclick="changePage('eventsPage', this)" class="text-3xl opacity-20">📸</button>
         </nav>
     </div>
 
-    <div id="profileModal" class="fixed inset-0 bg-black/95 hidden z-[4000] backdrop-blur-xl p-6 overflow-y-auto">
+    <div id="profileModal" class="fixed inset-0 bg-black/95 hidden z-[9000] backdrop-blur-2xl p-6 overflow-y-auto">
         <div class="max-w-md mx-auto pt-10">
-            <div class="glass p-10 rounded-[3rem] text-center relative">
-                <button onclick="closeProfile()" class="absolute top-6 right-6 opacity-30 text-2xl">✕</button>
-                <div class="w-20 h-20 rounded-3xl bg-indigo-600 mx-auto mb-4 flex items-center justify-center text-4xl shadow-2xl">👤</div>
-                <h2 id="pFullName" class="text-2xl font-black shimmer mb-6"></h2>
+            <div class="glass p-12 rounded-[3.5rem] text-center relative border-indigo-500/20">
+                <button onclick="closeProfile()" class="absolute top-8 right-8 text-3xl opacity-20">✕</button>
+                <div class="w-24 h-24 rounded-[2rem] bg-indigo-600 mx-auto mb-6 flex items-center justify-center text-5xl shadow-2xl">👤</div>
+                <h2 id="pFullName" class="text-3xl font-black shimmer mb-8"></h2>
                 
-                <div class="bg-white/5 p-5 rounded-2xl mb-8">
-                    <p class="text-xs opacity-50 mb-1">المستوى الحالي</p>
-                    <p class="text-xl font-black text-green-400">طالب متميز بطل 🏆</p>
+                <div class="bg-indigo-500/10 p-6 rounded-3xl mb-10 border border-indigo-500/20">
+                    <p class="text-[10px] uppercase tracking-widest opacity-40 mb-2">المستوى الدراسي</p>
+                    <p class="text-2xl font-black text-green-400">بطل متميز 🏆</p>
                 </div>
 
-                <div class="space-y-3 text-right">
-                    <p class="font-black text-sm pr-2 border-r-4 border-indigo-500">📊 نتائج الاختبارات</p>
-                    <div id="pExams" class="space-y-2"></div>
+                <div class="space-y-4 text-right">
+                    <p class="font-black text-sm pr-3 border-r-4 border-indigo-500">📊 كشف العلامات</p>
+                    <div id="pExams" class="space-y-3"></div>
                 </div>
-                <button onclick="logout()" class="mt-12 text-red-500 font-bold text-xs opacity-30">تسجيل الخروج</button>
+                <button onclick="logout()" class="mt-12 text-red-500 font-bold text-xs opacity-40 hover:opacity-100 transition-opacity">تسجيل الخروج</button>
             </div>
         </div>
     </div>
@@ -126,38 +131,33 @@
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // إعداد النجوم (سرعة أقل)
+        // النجوم الهادئة
         const starContainer = document.getElementById('stars');
-        for(let i=0; i<40; i++) {
+        for(let i=0; i<35; i++) {
             const s = document.createElement('div');
             s.className = 'star';
             const size = Math.random() * 2 + 1 + 'px';
             s.style.width = size; s.style.height = size;
             s.style.left = Math.random() * 100 + 'vw';
-            s.style.animationDuration = Math.random() * 8 + 6 + 's'; // سرعة أبطأ (6-14 ثانية)
+            s.style.animationDuration = Math.random() * 10 + 8 + 's';
             s.style.animationDelay = Math.random() * 5 + 's';
             starContainer.appendChild(s);
         }
 
-        // التعامل مع المظهر (Theme)
-        window.handleThemeClick = () => {
-            document.body.classList.toggle('dark');
-            document.body.classList.toggle('light');
-            localStorage.setItem('hasSeenThemeTip', 'true'); // حفظ أن المستخدم ضغط على الزر
-            document.getElementById('themeSection').classList.remove('show');
-        };
-
+        // نظام المظهر الذكي
         window.toggleTheme = () => {
             document.body.classList.toggle('dark');
             document.body.classList.toggle('light');
+            // إخفاء التنبيه بمجرد التفاعل
+            document.getElementById('themeTip').style.display = 'none';
+            localStorage.setItem('hasUsedTheme', 'true');
         };
 
-        // تبديل الصفحات
         window.changePage = (id, btn) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
-            document.querySelectorAll('nav button').forEach(b => b.classList.add('opacity-30'));
-            btn.classList.remove('opacity-30');
+            document.querySelectorAll('nav button').forEach(b => b.classList.add('opacity-20'));
+            btn.classList.remove('opacity-20');
             window.scrollTo({top:0, behavior:'smooth'});
         };
 
@@ -166,17 +166,20 @@
             const u = document.getElementById('userInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
             const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).maybeSingle();
+            
             if(data) { 
-                localStorage.setItem('v10_session', JSON.stringify(data)); 
+                localStorage.setItem('v11_session', JSON.stringify(data)); 
                 loginOk(data);
                 
-                // تنبيه تغيير اللون بعد 10 ثواني (إذا لم يره من قبل)
-                if (!localStorage.getItem('hasSeenThemeTip')) {
+                // إظهار التنبيه بعد 10 ثواني (مرة واحدة فقط في التاريخ)
+                if (!localStorage.getItem('hasUsedTheme')) {
                     setTimeout(() => {
-                        document.getElementById('themeSection').classList.add('show');
+                        document.getElementById('themeTip').style.display = 'block';
+                        // يختفي التنبيه تلقائياً بعد 5 ثواني من ظهوره ليبقى الموقع نظيفاً
+                        setTimeout(() => { document.getElementById('themeTip').style.display = 'none'; }, 5000);
                     }, 10000);
                 }
-            } else alert("بيانات الدخول غير صحيحة");
+            } else alert("بيانات البطل غير صحيحة!");
         };
 
         function loginOk(user) {
@@ -190,18 +193,18 @@
             const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
             const { data: stds } = await supabase.from('students').select('*').order('full_name');
             
-            document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `<div class="glass p-5 rounded-2xl border-r-4 border-indigo-500 shadow-lg"><p class="font-bold text-sm">${a.title}</p></div>`).join('');
-            document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `<div class="glass p-6 rounded-3xl border-b-4 border-indigo-500/20 shadow-md"><p class="font-bold text-lg leading-relaxed">${a.description}</p></div>`).join('');
-            document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="space-y-4"><h4 class="text-xl font-black text-center">${a.title || ''}</h4><div class="glass p-2 rounded-[2rem] overflow-hidden"><img src="${a.image_url}" class="w-full rounded-2xl"></div></div>`).join('');
-            document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `<div class="glass p-4 rounded-xl text-center shadow-inner"><div class="text-2xl mb-1">💎</div><p class="text-[10px] font-black">${s.full_name.split(' ')[0]}</p></div>`).join('');
+            document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `<div class="glass p-6 rounded-2xl border-r-4 border-indigo-500 shadow-xl"><p class="font-black text-sm">${a.title}</p></div>`).join('');
+            document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `<div class="glass p-8 rounded-[2.5rem] border-b-4 border-indigo-500/10"><p class="font-bold text-xl leading-relaxed">${a.description}</p></div>`).join('');
+            document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="space-y-6"><h4 class="text-2xl font-black text-center">${a.title || ''}</h4><div class="glass p-2 rounded-[3rem] overflow-hidden shadow-2xl"><img src="${a.image_url}" class="w-full rounded-[2.5rem]"></div></div>`).join('');
+            document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `<div class="glass p-6 rounded-2xl text-center shadow-inner"><div class="text-3xl mb-2">💎</div><p class="text-xs font-black">${s.full_name.split(' ')[0]}</p></div>`).join('');
         }
 
         window.openProfile = async () => {
-            const u = JSON.parse(localStorage.getItem('v10_session'));
+            const u = JSON.parse(localStorage.getItem('v11_session'));
             document.getElementById('profileModal').classList.remove('hidden');
             document.getElementById('pFullName').innerText = u.full_name;
             const { data } = await supabase.from('exams').select('*').eq('student_id', u.id).order('created_at', {ascending: false});
-            document.getElementById('pExams').innerHTML = data.map(e => `<div class="flex justify-between bg-white/5 p-3 rounded-xl border border-white/5"><span class="text-xs opacity-40 font-bold">${e.subject}</span><span class="font-black text-indigo-400">${e.score}</span></div>`).join('') || '<p class="text-center opacity-20">لا نتائج حالية</p>';
+            document.getElementById('pExams').innerHTML = data.map(e => `<div class="flex justify-between bg-white/5 p-4 rounded-2xl border border-white/5"><span class="text-[10px] opacity-40 font-bold uppercase">${e.subject}</span><span class="font-black text-indigo-400">${e.score}</span></div>`).join('') || '<p class="text-center opacity-20">لا يوجد علامات بعد</p>';
         };
         window.closeProfile = () => document.getElementById('profileModal').classList.add('hidden');
         window.logout = () => { localStorage.clear(); location.reload(); };
