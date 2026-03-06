@@ -2,210 +2,159 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>موقع الصف الأول ب</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الاحترافية - أ. لبنى</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; }
-        * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; margin: 0; transition: background 0.5s; }
-        
-        /* الوضع الداكن الافتراضي */
-        body.dark { background: radial-gradient(circle at top, #1e1b4b, #020617); color: #f8fafc; }
-        body.light { background: radial-gradient(circle at top, #e0e7ff, #f8fafc); color: #0f172a; }
-
-        .shimmer-text {
-            background: linear-gradient(90deg, #818cf8, #f472b6, #fbbf24, #818cf8);
-            background-size: 200% auto; -webkit-background-clip: text; color: transparent;
-            animation: shimmer 4s linear infinite;
-        }
-        @keyframes shimmer { to { background-position: 200% center; } }
-
-        .glass { backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .light .glass { background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(0,0,0,0.05); }
-
-        /* النجوم المتساقطة */
-        .stars-container { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: fall linear infinite; }
-        @keyframes fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
-
-        /* زر المظهر الذكي */
-        #themeToggle { 
-            position: fixed; top: 20px; right: -100px; /* مخفي في البداية */
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            z-index: 2000;
-        }
-        #themeToggle.show-left { right: auto; left: 20px; }
-
-        .page { display: none; }
-        .active-page { display: block; animation: zoomIn 0.5s ease; }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        .dock {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 380px; padding: 12px; border-radius: 2.5rem;
-            display: flex; justify-content: space-around; z-index: 1000;
-        }
+        body { font-family: 'Cairo', sans-serif; background: #020617; color: #f8fafc; margin: 0; padding-bottom: 60px; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        input, textarea, select { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; padding: 15px !important; border-radius: 15px !important; }
+        .shimmer { background: linear-gradient(90deg, #6366f1, #ec4899, #fbbf24, #6366f1); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: s 4s linear infinite; }
+        @keyframes s { to { background-position: 200% center; } }
     </style>
 </head>
-<body class="dark"> <div class="stars-container" id="stars"></div>
+<body>
 
-    <button id="themeToggle" onclick="toggleTheme()" class="w-12 h-12 glass rounded-2xl flex items-center justify-center text-xl shadow-2xl">🌓</button>
-
-    <div id="loginGate" class="min-h-screen flex items-center justify-center p-6">
-        <div class="glass p-12 rounded-[3.5rem] w-full max-w-sm text-center">
-            <h1 class="text-4xl font-900 mb-10 shimmer-text font-black">الصف الأول ب</h1>
-            <div class="space-y-4">
-                <input type="text" id="userInput" placeholder="اسم البطل" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-center font-bold">
-                <input type="password" id="passInput" placeholder="كلمة السر" class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-center font-bold">
-                <button id="submitLogin" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xl shadow-xl active:scale-95 transition-all">دخول الأبطال 🚀</button>
-            </div>
+    <header class="p-6 glass sticky top-0 z-50 border-b border-white/10 flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-900 shimmer font-black">غرفة التحكم</h1>
+            <p class="text-[10px] opacity-50 font-bold uppercase">المعلمة لبنى</p>
         </div>
-    </div>
+        <div class="flex gap-2">
+             <button onclick="location.reload()" class="p-2 glass rounded-lg text-xs">تحديث 🔄</button>
+        </div>
+    </header>
 
-    <div id="mainApp" class="hidden">
-        <header class="p-5 flex justify-between items-center glass sticky top-0 z-50">
-            <div class="flex items-center gap-3" onclick="openProfile()">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-pink-500 flex items-center justify-center text-white shadow-lg">👤</div>
-                <span id="navName" class="font-bold text-sm"></span>
+    <main class="p-4 max-w-2xl mx-auto">
+        
+        <div class="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+            <button onclick="showTab('addTab')" class="tab-btn bg-indigo-600 px-6 py-3 rounded-2xl font-bold text-xs whitespace-nowrap">➕ إضافة جديد</button>
+            <button onclick="showTab('manageTab')" class="tab-btn bg-white/5 px-6 py-3 rounded-2xl font-bold text-xs whitespace-nowrap">⚙️ إدارة المنشورات</button>
+            <button onclick="showTab('studentsTab')" class="tab-btn bg-white/5 px-6 py-3 rounded-2xl font-bold text-xs whitespace-nowrap">🎓 النجوم والعلامات</button>
+        </div>
+
+        <section id="addTab" class="tab-content active space-y-6">
+            <div class="glass p-6 rounded-[2.5rem] space-y-4">
+                <h3 class="font-black text-lg">📢 إعلان أو وظيفة أو فعالية</h3>
+                <select id="postType" class="w-full font-bold">
+                    <option value="news">إعلان هام (عنوان فقط)</option>
+                    <option value="hw">وظيفة منزلية (نص طويل)</option>
+                    <option value="event">فعالية (عنوان + رابط صورة)</option>
+                </select>
+                <input type="text" id="postTitle" placeholder="العنوان" class="w-full">
+                <textarea id="postDesc" rows="3" placeholder="التفاصيل (للوظائف فقط)" class="w-full hidden"></textarea>
+                <input type="text" id="postImg" placeholder="رابط الصورة (للفعاليات فقط)" class="w-full hidden">
+                <button onclick="createPost()" class="w-full bg-indigo-600 p-4 rounded-2xl font-black text-lg shadow-2xl active:scale-95 transition-all">نشر الآن 🚀</button>
             </div>
-            <h1 class="font-900 text-xl shimmer-text font-black">الصف الأول ب</h1>
-            <div class="w-10"></div> </header>
+        </section>
 
-        <main class="p-6 pb-32 max-w-5xl mx-auto">
-            <section id="homePage" class="page active-page space-y-12">
-                <div class="text-center py-6">
-                    <h2 class="text-4xl font-black mb-2">أهلاً بك يا بطل! 👋</h2>
-                    <p class="opacity-60 font-bold" id="welcomeSub">نحن سعداء برؤيتك اليوم</p>
+        <section id="manageTab" class="tab-content space-y-4">
+            <h2 class="text-xl font-black mb-4">📝 التحكم بالمنشورات الحالية</h2>
+            <div id="postsList" class="space-y-3">
                 </div>
+        </section>
 
-                <div class="space-y-6">
-                    <h3 class="text-2xl font-black flex items-center gap-3">📢 أخبارنا الهامة</h3>
-                    <div id="newsGrid" class="grid grid-cols-1 gap-4"></div>
-                </div>
-
-                <div class="space-y-6">
-                    <h3 class="text-2xl font-black flex items-center gap-3">💎 نجوم الصف</h3>
-                    <div id="starsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-                </div>
-            </section>
-
-            <section id="hwPage" class="page space-y-8">
-                <h2 class="text-4xl font-900 shimmer-text text-center font-black">ركن الوظائف</h2>
-                <div id="hwArea" class="grid gap-6"></div>
-            </section>
-
-            <section id="eventsPage" class="page space-y-10">
-                <h2 class="text-4xl font-900 shimmer-text text-center font-black">معرض الفعاليات</h2>
-                <div id="eventsArea" class="space-y-16"></div>
-            </section>
-        </main>
-
-        <nav class="dock glass">
-            <button onclick="changePage('homePage', this)" class="text-2xl">🏠</button>
-            <button onclick="changePage('hwPage', this)" class="text-2xl opacity-40">📚</button>
-            <button onclick="changePage('eventsPage', this)" class="text-2xl opacity-40">📸</button>
-        </nav>
-    </div>
-
-    <div id="profileModal" class="fixed inset-0 bg-black/90 hidden z-[2000] backdrop-blur-2xl p-6 overflow-y-auto">
-        <div class="max-w-md mx-auto space-y-6 pt-10">
-            <div class="glass p-10 rounded-[3rem] text-center relative">
-                <button onclick="closeProfile()" class="absolute top-6 right-6 opacity-30">✕</button>
-                <div class="w-24 h-24 rounded-3xl bg-indigo-600 mx-auto mb-4 flex items-center justify-center text-5xl shadow-2xl">👤</div>
-                <h2 id="pFullName" class="text-2xl font-black shimmer-text mb-4"></h2>
+        <section id="studentsTab" class="tab-content space-y-6">
+            <div class="glass p-6 rounded-[2.5rem] space-y-6">
+                <h3 class="font-black text-lg">💎 إدارة الأبطال</h3>
+                <select id="stdSelect" class="w-full font-bold"></select>
                 
-                <div class="grid grid-cols-2 gap-3 mb-8">
-                    <div class="bg-white/5 p-4 rounded-2xl text-center">
-                        <p class="text-[10px] opacity-50 mb-1">الرصيد</p>
-                        <p class="text-lg font-black text-yellow-400">180 ⭐</p>
-                    </div>
-                    <div class="bg-white/5 p-4 rounded-2xl text-center">
-                        <p class="text-[10px] opacity-50 mb-1">المستوى</p>
-                        <p class="text-lg font-black text-green-400">بطل 🏆</p>
-                    </div>
+                <div class="flex gap-2">
+                    <button onclick="setStar(true)" class="flex-1 bg-yellow-500 text-black font-black p-4 rounded-2xl text-sm">تتويج نجم 💎</button>
+                    <button onclick="setStar(false)" class="flex-1 bg-white/5 font-black p-4 rounded-2xl text-sm">إزالة النجمة</button>
                 </div>
 
-                <div class="space-y-3 text-right">
-                    <p class="font-black text-sm pr-2 border-r-4 border-indigo-500">📊 سجل العلامات</p>
-                    <div id="pExams" class="space-y-2"></div>
+                <div class="space-y-3 border-t border-white/10 pt-4">
+                    <p class="font-black text-sm">📊 إضافة علامة</p>
+                    <input type="text" id="subject" placeholder="الموضوع (مثلاً: لغة عربية)" class="w-full">
+                    <input type="number" id="score" placeholder="العلامة" class="w-full">
+                    <button onclick="addScore()" class="w-full bg-green-600 p-4 rounded-2xl font-black">حفظ العلامة ✅</button>
                 </div>
-                <button onclick="logout()" class="mt-10 text-red-500 font-bold text-xs opacity-40">تسجيل الخروج</button>
             </div>
-        </div>
-    </div>
+        </section>
+
+    </main>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // إنشاء النجوم
-        const starContainer = document.getElementById('stars');
-        for(let i=0; i<30; i++) {
-            const s = document.createElement('div');
-            s.className = 'star';
-            const size = Math.random() * 3 + 1 + 'px';
-            s.style.width = size; s.style.height = size;
-            s.style.left = Math.random() * 100 + 'vw';
-            s.style.animationDuration = Math.random() * 3 + 2 + 's';
-            s.style.animationDelay = Math.random() * 5 + 's';
-            starContainer.appendChild(s);
+        // إخفاء/إظهار الحقول حسب النوع
+        document.getElementById('postType').onchange = (e) => {
+            const v = e.target.value;
+            document.getElementById('postDesc').classList.toggle('hidden', v !== 'hw');
+            document.getElementById('postImg').classList.toggle('hidden', v !== 'event');
+        };
+
+        window.showTab = (id) => {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.replace('bg-indigo-600', 'bg-white/5'));
+            event.target.classList.replace('bg-white/5', 'bg-indigo-600');
+            if(id === 'manageTab') loadManageList();
+        };
+
+        // إنشاء منشور جديد
+        window.createPost = async () => {
+            const type = document.getElementById('postType').value;
+            const title = document.getElementById('postTitle').value;
+            const desc = document.getElementById('postDesc').value;
+            const img = document.getElementById('postImg').value;
+
+            let payload = {};
+            if(type === 'news') payload = { title };
+            if(type === 'hw') payload = { description: desc }; // هنا نستخدم الوصف للوظائف
+            if(type === 'event') payload = { title, image_url: img };
+
+            const { error } = await supabase.from('assignments').insert([payload]);
+            if(!error) { alert("تم النشر بنجاح! 🎉"); location.reload(); }
+        };
+
+        // تحميل قائمة المنشورات للإدارة
+        async function loadManageList() {
+            const { data } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
+            const list = document.getElementById('postsList');
+            list.innerHTML = data.map(p => `
+                <div class="glass p-4 rounded-2xl flex justify-between items-center border-r-4 ${p.image_url ? 'border-pink-500' : p.description ? 'border-indigo-500' : 'border-red-500'}">
+                    <div class="max-w-[70%]">
+                        <p class="font-bold text-sm truncate">${p.title || p.description.substring(0,20) + '...'}</p>
+                        <span class="text-[10px] opacity-40">${p.image_url ? 'فعالية' : p.description ? 'وظيفة' : 'إعلان'}</span>
+                    </div>
+                    <button onclick="deletePost('${p.id}')" class="bg-red-500/20 text-red-500 p-2 px-4 rounded-xl text-xs font-black">حذف 🗑️</button>
+                </div>
+            `).join('');
         }
 
-        window.toggleTheme = () => {
-            document.body.classList.toggle('dark');
-            document.body.classList.toggle('light');
+        window.deletePost = async (id) => {
+            if(confirm("هل أنتِ متأكدة من حذف هذا المنشور؟")) {
+                const { error } = await supabase.from('assignments').delete().eq('id', id);
+                if(!error) loadManageList();
+            }
         };
 
-        window.changePage = (id, btn) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            document.getElementById(id).classList.add('active-page');
-            document.querySelectorAll('.dock button').forEach(b => b.classList.add('opacity-40'));
-            btn.classList.remove('opacity-40');
-            window.scrollTo({top:0, behavior:'smooth'});
-        };
-
-        document.getElementById('submitLogin').onclick = async () => {
-            const u = document.getElementById('userInput').value.trim();
-            const p = document.getElementById('passInput').value.trim();
-            const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).maybeSingle();
-            if(data) { 
-                localStorage.setItem('v9_session', JSON.stringify(data)); 
-                loginOk(data);
-                // تفعيل مؤقت الزر بعد الدخول
-                setTimeout(() => {
-                    const btn = document.getElementById('themeToggle');
-                    btn.style.right = '20px'; // يظهر أولاً جهة اليمين
-                    setTimeout(() => { btn.classList.add('show-left'); }, 2000); // ينتقل لليسار
-                }, 10000);
-            } else alert("خطأ في البيانات");
-        };
-
-        function loginOk(user) {
-            document.getElementById('loginGate').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('navName').innerText = user.full_name;
-            loadData();
+        // إدارة الطلاب
+        async function loadStds() {
+            const { data } = await supabase.from('students').select('*').order('full_name');
+            document.getElementById('stdSelect').innerHTML = data.map(s => `<option value="${s.id}">${s.full_name}</option>`).join('');
         }
+        loadStds();
 
-        async function loadData() {
-            const { data: ads } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
-            const { data: stds } = await supabase.from('students').select('*').order('full_name');
-            document.getElementById('newsGrid').innerHTML = ads.filter(a => a.title && !a.description && !a.image_url).map(a => `<div class="glass p-6 rounded-2xl border-r-4 border-red-500"><p class="font-black">${a.title}</p></div>`).join('');
-            document.getElementById('hwArea').innerHTML = ads.filter(a => a.description).map(a => `<div class="glass p-8 rounded-3xl border-b-4 border-indigo-500/20"><p class="font-bold text-lg">${a.description}</p></div>`).join('');
-            document.getElementById('eventsArea').innerHTML = ads.filter(a => a.image_url).map(a => `<div class="space-y-4"><h4 class="text-xl font-black text-center">${a.title || ''}</h4><div class="glass p-2 rounded-[2.5rem] overflow-hidden"><img src="${a.image_url}" class="w-full rounded-[2rem]"></div></div>`).join('');
-            document.getElementById('starsGrid').innerHTML = stds.filter(s => s.is_star).map(s => `<div class="glass p-5 rounded-2xl text-center"><div class="text-3xl mb-1">💎</div><p class="text-[10px] font-black">${s.full_name.split(' ')[0]}</p></div>`).join('');
-        }
-
-        window.openProfile = async () => {
-            const u = JSON.parse(localStorage.getItem('v9_session'));
-            document.getElementById('profileModal').classList.remove('hidden');
-            document.getElementById('pFullName').innerText = u.full_name;
-            const { data } = await supabase.from('exams').select('*').eq('student_id', u.id).order('created_at', {ascending: false});
-            document.getElementById('pExams').innerHTML = data.map(e => `<div class="flex justify-between bg-white/5 p-3 rounded-xl"><span class="text-xs opacity-40">${e.subject}</span><span class="font-black text-indigo-400">${e.score}</span></div>`).join('') || '<p class="text-center opacity-20">لا نتائج</p>';
+        window.setStar = async (val) => {
+            const id = document.getElementById('stdSelect').value;
+            const { error } = await supabase.from('students').update({ is_star: val }).eq('id', id);
+            if(!error) alert(val ? "توج بطلاً! 💎" : "تمت إزالة النجمة");
         };
-        window.closeProfile = () => document.getElementById('profileModal').classList.add('hidden');
-        window.logout = () => { localStorage.clear(); location.reload(); };
+
+        window.addScore = async () => {
+            const sid = document.getElementById('stdSelect').value;
+            const sc = document.getElementById('score').value;
+            const sub = document.getElementById('subject').value;
+            const { error } = await supabase.from('exams').insert([{ student_id: sid, score: sc, subject: sub }]);
+            if(!error) alert("تم الحفظ! 📊");
+        };
     </script>
 </body>
 </html>
