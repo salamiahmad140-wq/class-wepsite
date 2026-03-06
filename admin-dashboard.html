@@ -2,90 +2,147 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة الصف الأول "ب" | المعلمة لبنى</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | المعلمة لبنى</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Cairo', sans-serif; background: #f8fafc; }</style>
+    <style>
+        body { font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        .light-mode { background: #f8fafc; color: #1e293b; }
+        .dark-mode { background: #0f172a; color: #f1f5f9; }
+        .admin-card { border-radius: 2rem; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .dark-mode .admin-card { background: #1e293b; border: 1px solid #334155; }
+        input, textarea { border: 1px solid #e2e8f0; border-radius: 1rem; padding: 12px; width: 100%; color: #000; }
+        .dark-mode input, .dark-mode textarea { background: #0f172a; border-color: #334155; color: #fff; }
+    </style>
 </head>
-<body class="p-6">
-    <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-10 bg-white p-6 rounded-3xl shadow-sm">
-            <h1 class="text-3xl font-black text-blue-600">لوحة تحكم الأستاذة لبنى 👩‍🏫</h1>
-            <button onclick="location.href='index.html'" class="text-slate-400">معاينة الموقع</button>
-        </header>
+<body class="light-mode p-4 pb-20">
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="space-y-6">
-                <div class="bg-blue-600 p-6 rounded-[2rem] text-white">
-                    <h3 class="font-bold mb-4">📢 الإعلان الرئيسي (يظهر بشكل كبير)</h3>
-                    <input id="advTitle" placeholder="مثال: موعد اختبار العلوم القادم" class="w-full p-3 rounded-xl mb-3 text-blue-900">
-                    <button id="postAdv" class="w-full bg-yellow-400 text-blue-900 font-bold py-2 rounded-xl">تحديث الإعلان</button>
-                </div>
+    <header class="flex justify-between items-center mb-8">
+        <h1 class="text-xl font-black text-indigo-600">لوحة تحكم المعلمة لبنى 👩‍🏫</h1>
+        <button id="themeToggle" class="text-2xl">🌓</button>
+    </header>
 
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
-                    <h3 class="font-bold mb-4 text-blue-600">🏠 إضافة وظيفة بيتية</h3>
-                    <textarea id="taskContent" class="w-full p-3 bg-slate-50 rounded-xl mb-3 h-24" placeholder="اكتبي تفاصيل الوظيفة..."></textarea>
-                    <button id="postTask" class="w-full bg-blue-600 text-white font-bold py-2 rounded-xl">نشر الوظيفة</button>
+    <div class="grid grid-cols-1 gap-6 max-w-4xl mx-auto">
+        
+        <div class="admin-card p-6">
+            <h3 class="font-black mb-4 text-red-500">📢 الإعلانات والوظائف</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold block mb-1">عنوان الإعلان (هام جداً):</label>
+                    <input id="advTitle" placeholder="مثلاً: اختبار لغة عربية يوم الثلاثاء">
                 </div>
-            </div>
-
-            <div class="lg:col-span-2 bg-white p-8 rounded-[2rem] shadow-sm">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-black text-xl">👥 إدارة الطلاب والدرجات</h3>
-                    <button onclick="document.getElementById('addModal').classList.toggle('hidden')" class="bg-green-100 text-green-600 px-4 py-2 rounded-full font-bold">+ إضافة طالب</button>
+                <div>
+                    <label class="text-xs font-bold block mb-1">تفاصيل الوظيفة البيتية:</label>
+                    <textarea id="homeworkContent" placeholder="مثلاً: حل صفحة 10 في كتاب الحساب"></textarea>
                 </div>
-                <table class="w-full text-right">
-                    <thead><tr class="text-slate-400 border-b"><th>الطالب</th><th class="text-center">العلامة</th><th class="text-center">متميز؟</th><th>حفظ</th></tr></thead>
-                    <tbody id="adminTable"></tbody>
-                </table>
+                <button onclick="publishContent()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold">نشر الآن ✅</button>
             </div>
         </div>
+
+        <div class="admin-card p-6 overflow-x-auto">
+            <h3 class="font-black mb-4 text-indigo-600">👥 إدارة الطلاب والاختبارات</h3>
+            <table class="w-full text-right text-sm">
+                <thead>
+                    <tr class="border-b">
+                        <th class="pb-2">الطالب</th>
+                        <th class="pb-2 text-center">بطل؟</th>
+                        <th class="pb-2 text-center">درجة</th>
+                        <th class="pb-2 text-center">إجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="studentRows">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 left-0 w-full bg-white dark:bg-slate-800 p-4 border-t flex justify-around">
+        <a href="index.html" class="text-xs font-bold">🏠 عرض الموقع</a>
+        <button onclick="location.reload()" class="text-xs font-bold">🔄 تحديث البيانات</button>
     </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        // وظيفة تحديث الإعلان
-        document.getElementById('postAdv').onclick = async () => {
+        // تغيير الطابع
+        document.getElementById('themeToggle').onclick = () => {
+            document.body.classList.toggle('dark-mode');
+        };
+
+        // نشر الإعلانات والوظائف
+        window.publishContent = async () => {
             const title = document.getElementById('advTitle').value;
-            await supabase.from('assignments').insert([{ title: title, content: "إعلان هام" }]);
-            alert("تم تحديث الإعلان الكبير! 🎉");
+            const desc = document.getElementById('homeworkContent').value;
+            
+            if(!title && !desc) return alert("يرجى كتابة شيء لنشره!");
+
+            const { error } = await supabase.from('assignments').insert([{ 
+                title: title || null, 
+                description: desc || null 
+            }]);
+
+            if(!error) {
+                alert("تم النشر بنجاح! سيراها الطلاب الآن.");
+                document.getElementById('advTitle').value = "";
+                document.getElementById('homeworkContent').value = "";
+            } else {
+                alert("حدث خطأ: " + error.message);
+            }
         };
 
-        // وظيفة نشر الوظيفة
-        document.getElementById('postTask').onclick = async () => {
-            const content = document.getElementById('taskContent').value;
-            await supabase.from('assignments').insert([{ content: content }]);
-            alert("تم نشر الوظيفة بنجاح! ✅");
-        };
-
-        // عرض الطلاب
-        async function loadAdmin() {
-            const { data } = await supabase.from('students').select('*').order('full_name');
-            document.getElementById('adminTable').innerHTML = data.map(s => `
-                <tr class="border-b">
-                    <td class="py-4 font-bold">${s.full_name}</td>
-                    <td class="py-4 text-center"><input id="g-${s.id}" value="${s.grade || 0}" class="w-12 text-center bg-slate-100 rounded"></td>
+        // تحميل قائمة الطلاب
+        async function loadStudents() {
+            const { data, error } = await supabase.from('students').select('*').order('full_name');
+            const tbody = document.getElementById('studentRows');
+            
+            tbody.innerHTML = data.map(s => `
+                <tr class="border-b last:border-0">
+                    <td class="py-4 font-bold text-xs">${s.full_name}</td>
                     <td class="py-4 text-center">
-                        <button onclick="window.toggleStar('${s.id}', ${s.is_star})" class="text-xl ${s.is_star ? '' : 'grayscale'}">⭐</button>
+                        <button onclick="toggleStar('${s.id}', ${s.is_star})" class="text-xl ${s.is_star ? '' : 'grayscale'}">⭐</button>
                     </td>
-                    <td class="py-4"><button onclick="window.updateS('${s.id}')" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs">حفظ</button></td>
+                    <td class="py-4 text-center">
+                        <input id="g-${s.id}" type="number" value="${s.grade || 0}" class="w-12 p-1 text-center bg-slate-100 rounded-lg text-xs">
+                    </td>
+                    <td class="py-4 text-center space-y-1">
+                        <button onclick="saveGrade('${s.id}')" class="bg-green-500 text-white px-3 py-1 rounded-lg text-[10px] block w-full">حفظ</button>
+                        <button onclick="addNewExam('${s.id}')" class="bg-purple-600 text-white px-3 py-1 rounded-lg text-[10px] block w-full">+ اختبار</button>
+                    </td>
                 </tr>
             `).join('');
         }
 
-        window.updateS = async (id) => {
-            const g = document.getElementById('g-'+id).value;
-            await supabase.from('students').update({ grade: parseInt(g) }).eq('id', id);
-            alert("تم تحديث العلامة!");
+        // تحديث الدرجة الأساسية
+        window.saveGrade = async (id) => {
+            const grade = document.getElementById('g-'+id).value;
+            await supabase.from('students').update({ grade: parseInt(grade) }).eq('id', id);
+            alert("تم تحديث الدرجة!");
         };
 
+        // تبديل حالة بطل الأسبوع
         window.toggleStar = async (id, current) => {
             await supabase.from('students').update({ is_star: !current }).eq('id', id);
-            loadAdmin();
+            loadStudents();
         };
 
-        window.onload = loadAdmin;
+        // إضافة اختبار جديد (اختياري - يتطلب جدول exams)
+        window.addNewExam = async (studentId) => {
+            const subject = prompt("أدخل اسم المادة (مثلاً: إملاء، حساب):");
+            const score = prompt("أدخل العلامة:");
+            if(subject && score) {
+                // ملاحظة: تأكدي من إنشاء جدول باسم exams في Supabase ليعمل هذا الزر
+                const { error } = await supabase.from('exams').insert([{ 
+                    student_id: studentId, 
+                    subject: subject, 
+                    score: parseInt(score) 
+                }]);
+                if(!error) alert("تمت إضافة الاختبار بنجاح!");
+                else alert("يجب إنشاء جدول exams أولاً في قاعدة البيانات.");
+            }
+        };
+
+        window.onload = loadStudents;
     </script>
 </body>
 </html>
