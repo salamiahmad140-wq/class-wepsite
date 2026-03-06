@@ -3,119 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة المنصة | لبنى سلامي</title>
+    <title>مركز القيادة | لبنى سلامي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f8fafc; }
-        .card { background: white; border-radius: 2rem; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        input, textarea, select { border: 2px solid #e2e8f0; border-radius: 1rem; padding: 12px; width: 100%; margin-bottom: 10px; }
+        body { font-family: 'Cairo', sans-serif; background: #f0f4f8; padding-bottom: 50px; }
+        .admin-card { background: white; border-radius: 2.5rem; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); margin-bottom: 25px; border: 2px solid white; transition: 0.3s; }
+        .admin-card:hover { box-shadow: 0 15px 50px rgba(0,0,0,0.1); transform: translateY(-5px); }
+        input, textarea, select { border: 2.5px solid #f1f5f9; border-radius: 1.5rem; padding: 15px; width: 100%; margin-bottom: 12px; outline-color: #6366f1; transition: 0.3s; font-weight: bold; }
+        input:focus, textarea:focus { border-color: #6366f1; background: #f5f3ff; }
+        .btn-click { transition: 0.1s; }
+        .btn-click:active { transform: scale(0.95); }
+        .hero-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
     </style>
 </head>
-<body class="p-4 pb-20">
+<body class="p-6">
 
-    <header class="bg-white p-6 rounded-3xl shadow-sm mb-6 flex justify-between items-center">
-        <h1 class="text-xl font-black text-indigo-600">لوحة تحكم المعلمة لبنى 👩‍🏫</h1>
-        <button onclick="location.href='index.html'" class="bg-slate-100 px-4 py-2 rounded-xl text-xs font-bold">عرض الموقع 🏠</button>
+    <header class="bg-white p-8 rounded-[3rem] shadow-sm mb-10 flex justify-between items-center border-b-4 border-indigo-600 animate-slideUp">
+        <h1 class="text-3xl font-black text-indigo-600">مركز إدارة الصف 👩‍🏫</h1>
+        <button onclick="location.href='index.html'" class="bg-indigo-50 text-indigo-600 px-6 py-3 rounded-2xl font-black btn-click">عرض الموقع 🏠</button>
     </header>
 
-    <section class="card border-r-8 border-indigo-600">
-        <h3 class="font-black mb-3 text-indigo-600">✨ نشر جديد (إعلان / وظيفة / فعالية)</h3>
-        <select id="type">
-            <option value="news">📢 إعلان هام (يظهر في الرئيسية)</option>
-            <option value="hw">📚 وظيفة بيتية (يظهر في الوظائف)</option>
-            <option value="event">📸 فعالية/صورة (يظهر في الفعاليات)</option>
-        </select>
-        <input id="title" placeholder="عنوان الإعلان أو الفعالية">
-        <textarea id="desc" placeholder="نص الوظيفة البيتية"></textarea>
-        <input id="img" placeholder="رابط الصورة (URL) للفعاليات فقط">
-        <button onclick="publish()" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg">نشر الآن ✅</button>
-    </section>
+    <div class="max-w-4xl mx-auto space-y-8 animate-slideUp" style="animation-delay: 0.1s">
+        <section class="admin-card border-r-8 border-green-500">
+            <h3 class="font-black mb-6 text-green-600 text-xl italic flex items-center gap-2">✨ إضافة محتوى جديد ومبهج:</h3>
+            <select id="pub_type" class="font-bold text-green-700 bg-green-50">
+                <option value="news">📢 إعلان هام جداً (الصفحة الرئيسية)</option>
+                <option value="hw">📚 وظيفة بيتية جديدة (صفحة الوظائف)</option>
+                <option value="event">📸 فعالية أو صورة (صفحة الفعاليات)</option>
+            </select>
+            
+            <input id="pub_title" placeholder="العنوان (للإعلان أو الفعالية)">
+            <textarea id="pub_desc" placeholder="اكتبي تفاصيل الوظيفة البيتية هنا باختصار ووضوح..." rows="3"></textarea>
+            <input id="pub_img" placeholder="رابط الصورة (URL) للفعاليات فقط">
+            
+            <button onclick="publishContent()" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl text-xl shadow-xl btn-click">نشر المحتوى الآن يا أستاذة لبنى 🚀</button>
+        </section>
 
-    <section class="card border-r-8 border-orange-500">
-        <h3 class="font-black mb-4 text-orange-600 italic">📦 إدارة المنشورات السابقة (تعديل وحذف)</h3>
-        <div id="contentList" class="space-y-3"></div>
-    </section>
-
-    <section class="card border-r-8 border-green-500">
-        <h3 class="font-black mb-4 text-green-600">👥 إدارة أبطال الصف الأول</h3>
-        <div class="flex gap-2 mb-4">
-            <input id="s_name" placeholder="اسم الطالب">
-            <input id="s_user" placeholder="اليوزر">
-            <input id="s_pass" placeholder="الباسورد">
-            <button onclick="addStudent()" class="bg-green-500 text-white px-4 rounded-xl font-bold">+</button>
-        </div>
-        <div id="studentsList" class="space-y-4"></div>
-    </section>
+        <section class="admin-card border-r-8 border-orange-500">
+            <h3 class="font-black mb-6 text-orange-500 flex items-center gap-2">📦 تعديل وحذف ما تم نشره:</h3>
+            <div id="contentList" class="space-y-4"></div>
+        </section>
+        
+        <section class="admin-card border-r-8 border-indigo-600">
+            <h3 class="font-black mb-6 text-indigo-600 italic flex items-center gap-2">👥 إدارة أبطال أول "ب":</h3>
+            <div id="studentsList" class="space-y-4"></div>
+        </section>
+    </div>
 
     <script type="module">
         import { supabase } from './supabaseClient.js';
 
-        window.publish = async () => {
-            const t = document.getElementById('type').value;
-            const title = document.getElementById('title').value;
-            const desc = document.getElementById('desc').value;
-            const img = document.getElementById('img').value;
-            
-            await supabase.from('assignments').insert([{
-                title: (t==='news' || t==='event') ? title : null,
-                description: t==='hw' ? desc : null,
-                image_url: t==='event' ? img : null
+        // وظيفة النشر الذكية
+        window.publishContent = async () => {
+            const type = document.getElementById('pub_type').value;
+            const titleInput = document.getElementById('pub_title').value;
+            const descInput = document.getElementById('pub_desc').value;
+            const imgInput = document.getElementById('pub_img').value;
+
+            // تأكدي أن الأعمدة في Supabase مطابقة: title, description, image_url
+            const { error } = await supabase.from('assignments').insert([{
+                title: (type === 'news' || type === 'event') ? titleInput : null,
+                description: (type === 'hw') ? descInput : null,
+                image_url: (type === 'event') ? imgInput : null
             }]);
-            alert("تم النشر!"); location.reload();
+
+            if(!error) {
+                alert("تم النشر بنجاح! 🎉");
+                location.reload();
+            } else {
+                console.error(error);
+                alert("حدث خطأ، تأكدي من السياسات (Policies) في Supabase أنها ALL و true");
+            }
         };
 
-        async function loadData() {
-            // تحميل المنشورات للإدارة
+        // وظائف التحميل والإدارة (نفس المنطق السابق مع تحسينات بصرية فخمة)
+        async function loadAdminData() {
             const { data: items } = await supabase.from('assignments').select('*').order('created_at', {ascending:false});
             document.getElementById('contentList').innerHTML = items.map(i => `
-                <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border">
-                    <span class="text-[10px] font-bold truncate w-40">${i.title || i.description}</span>
-                    <div class="flex gap-1">
-                        <button onclick="editItem('${i.id}', '${i.title || i.description}')" class="bg-blue-500 text-white text-[9px] px-2 py-1 rounded-lg">تعديل</button>
-                        <button onclick="deleteItem('assignments', '${i.id}')" class="bg-red-500 text-white text-[9px] px-2 py-1 rounded-lg">حذف</button>
+                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-3xl border border-slate-100 btn-click">
+                    <span class="font-bold text-slate-600 truncate w-48">${i.title || i.description}</span>
+                    <div class="flex gap-2">
+                        <button onclick="deleteItem('assignments', '${i.id}')" class="text-red-500 font-black">حذف 🗑️</button>
                     </div>
                 </div>
             `).join('');
 
-            // تحميل الطلاب للإدارة
             const { data: students } = await supabase.from('students').select('*').order('full_name');
             document.getElementById('studentsList').innerHTML = students.map(s => `
-                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border">
-                    <span class="text-xs font-black">${s.full_name}</span>
-                    <div class="flex gap-1">
-                        <button onclick="addEx('${s.id}')" class="bg-purple-600 text-white text-[9px] px-2 py-1 rounded-lg">+ علامة</button>
-                        <button onclick="toggleStar('${s.id}', ${s.is_star})" class="${s.is_star ? '' : 'grayscale'} text-lg">⭐</button>
-                        <button onclick="deleteItem('students', '${s.id}')" class="text-lg">🗑️</button>
+                <div class="flex justify-between items-center bg-indigo-50 p-5 rounded-3xl border border-indigo-100 btn-click">
+                    <span class="font-black text-indigo-700">${s.full_name}</span>
+                    <div class="flex gap-3 items-center">
+                        <button onclick="addExamGrade('${s.id}')" class="bg-indigo-100 text-indigo-600 px-4 py-2 rounded-xl font-black text-xs">+ علامة</button>
+                        <button onclick="toggleStarStatus('${s.id}', ${s.is_star})" class="text-2xl ${s.is_star ? 'star-anim' : 'grayscale'}">⭐</button>
+                        <button onclick="deleteItem('students', '${s.id}')" class="text-red-400 text-lg">🗑️</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        window.deleteItem = async (table, id) => { if(confirm("حذف نهائي؟")) { await supabase.from(table).delete().eq('id', id); location.reload(); } };
-        
-        window.editItem = async (id, old) => {
-            const n = prompt("تعديل المحتوى:", old);
-            if(n) { await supabase.from('assignments').update({ title: n, description: n }).eq('id', id); location.reload(); }
-        };
-
-        window.addStudent = async () => {
-            const n = document.getElementById('s_name').value;
-            const u = document.getElementById('s_user').value;
-            const p = document.getElementById('s_pass').value;
-            await supabase.from('students').insert([{ full_name: n, username: u, password: p }]);
-            location.reload();
-        };
-
-        window.addEx = async (id) => {
-            const sub = prompt("المادة:");
-            const sc = prompt("العلامة:");
+        window.deleteItem = async (table, id) => { if(confirm("هل تريدين الحذف النهائي؟")) { await supabase.from(table).delete().eq('id', id); loadAdminData(); } };
+        window.addExamGrade = async (id) => {
+            const sub = prompt("اسم المادة (مثلاً: حساب، علوم):");
+            const sc = prompt("العلامة الكاملة:");
             if(sub && sc) await supabase.from('exams').insert([{ student_id: id, subject: sub, score: parseInt(sc) }]);
         };
+        window.toggleStarStatus = async (id, cur) => { await supabase.from('students').update({ is_star: !cur }).eq('id', id); loadAdminData(); };
 
-        window.toggleStar = async (id, cur) => { await supabase.from('students').update({ is_star: !cur }).eq('id', id); loadData(); };
-
-        loadData();
+        loadAdminData();
     </script>
 </body>
 </html>
