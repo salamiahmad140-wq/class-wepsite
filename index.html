@@ -3,266 +3,500 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إمبراطورية أساطير لبنى | LUBNA SUPREME</title>
+    <title>LUBNA SUPREME OS | نظام الأساطير التعليمي</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Fredoka:wght@400;700&family=Are-You-Serious&display=swap" rel="stylesheet">
+
     <style>
-        :root { --primary: #6366f1; --accent: #f59e0b; }
-        * { user-select: none; font-family: 'Fredoka', 'Cairo', sans-serif; box-sizing: border-box; }
-        body { background: #0f172a; color: white; margin: 0; overflow: hidden; height: 100vh; }
-        .window { position: absolute; inset: 0; display: none; flex-direction: column; background: #f8fafc; color: #1e293b; z-index: 10; overflow-y: auto; }
-        .window-active { display: flex; animation: zoomIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        .lvl-node { height: 100px; border-radius: 30px; background: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; box-shadow: 0 10px 0 #cbd5e1; cursor: pointer; transition: 0.2s; position: relative; border: 2px solid #e2e8f0; }
-        .lvl-done { background: #dcfce7; color: #15803d; box-shadow: 0 10px 0 #bbf7d0; }
-        .lvl-locked { opacity: 0.4; filter: grayscale(1); pointer-events: none; border: 2px dashed #cbd5e1; }
-        .dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); padding: 15px 40px; border-radius: 100px; display: flex; gap: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 1000; }
-        .dock-btn { font-size: 2.5rem; cursor: pointer; transition: 0.3s; filter: grayscale(1); opacity: 0.5; }
-        .dock-btn.active { filter: grayscale(0); opacity: 1; transform: translateY(-15px) scale(1.3); }
-        .podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; padding: 20px; margin-top: 40px; }
-        .rank-card { width: 100px; text-align: center; border-radius: 20px 20px 0 0; position: relative; font-weight: 900; }
+        :root {
+            --gold: #f59e0b; --indigo-dark: #312e81; --emerald: #10b981;
+            --royal-bg: #020617; --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Fredoka', 'Cairo', sans-serif; background: var(--royal-bg); color: white; overflow: hidden; height: 100vh; }
+
+        /* الأنظمة الأساسية (The Core Windows) */
+        .app-window {
+            position: absolute; inset: 0; display: none; flex-direction: column;
+            background: radial-gradient(circle at top right, #1e1b4b, #020617);
+            z-index: 10; overflow-y: auto; padding-bottom: 120px;
+        }
+        .active-window { display: flex; animation: ultraFade 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        @keyframes ultraFade { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* خريطة الـ 200 مرحلة (The 200 Levels Grid) */
+        .levels-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 25px; padding: 40px; perspective: 1000px;
+        }
+        .level-card {
+            aspect-ratio: 1; border-radius: 35px; background: white; color: var(--indigo-dark);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: 900; box-shadow: 0 12px 0 #cbd5e1;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; border: 3px solid #e2e8f0;
+        }
+        .level-card:active { transform: translateY(8px); box-shadow: 0 4px 0 #cbd5e1; }
+        .level-card.done { background: #dcfce7; color: #15803d; box-shadow: 0 12px 0 #bbf7d0; border-color: #86efac; }
+        .level-card.locked { opacity: 0.3; filter: grayscale(1); pointer-events: none; border: 3px dashed #64748b; background: #1e293b; }
+        .level-card.current { animation: pulseGold 2s infinite; border-color: var(--gold); }
+        @keyframes pulseGold { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(245, 158, 11, 0.4); } }
+
+        /* قائمة النخبة (The Leaderboard) */
+        .leader-item {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 15px; border-radius: 25px; transition: 0.3s;
+        }
+        .leader-item:hover { background: rgba(255,255,255,0.1); transform: translateX(-10px); }
+
+        /* شريط التحكم السفلي (The Dock) */
+        .main-dock {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(25px);
+            padding: 15px 45px; border-radius: 100px; display: flex; gap: 45px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .dock-item { font-size: 2.8rem; cursor: pointer; transition: 0.4s; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
+        .dock-item:hover { transform: scale(1.4) translateY(-15px); }
+        .dock-item.active { filter: drop-shadow(0 0 20px var(--gold)); transform: scale(1.2) translateY(-10px); }
+
+        /* نظام الشهادات الملكية */
+        .certificate-paper {
+            background: white; color: #1e293b; padding: 60px; border: 20px double var(--gold);
+            text-align: center; position: relative; overflow: hidden; border-radius: 10px;
+        }
+        .cert-stamp { font-family: 'Are-You-Serious', cursive; font-size: 4rem; color: #b45309; opacity: 0.8; }
+
+        /* نظام الألعاب المتقدم */
+        #game-canvas { width: 100%; height: 100%; position: relative; overflow: hidden; touch-action: none; }
+        .game-obj { position: absolute; transition: transform 0.1s linear; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="win-login" class="window window-active bg-gradient-to-br from-indigo-900 to-purple-900 justify-center items-center">
-        <div class="text-center p-12 bg-white/10 backdrop-blur-2xl rounded-[60px] border border-white/20 w-[90%] max-w-md">
-            <div class="text-8xl mb-6">👑</div>
-            <h1 class="text-5xl font-black text-white mb-8 underline decoration-amber-400">دخول الأساطير</h1>
-            <input type="text" id="in-code" placeholder="كود البطل" class="w-full text-center text-4xl p-6 rounded-3xl mb-6 bg-white outline-none font-black text-indigo-900 uppercase shadow-2xl">
-            <button onclick="Core.login()" class="w-full py-7 bg-amber-400 text-indigo-900 rounded-3xl text-4xl font-black shadow-[0_12px_0_#b45309] active:translate-y-2 active:shadow-none transition-all">هيا نلعب! 🚀</button>
-        </div>
-    </div>
-
-    <div id="win-profile" class="window bg-slate-50">
-        <div class="bg-indigo-600 p-16 text-center text-white rounded-b-[100px] shadow-2xl">
-            <div id="u-avatar" class="w-44 h-44 bg-white rounded-full flex items-center justify-center mx-auto text-[90px] shadow-2xl mb-6 border-8 border-indigo-400">👤</div>
-            <h2 id="u-name" class="text-6xl font-black mb-2">بطل لبنى</h2>
-            <div class="flex justify-center gap-4 mt-6">
-                <div class="bg-amber-400 text-indigo-900 px-8 py-3 rounded-2xl text-2xl font-black">💰 <span id="u-coins">0</span></div>
-                <div class="bg-blue-500 text-white px-8 py-3 rounded-2xl text-2xl font-black">⭐ <span id="u-stars">0</span></div>
-            </div>
-        </div>
-        <div class="p-8 max-w-4xl mx-auto space-y-6 pb-32">
-            <div onclick="Core.nav('win-leaderboard')" class="bg-white p-8 rounded-[40px] shadow-xl flex items-center gap-6 border-b-8 border-purple-500 cursor-pointer">
-                <span class="text-6xl">🏆</span>
-                <div><h3 class="text-3xl font-black">قائمة الصدارة</h3><p class="text-slate-500">من هو بطل الصف الأول؟</p></div>
-            </div>
-            <div onclick="Core.showCert()" class="bg-white p-8 rounded-[40px] shadow-xl flex items-center gap-6 border-b-8 border-emerald-500 cursor-pointer">
-                <span class="text-6xl">📜</span>
-                <div><h3 class="text-3xl font-black">شهاداتي</h3><p class="text-slate-500">استلم أوسمة الفخر</p></div>
+    <div id="win-login" class="app-window active-window justify-center items-center">
+        <div class="text-center">
+            <h1 class="text-8xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-b from-amber-200 to-amber-500">لبنى</h1>
+            <p class="text-3xl text-amber-200/60 font-bold mb-12 tracking-[10px]">SUPREME OS</p>
+            <div class="bg-white/5 backdrop-blur-xl p-10 rounded-[60px] border border-white/10 shadow-2xl w-96">
+                <input type="text" id="login-input" placeholder="كود البطل" class="w-full bg-white text-indigo-950 text-4xl p-6 rounded-3xl mb-8 font-black text-center outline-none focus:ring-4 ring-amber-400 uppercase">
+                <button onclick="System.login()" class="w-full py-6 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-950 text-4xl font-black rounded-3xl shadow-[0_15px_0_#b45309] active:translate-y-2 active:shadow-none transition-all">دخول 🛡️</button>
             </div>
         </div>
     </div>
 
-    <div id="win-leaderboard" class="window bg-slate-100 pb-32">
-        <div class="p-10 text-center"><h2 class="text-6xl font-black text-indigo-900">نخبة الأساطير 🏆</h2></div>
-        <div class="podium" id="podium-render"></div>
-        <div class="max-w-2xl mx-auto bg-white rounded-[40px] shadow-2xl overflow-hidden mt-10">
-            <div id="leader-list" class="divide-y divide-slate-100"></div>
-        </div>
-    </div>
-
-    <div id="win-worlds" class="window bg-indigo-50 pb-32">
-        <div class="p-10 text-center"><h2 class="text-6xl font-black text-indigo-900">اختر عالمك 🪐</h2></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 p-8 max-w-5xl mx-auto">
-            <div onclick="Core.openMap('math')" class="bg-white p-12 rounded-[50px] text-center border-b-[20px] border-blue-500 shadow-2xl">
-                <div class="text-[120px] mb-4">🧮</div>
-                <h3 class="text-5xl font-black text-blue-600">عالم الحساب</h3>
-                <p class="text-2xl text-slate-400 mt-2">100 مرحلة</p>
+    <div id="win-profile" class="app-window">
+        <div class="max-w-5xl mx-auto w-full p-8 mt-10">
+            <div class="flex items-center gap-10 bg-white/5 p-12 rounded-[60px] border border-white/10 mb-10">
+                <div id="u-avatar" class="w-48 h-48 rounded-full bg-gradient-to-tr from-amber-400 to-orange-400 flex items-center justify-center text-[110px] shadow-2xl border-8 border-white/20">🦁</div>
+                <div class="flex-1">
+                    <h2 id="u-name" class="text-7xl font-black text-white italic">جارِ التحميل...</h2>
+                    <div class="flex gap-6 mt-6">
+                        <div class="bg-white/10 px-8 py-4 rounded-3xl"><span class="text-amber-400 text-3xl font-black">💰 <span id="u-coins">0</span></span></div>
+                        <div class="bg-white/10 px-8 py-4 rounded-3xl"><span class="text-blue-400 text-3xl font-black">⭐ <span id="u-stars">0</span></span></div>
+                    </div>
+                </div>
             </div>
-            <div onclick="Core.openMap('arabic')" class="bg-white p-12 rounded-[50px] text-center border-b-[20px] border-emerald-500 shadow-2xl">
-                <div class="text-[120px] mb-4">📖</div>
-                <h3 class="text-5xl font-black text-emerald-600">عالم العربية</h3>
-                <p class="text-2xl text-slate-400 mt-2">100 مرحلة</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div onclick="System.nav('win-leader')" class="bg-gradient-to-br from-purple-600 to-indigo-800 p-10 rounded-[50px] cursor-pointer hover:scale-[1.02] transition shadow-2xl border-b-[15px] border-indigo-950">
+                    <div class="text-7xl mb-4">🏆</div>
+                    <h3 class="text-4xl font-black text-white">قائمة الصدارة</h3>
+                    <p class="text-white/60 text-xl mt-2">نافس أبطال الصف الأول على المركز الأول</p>
+                </div>
+                <div onclick="System.showCert()" class="bg-gradient-to-br from-emerald-500 to-teal-700 p-10 rounded-[50px] cursor-pointer hover:scale-[1.02] transition shadow-2xl border-b-[15px] border-emerald-950">
+                    <div class="text-7xl mb-4">📜</div>
+                    <h3 class="text-4xl font-black text-white">الشهادات الملكية</h3>
+                    <p class="text-white/60 text-xl mt-2">استعرض أوسمة الفخر الموقعة من الأستاذة لبنى</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="win-map" class="window bg-white pb-32">
-        <div class="p-8 sticky top-0 bg-white/90 backdrop-blur-md z-50 flex justify-between border-b">
-            <h2 id="map-title" class="text-4xl font-black">الخريطة</h2>
-            <button onclick="Core.nav('win-worlds')" class="text-2xl bg-slate-100 px-6 py-2 rounded-2xl font-bold">رجوع 🔙</button>
-        </div>
-        <div id="map-render" class="grid grid-cols-3 md:grid-cols-5 gap-6 p-8"></div>
-    </div>
-
-    <div id="win-game" class="window !bg-slate-900 flex justify-center items-center">
-        <div class="absolute top-10 inset-x-10 flex justify-between items-center z-50">
-            <div id="g-task" class="bg-white px-8 py-4 rounded-3xl text-3xl font-black text-indigo-900">...</div>
-            <button onclick="Core.nav('win-map')" class="bg-red-500 text-white w-20 h-20 rounded-full text-4xl">❌</button>
-        </div>
-        <div id="game-arena" class="relative w-full h-full flex items-center justify-center overflow-hidden"></div>
-    </div>
-
-    <div id="win-cert" class="window bg-slate-900/90 justify-center items-center p-10">
-        <div class="bg-white p-16 border-[15px] border-double border-indigo-600 rounded-[50px] text-center max-w-3xl w-full shadow-[0_0_100px_rgba(255,255,255,0.2)]">
-            <h1 class="text-5xl font-black text-indigo-600 underline mb-10">شهادة فخر واعتزاز</h1>
-            <p class="text-3xl">بكل فخر، تشهد المربية <span class="font-black">لبنى</span> بأن البطل:</p>
-            <h2 id="cert-name" class="text-7xl font-black text-slate-800 my-12">...</h2>
-            <p class="text-3xl italic font-bold">قد اجتاز تحديات الأساطير ببراعة!</p>
-            <div class="mt-16 flex justify-between items-end px-10">
-                <div class="text-center"><p class="font-bold">التاريخ</p><p class="text-xl">2026/03/10</p></div>
-                <div class="text-center"><p class="font-black text-2xl">توقيع المربية لبنى ✍️</p></div>
+    <div id="win-worlds" class="app-window items-center">
+        <h2 class="text-7xl font-black my-16 text-amber-400">اختر مسار القوة 🪐</h2>
+        <div class="flex flex-wrap justify-center gap-12 p-10">
+            <div onclick="System.openMap('math')" class="w-[450px] bg-white p-12 rounded-[70px] text-indigo-900 border-b-[25px] border-blue-400 hover:-translate-y-4 transition-all cursor-pointer">
+                <div class="text-[150px] mb-6 text-center">🧮</div>
+                <h3 class="text-6xl font-black text-center">عالم الحساب</h3>
+                <div class="bg-blue-100 p-4 rounded-2xl mt-6 text-center text-3xl font-black">100 مرحلة</div>
             </div>
-            <button onclick="Core.nav('win-profile')" class="mt-12 bg-indigo-600 text-white px-12 py-5 rounded-3xl text-2xl font-bold">إغلاق</button>
+            <div onclick="System.openMap('arabic')" class="w-[450px] bg-white p-12 rounded-[70px] text-emerald-900 border-b-[25px] border-emerald-400 hover:-translate-y-4 transition-all cursor-pointer">
+                <div class="text-[150px] mb-6 text-center">📖</div>
+                <h3 class="text-6xl font-black text-center">عالم العربية</h3>
+                <div class="bg-emerald-100 p-4 rounded-2xl mt-6 text-center text-3xl font-black">100 مرحلة</div>
+            </div>
         </div>
     </div>
 
-    <nav id="app-dock" class="dock hidden">
-        <div class="dock-btn active" onclick="Core.nav('win-profile', this)">👤</div>
-        <div class="dock-btn" onclick="Core.nav('win-worlds', this)">🪐</div>
-        <div class="dock-btn" onclick="Core.nav('win-leaderboard', this)">🏆</div>
+    <div id="win-map" class="app-window">
+        <div class="sticky top-0 bg-slate-900/80 backdrop-blur-xl p-8 z-[100] border-b border-white/10 flex justify-between items-center">
+            <h2 id="map-title" class="text-5xl font-black text-amber-400">خريطة العالم</h2>
+            <button onclick="System.nav('win-worlds')" class="bg-white/10 px-8 py-4 rounded-3xl text-2xl font-black">عودة 🔙</button>
+        </div>
+        <div id="map-render" class="levels-container"></div>
+    </div>
+
+    <div id="win-game" class="app-window !overflow-hidden">
+        <div class="absolute top-10 inset-x-10 flex justify-between items-center z-[200]">
+            <div id="g-info" class="bg-white/10 backdrop-blur-md px-10 py-5 rounded-[30px] border border-white/20 text-4xl font-black text-amber-400">...</div>
+            <div id="g-task" class="bg-white px-12 py-5 rounded-[30px] text-5xl font-black text-indigo-950 shadow-2xl">?</div>
+            <button onclick="Game.exit()" class="bg-red-500 w-20 h-20 rounded-full text-4xl shadow-xl">❌</button>
+        </div>
+        <div id="game-canvas"></div>
+    </div>
+
+    <div id="win-leader" class="app-window">
+        <div class="max-w-4xl mx-auto w-full p-10">
+            <h2 class="text-7xl font-black text-center mb-16 text-amber-400">أباطرة الصف الأول 🏆</h2>
+            <div id="leader-list" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <div id="win-admin" class="app-window bg-slate-50 !text-slate-900">
+        <div class="p-10 border-b flex justify-between items-center bg-white shadow-sm">
+            <h1 class="text-5xl font-black text-indigo-950">غرفة قيادة المعلمة لبنى 👑</h1>
+            <div class="flex gap-4">
+                <button onclick="Admin.add()" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold">إضافة بطل +</button>
+                <button onclick="Admin.backup()" class="bg-slate-800 text-white px-8 py-4 rounded-2xl font-bold">تصدير النسخة 📥</button>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto w-full p-10">
+            <div class="bg-white rounded-[40px] shadow-2xl overflow-hidden">
+                <table class="w-full text-right border-collapse">
+                    <thead class="bg-slate-100 border-b">
+                        <tr class="text-slate-500 text-xl font-black"><th class="p-8">البطل</th><th class="p-8">الكود</th><th class="p-8">الرصيد</th><th class="p-8">التقدم</th><th class="p-8 text-center">التحكم</th></tr>
+                    </thead>
+                    <tbody id="admin-table"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="win-cert" class="app-window bg-black/95 justify-center items-center p-10">
+        <div class="certificate-paper max-w-5xl w-full shadow-[0_0_150px_rgba(245,158,11,0.3)]">
+            <div class="text-amber-500 text-4xl mb-6">إمبراطورية لبنى التعليمية</div>
+            <h1 class="text-7xl font-black text-indigo-900 underline mb-10">وسام الفخر والتميز</h1>
+            <p class="text-4xl leading-relaxed">بكل فخر واعتزاز، تشهد المربية <span class="font-black">لبنى</span> بأن البطل:</p>
+            <h2 id="cert-name" class="text-8xl font-black my-12 text-amber-600">...</h2>
+            <p class="text-4xl">قد أتم تحديات الأساطير ببراعة فائقة وحصل على لقب <br> <span class="font-black text-indigo-600">"قائد النجوم"</span></p>
+            <div class="mt-20 flex justify-between items-end px-20">
+                <div class="text-center"><p class="font-bold text-2xl">التاريخ</p><p class="text-xl">2026/03/10</p></div>
+                <div class="text-center"><div class="cert-stamp mb-2 italic">Lubna</div><div class="border-t-4 border-indigo-950 px-10 pt-4 font-black text-2xl">توقيع المربية لبنى</div></div>
+            </div>
+            <button onclick="System.nav('win-profile')" class="mt-16 bg-indigo-600 text-white px-16 py-6 rounded-3xl text-3xl font-black">إغلاق ❌</button>
+        </div>
+    </div>
+
+    <nav id="app-dock" class="main-dock hidden">
+        <div class="dock-item active" onclick="System.nav('win-profile', this)">👤</div>
+        <div class="dock-item" onclick="System.nav('win-worlds', this)">🪐</div>
+        <div class="dock-item" onclick="System.nav('win-leader', this)">🏆</div>
+        <div class="dock-item" onclick="System.nav('win-admin', this)">⚙️</div>
+        <div class="dock-item" onclick="location.reload()">🚪</div>
     </nav>
 
 <script>
-    const Core = {
-        dbKey: 'LUBNA_FINAL_SYSTEM_2026',
-        user: null, currentWorld: 'math',
+/**
+ * ============================================================
+ * 🧠 النواة المركزية للنظام (THE SUPREME CORE)
+ * ============================================================
+ */
+const System = {
+    dbKey: 'LUBNA_EMPIRE_PRO_2026',
+    user: null, currentWorld: 'math',
 
-        login() {
-            const code = document.getElementById('in-code').value.trim().toUpperCase();
-            const db = JSON.parse(localStorage.getItem(this.dbKey)) || [];
-            const found = db.find(s => s.code === code);
-            if(found) {
-                this.user = found;
-                this.nav('win-profile');
-                document.getElementById('app-dock').classList.remove('hidden');
-                this.sync();
-            } else alert("الكود غير مسجل!");
-        },
+    init() {
+        if(!localStorage.getItem(this.dbKey)) {
+            const initialDB = [
+                {name: 'تجربة بطل', code: 'LUB-0000', avatar: '🐱', stars: 50, coins: 500, progress: {math: 0, arabic: 0}}
+            ];
+            localStorage.setItem(this.dbKey, JSON.stringify(initialDB));
+        }
+        console.log("Lubna Supreme OS Loaded.");
+    },
 
-        nav(id, el) {
-            document.querySelectorAll('.window').forEach(w => w.classList.remove('window-active'));
-            document.getElementById(id).classList.add('window-active');
-            if(el) {
-                document.querySelectorAll('.dock-btn').forEach(d => d.classList.remove('active'));
-                el.classList.add('active');
-            }
-            if(id === 'win-leaderboard') this.renderLeaderboard();
-        },
+    login() {
+        const code = document.getElementById('login-input').value.trim().toUpperCase();
+        const db = JSON.parse(localStorage.getItem(this.dbKey));
+        const found = db.find(s => s.code === code);
+        
+        if(found) {
+            this.user = found;
+            document.getElementById('app-dock').classList.remove('hidden');
+            this.nav('win-profile');
+            this.sync();
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        } else {
+            alert("⚠️ الكود غير صحيح يا بطل! تأكد من المعلمة لبنى.");
+        }
+    },
 
-        sync() {
-            document.getElementById('u-name').innerText = this.user.name;
-            document.getElementById('u-stars').innerText = this.user.stars;
-            document.getElementById('u-coins').innerText = this.user.coins;
-            const db = JSON.parse(localStorage.getItem(this.dbKey));
-            const idx = db.findIndex(s => s.code === this.user.code);
-            db[idx] = this.user;
-            localStorage.setItem(this.dbKey, JSON.stringify(db));
-        },
+    nav(id, el) {
+        document.querySelectorAll('.app-window').forEach(w => w.classList.remove('active-window'));
+        document.getElementById(id).classList.add('active-window');
+        if(el) {
+            document.querySelectorAll('.dock-item').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+        }
+        if(id === 'win-leader') this.renderLeaderboard();
+        if(id === 'win-admin') Admin.render();
+    },
 
-        openMap(world) {
-            this.currentWorld = world;
-            const grid = document.getElementById('map-render');
-            grid.innerHTML = '';
-            const prog = this.user.progress[world];
-            for(let i=1; i<=100; i++) {
-                const node = document.createElement('div');
-                const isLocked = i > (prog + 1);
-                node.className = `lvl-node ${isLocked?'lvl-locked':''} ${i<=prog?'lvl-done':''}`;
-                node.innerText = i;
-                if(!isLocked) node.onclick = () => Game.init(i, world);
-                grid.appendChild(node);
-            }
-            this.nav('win-map');
-        },
+    sync() {
+        document.getElementById('u-name').innerText = this.user.name;
+        document.getElementById('u-stars').innerText = this.user.stars;
+        document.getElementById('u-coins').innerText = this.user.coins;
+        document.getElementById('u-avatar').innerText = this.user.avatar || '🦁';
+        
+        const db = JSON.parse(localStorage.getItem(this.dbKey));
+        const idx = db.findIndex(s => s.code === this.user.code);
+        db[idx] = this.user;
+        localStorage.setItem(this.dbKey, JSON.stringify(db));
+    },
 
-        renderLeaderboard() {
-            const db = (JSON.parse(localStorage.getItem(this.dbKey)) || []).sort((a,b) => b.stars - a.stars);
-            const podium = document.getElementById('podium-render');
-            const list = document.getElementById('leader-list');
+    openMap(world) {
+        this.currentWorld = world;
+        document.getElementById('map-title').innerText = world === 'math' ? 'عالم الأرقام والحساب' : 'عالم الحروف والعربية';
+        const grid = document.getElementById('map-render');
+        grid.innerHTML = '';
+        
+        const currentProg = this.user.progress[world];
+        for(let i=1; i<=100; i++) {
+            const card = document.createElement('div');
+            const isDone = i <= currentProg;
+            const isCurrent = i === currentProg + 1;
+            const isLocked = i > currentProg + 1;
+
+            card.className = `level-card ${isDone?'done':''} ${isLocked?'locked':''} ${isCurrent?'current':''}`;
+            card.innerHTML = `<span>${i}</span>${isDone?'<div class="text-sm absolute bottom-2">تم✅</div>':''}`;
             
-            // منصة التتويج (Top 3)
-            podium.innerHTML = '';
-            const top3 = db.slice(0, 3);
-            const heights = [140, 200, 110];
-            const colors = ['bg-slate-300', 'bg-amber-400', 'bg-orange-400'];
-            
-            [1, 0, 2].forEach(idx => {
-                if(top3[idx]) {
-                    podium.innerHTML += `
-                        <div class="flex flex-col items-center">
-                            <span class="text-4xl mb-2">${top3[idx].avatar}</span>
-                            <div class="rank-card ${colors[idx]} ${idx===0?'h-44':'h-32'} flex flex-col justify-end p-4">
-                                <div class="text-white text-3xl font-black">#${idx+1}</div>
-                                <div class="text-white text-xs truncate w-full">${top3[idx].name}</div>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
+            if(!isLocked) card.onclick = () => Game.launch(i, world);
+            grid.appendChild(card);
+        }
+        this.nav('win-map');
+    },
 
-            list.innerHTML = db.map((s, i) => `
-                <div class="flex justify-between items-center p-6 ${s.code === this.user.code ? 'bg-indigo-50':''}">
-                    <div class="flex items-center gap-4">
-                        <span class="text-3xl font-black w-10">#${i+1}</span>
-                        <span class="text-4xl">${s.avatar}</span>
-                        <span class="text-2xl font-bold">${s.name}</span>
+    renderLeaderboard() {
+        const db = JSON.parse(localStorage.getItem(this.dbKey)).sort((a,b) => b.stars - a.stars);
+        const list = document.getElementById('leader-list');
+        list.innerHTML = db.map((s, i) => `
+            <div class="leader-item p-8 flex justify-between items-center ${s.code === this.user.code ? 'border-amber-400 border-2 bg-amber-400/10' : ''}">
+                <div class="flex items-center gap-6">
+                    <span class="text-4xl font-black w-12">${i+1}</span>
+                    <span class="text-6xl">${s.avatar}</span>
+                    <div>
+                        <div class="text-3xl font-black">${s.name}</div>
+                        <div class="text-white/40">الكود: ${s.code}</div>
                     </div>
-                    <span class="text-2xl font-black text-blue-600">${s.stars} ⭐</span>
                 </div>
-            `).join('');
-        },
+                <div class="text-right">
+                    <div class="text-4xl font-black text-amber-400">${s.stars} ⭐</div>
+                    <div class="text-xl text-white/40">مستوى ${s.progress.math + s.progress.arabic}</div>
+                </div>
+            </div>
+        `).join('');
+    },
 
-        showCert() {
-            document.getElementById('cert-name').innerText = this.user.name;
-            this.nav('win-cert');
+    showCert() {
+        if(this.user.stars < 100) {
+            alert("📜 عذراً يا بطل! يجب أن تجمع 100 نجمة على الأقل لتحصل على الشهادة.");
+            return;
         }
-    };
+        document.getElementById('cert-name').innerText = this.user.name;
+        this.nav('win-cert');
+    }
+};
 
-    const Game = {
-        init(lvl, world) {
-            this.lvl = lvl; this.world = world;
-            Core.nav('win-game');
+/**
+ * ============================================================
+ * 🎮 محرك الألعاب المحترف (ULTRA PHYSICS ENGINE)
+ * ============================================================
+ */
+const Game = {
+    active: false, lvl: 1, world: '', score: 0, target: null,
+
+    launch(lvl, world) {
+        this.lvl = lvl; this.world = world; this.active = true; this.score = 0;
+        System.nav('win-game');
+        document.getElementById('g-info').innerText = `المستوى ${lvl}`;
+        this.startLevel();
+    },
+
+    startLevel() {
+        const arena = document.getElementById('game-canvas');
+        const taskDisplay = document.getElementById('g-task');
+        arena.innerHTML = '';
+
+        // منطق السؤال بناءً على العالم
+        if(this.world === 'math') {
+            this.target = Math.floor(Math.random() * (10 + this.lvl)) + 1;
+            taskDisplay.innerText = `أين هو الرقم: ${this.target}`;
+        } else {
+            const chars = ['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز'];
+            this.target = chars[Math.floor(Math.random()*chars.length)];
+            taskDisplay.innerText = `اصطد الحرف: ${this.target}`;
+        }
+
+        // إنشاء الأهداف المتطايرة
+        this.spawnInterval = setInterval(() => {
+            if(!this.active) return;
+            this.createObject();
+        }, 800);
+    },
+
+    createObject() {
+        const arena = document.getElementById('game-canvas');
+        const obj = document.createElement('div');
+        const isTarget = Math.random() > 0.7;
+        
+        let val;
+        if(this.world === 'math') {
+            val = isTarget ? this.target : Math.floor(Math.random()*50);
+        } else {
+            const chars = ['س','ش','ص','ض','ط','ظ','ع','غ','ف','ق'];
+            val = isTarget ? this.target : chars[Math.floor(Math.random()*chars.length)];
+        }
+
+        obj.className = "game-obj w-32 h-32 flex items-center justify-center text-6xl font-black rounded-full shadow-2xl";
+        obj.style.background = `hsl(${Math.random()*360}, 70%, 60%)`;
+        obj.innerText = val;
+        obj.style.left = Math.random() * (window.innerWidth - 100) + "px";
+        obj.style.top = window.innerHeight + "px";
+        
+        arena.appendChild(obj);
+
+        // تحريك العنصر للأعلى
+        gsap.to(obj, {
+            y: -(window.innerHeight + 200),
+            duration: 4 - (this.lvl * 0.02),
+            ease: "none",
+            onComplete: () => obj.remove()
+        });
+
+        obj.onclick = () => {
+            if(val == this.target) {
+                this.score++;
+                gsap.to(obj, {scale: 1.5, opacity: 0, duration: 0.2});
+                confetti({ particleCount: 20, spread: 30, origin: { x: obj.offsetLeft/window.innerWidth, y: obj.offsetTop/window.innerHeight } });
+                if(this.score >= 5) this.win();
+            } else {
+                gsap.to(obj, {x: "+=20", repeat: 5, yoyo: true, duration: 0.05});
+                obj.style.background = "#000";
+            }
+        };
+    },
+
+    win() {
+        this.active = false;
+        clearInterval(this.spawnInterval);
+        confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
+        
+        System.user.stars += 10;
+        System.user.coins += 50;
+        if(System.user.progress[this.world] < this.lvl) System.user.progress[this.world] = this.lvl;
+        System.sync();
+
+        const msg = document.createElement('div');
+        msg.className = "fixed inset-0 flex items-center justify-center z-[500] bg-indigo-900/90 text-center";
+        msg.innerHTML = `<div><div class="text-[200px]">🏆</div><h2 class="text-9xl font-black text-white">عبقري!</h2><p class="text-4xl text-amber-400">+10 نجوم</p></div>`;
+        document.body.appendChild(msg);
+
+        setTimeout(() => {
+            msg.remove();
+            System.openMap(this.world);
+        }, 2500);
+    },
+
+    exit() {
+        this.active = false;
+        clearInterval(this.spawnInterval);
+        System.nav('win-map');
+    }
+};
+
+/**
+ * ============================================================
+ * ⚙️ لوحة التحكم الإدارية (ADMIN COMMAND CENTER)
+ * ============================================================
+ */
+const Admin = {
+    render() {
+        const db = JSON.parse(localStorage.getItem(System.dbKey));
+        const table = document.getElementById('admin-table');
+        table.innerHTML = db.map(s => `
+            <tr class="border-b hover:bg-slate-50 transition">
+                <td class="p-8 flex items-center gap-4">
+                    <span class="text-5xl">${s.avatar}</span>
+                    <div class="font-black text-2xl">${s.name}</div>
+                </td>
+                <td class="p-8 font-mono font-bold text-indigo-600">${s.code}</td>
+                <td class="p-8">
+                    <div class="font-bold text-amber-600">💰 ${s.coins}</div>
+                    <div class="font-bold text-blue-600">⭐ ${s.stars}</div>
+                </td>
+                <td class="p-8">
+                    <div class="text-sm font-bold">حساب: ${s.progress.math} | عربي: ${s.progress.arabic}</div>
+                    <div class="w-48 bg-slate-200 h-2 rounded-full mt-2"><div class="bg-indigo-600 h-full rounded-full" style="width:${(s.progress.math+s.progress.arabic)/2}%"></div></div>
+                </td>
+                <td class="p-8">
+                    <div class="flex gap-2">
+                        <button onclick="Admin.edit('${s.code}')" class="bg-blue-600 text-white px-4 py-2 rounded-xl">تعديل</button>
+                        <button onclick="Admin.del('${s.code}')" class="bg-red-600 text-white px-4 py-2 rounded-xl">حذف</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    },
+
+    add() {
+        const name = prompt("اسم البطل الجديد:");
+        if(name) {
+            const db = JSON.parse(localStorage.getItem(System.dbKey));
+            const code = "LUB-" + Math.floor(1000 + Math.random()*9000);
+            db.push({name, code, avatar: '👤', stars: 0, coins: 0, progress: {math: 0, arabic: 0}});
+            localStorage.setItem(System.dbKey, JSON.stringify(db));
             this.render();
-        },
-        render() {
-            const arena = document.getElementById('game-arena');
-            const task = document.getElementById('g-task');
-            arena.innerHTML = '';
-            
-            // لعبة صيد العناصر (Advanced Catch)
-            const target = this.world === 'math' ? Math.floor(Math.random()*20) : 'أ';
-            task.innerText = `اصطد العنصر الصحيح: ${target}`;
-            
-            let count = 0;
-            const loop = setInterval(() => {
-                if(document.getElementById('win-game').style.display === 'none') { clearInterval(loop); return; }
-                const item = document.createElement('div');
-                const isCorrect = Math.random() > 0.6;
-                const val = isCorrect ? target : (this.world==='math'?Math.floor(Math.random()*50):'ب');
-                
-                item.className = "absolute text-8xl cursor-pointer transition-all duration-[2500ms] p-10";
-                item.style.left = Math.random()*80 + 5 + "%";
-                item.style.top = "-200px";
-                item.innerText = val;
-                arena.appendChild(item);
-                
-                setTimeout(() => { item.style.top = "120%"; }, 100);
-                
-                item.onclick = () => {
-                    if(isCorrect) {
-                        confetti({ particleCount: 50, origin: { x: item.offsetLeft/window.innerWidth, y: item.offsetTop/window.innerHeight } });
-                        item.remove(); count++;
-                        if(count >= 5) { clearInterval(loop); this.win(); }
-                    } else {
-                        item.style.filter = "grayscale(1)";
-                        setTimeout(()=>item.remove(), 200);
-                    }
-                };
-                setTimeout(() => item.remove(), 3000);
-            }, 1000);
-        },
-        win() {
-            confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-            Core.user.stars += 10; Core.user.coins += 50;
-            if(Core.user.progress[Core.currentWorld] < this.lvl) Core.user.progress[Core.currentWorld] = this.lvl;
-            Core.sync();
-            setTimeout(() => Core.openMap(Core.currentWorld), 2000);
+            alert("تم بنجاح! كود الدخول هو: " + code);
         }
-    };
+    },
+
+    edit(code) {
+        const db = JSON.parse(localStorage.getItem(System.dbKey));
+        const idx = db.findIndex(s => s.code === code);
+        const stars = prompt("عدد النجوم الجديد:", db[idx].stars);
+        if(stars !== null) {
+            db[idx].stars = parseInt(stars);
+            localStorage.setItem(System.dbKey, JSON.stringify(db));
+            this.render();
+        }
+    },
+
+    del(code) {
+        if(confirm("❗ هل أنتِ متأكدة؟ سيتم حذف البطل وبياناته للأبد!")) {
+            const db = JSON.parse(localStorage.getItem(System.dbKey)).filter(s => s.code !== code);
+            localStorage.setItem(System.dbKey, JSON.stringify(db));
+            this.render();
+        }
+    },
+
+    backup() {
+        const data = localStorage.getItem(System.dbKey);
+        const blob = new Blob([data], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `LUBNA_BACKUP_${new Date().toLocaleDateString()}.json`;
+        a.click();
+    }
+};
+
+// انطلاق النظام
+System.init();
 </script>
 </body>
 </html>
