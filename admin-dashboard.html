@@ -2,18 +2,18 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>غرفة قيادة أ. لبنى | الصف الأول ب</title>
+    <title>تحكم الأستاذة لبنى</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-blue-50 p-10 font-sans">
-    <div class="max-w-4xl mx-auto bg-white p-10 rounded-[50px] shadow-2xl">
-        <h1 class="text-5xl font-black text-blue-600 mb-8 text-center">إدارة أساطير الصف الأول ب 👑</h1>
-        <button onclick="Admin.add()" class="w-full py-4 bg-pink-500 text-white rounded-3xl font-black text-2xl mb-10 shadow-xl">إضافة بطل جديد +</button>
+<body class="bg-blue-50 p-10 font-sans text-right">
+    <div class="max-w-4xl mx-auto bg-white p-10 rounded-[50px] shadow-2xl border-8 border-blue-200">
+        <h1 class="text-5xl font-black text-blue-600 mb-8 text-center">غرفة التحكم الملكية 👑</h1>
+        <button onclick="Admin.add()" class="w-full py-5 bg-pink-500 text-white rounded-full font-black text-3xl mb-10 shadow-xl">إضافة بطل جديد +</button>
         <div id="admin-list" class="space-y-4"></div>
     </div>
 
 <script>
-    const DB_KEY = 'LUBNA_FINAL_2026_B';
+    const DB_KEY = 'LUBNA_KIDS_2026_V1';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
@@ -21,12 +21,12 @@
             document.getElementById('admin-list').innerHTML = db.map(s => `
                 <div class="p-6 border-4 border-blue-100 rounded-3xl flex justify-between items-center">
                     <div>
-                        <div class="text-2xl font-black">${s.name}</div>
-                        <div class="text-blue-500 font-bold">كود الدخول: ${s.code}</div>
+                        <div class="text-3xl font-black">${s.name}</div>
+                        <div class="text-blue-500 font-bold text-xl">كود الدخول: ${s.code}</div>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="Admin.gift('${s.code}')" class="bg-amber-400 p-3 rounded-xl font-bold">هدية 💰</button>
-                        <button onclick="Admin.del('${s.code}')" class="bg-red-500 text-white p-3 rounded-xl">حذف</button>
+                    <div class="flex gap-4">
+                        <button onclick="Admin.gift('${s.code}')" class="bg-amber-400 text-white px-6 py-2 rounded-xl font-bold">هدية 💰</button>
+                        <button onclick="Admin.del('${s.code}')" class="bg-red-500 text-white px-6 py-2 rounded-xl">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -35,8 +35,8 @@
             const name = prompt("اسم بطل الصف الأول ب:");
             if(name) {
                 const db = this.get();
-                const code = "LBN-" + Math.floor(1000 + Math.random()*9000);
-                db.push({name, code, stars:0, coins:500, inventory:[], tag:'', progress:{math:0, arabic:0}});
+                const code = "B-" + Math.floor(1000 + Math.random()*9000);
+                db.push({name, code, stars:0, coins:100, inventory:[], tag:'', avatar:'🦁'});
                 localStorage.setItem(DB_KEY, JSON.stringify(db));
                 this.render();
                 alert("تم! الكود هو: " + code);
@@ -45,7 +45,7 @@
         gift(code) {
             const db = this.get();
             const idx = db.findIndex(s => s.code === code);
-            db[idx].coins += 1000;
+            db[idx].coins += 500;
             localStorage.setItem(DB_KEY, JSON.stringify(db));
             this.render();
         },
