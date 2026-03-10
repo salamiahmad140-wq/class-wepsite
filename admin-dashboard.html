@@ -2,44 +2,40 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة الأبطال</title>
+    <title>إدارة الأساطير</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 p-10">
-    <div class="max-w-4xl mx-auto bg-white p-12 rounded-[50px] shadow-xl border-t-[15px] border-blue-500">
-        <h1 class="text-5xl font-black text-center mb-10">إدارة أبطال الأول ب 🏰</h1>
-        <button onclick="Admin.add()" class="w-full py-6 bg-blue-500 text-white rounded-3xl font-black text-3xl mb-10 shadow-lg">+ إضافة طالب جديد</button>
+<body class="bg-slate-950 p-10 text-white">
+    <div class="max-w-4xl mx-auto bg-slate-900 p-12 rounded-[50px] border-2 border-slate-800">
+        <h1 class="text-5xl font-black text-center mb-12 text-blue-400">تحكم الأساطير 🏰</h1>
+        <button onclick="Admin.add()" class="w-full py-6 bg-blue-600 rounded-3xl font-black text-3xl mb-12 shadow-lg">إضافة بطل +</button>
         <div id="admin-list" class="space-y-4"></div>
     </div>
 <script>
-    const DB_KEY = 'LEGENDS_1B_FINAL_V2';
+    const DB_KEY = 'LEGENDS_1B_REBORN';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
             const db = this.get();
             document.getElementById('admin-list').innerHTML = db.map(s => `
-                <div class="p-6 bg-slate-50 rounded-3xl flex justify-between items-center border-2 border-slate-100">
-                    <div>
-                        <div class="text-3xl font-black">${s.name}</div>
-                        <div class="text-blue-500 font-bold">الكود: ${s.code}</div>
-                    </div>
-                    <button onclick="Admin.gift('${s.code}')" class="bg-amber-400 text-white px-6 py-2 rounded-xl font-black">هدية 💰</button>
+                <div class="p-6 bg-slate-800 rounded-3xl flex justify-between items-center border border-slate-700">
+                    <div><div class="text-3xl font-black">${s.name}</div><div class="text-blue-400">كود: ${s.code}</div></div>
+                    <button onclick="Admin.gift('${s.code}')" class="bg-yellow-500 text-black px-6 py-2 rounded-xl font-black">هدية 💰</button>
                 </div>
             `).join('');
         },
         add() {
-            const name = prompt("اسم الطالب:");
+            const name = prompt("الاسم:");
             if(name) {
                 const db = this.get();
-                const code = "STU-" + Math.floor(1000 + Math.random()*9000);
-                db.push({name, code, stars:0, coins:200, inventory:[], equipped:'', avatar:'👤', done:{math:[], arabic:[]}});
+                const code = "LEG-" + Math.floor(1000 + Math.random()*9000);
+                db.push({name, code, stars:0, coins:500, inventory:[], equipped:'', done:{math:[], arabic:[]}});
                 localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
-                alert("تمت الإضافة! الكود هو: " + code);
             }
         },
         gift(code) {
             const db = this.get(); const idx = db.findIndex(s => s.code === code);
-            db[idx].coins += 500; localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
+            db[idx].coins += 1000; localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
         }
     };
     Admin.render();
