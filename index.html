@@ -3,255 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أكاديمية الأساطير 2026 | الأستاذة لبنى</title>
+    <title>مجرّة الأساطير التعليمية | الإصدار الملكي V20</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --secondary: #ec4899; --accent: #f59e0b; --bg: #020617; }
-        * { user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: white; margin: 0; overflow: hidden; }
+        :root { --p-indigo: #6366f1; --p-pink: #ec4899; --p-gold: #f59e0b; --p-dark: #020617; }
+        * { user-select: none; -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; background: var(--p-dark); color: white; margin: 0; overflow: hidden; }
 
-        /* الشاشات الرئيسية */
-        .screen { position: fixed; inset: 0; display: none; flex-direction: column; z-index: 10; transition: 0.5s; }
-        .active-screen { display: flex; animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes zoomIn { from { transform: scale(1.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* الأنظمة الأساسية */
+        .app-screen { position: fixed; inset: 0; display: none; flex-direction: column; overflow: hidden; z-index: 10; background: var(--p-dark); }
+        .active-screen { display: flex; animation: slideIn 0.4s ease-out; }
+        @keyframes slideIn { from { transform: scale(1.1); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* الهيدر العلوي HUD */
-        .hud { height: 80px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); border-bottom: 2px solid rgba(255,255,255,0.1); padding: 0 20px; display: flex; align-items: center; justify-content: space-between; z-index: 100; position: fixed; top: 0; width: 100%; }
+        /* الهيدر (HUD) */
+        .hud { height: 90px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border-bottom: 2px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; position: fixed; top: 0; width: 100%; }
+
+        /* خريطة المراحل */
+        .map-viewport { flex: 1; overflow-y: auto; padding: 120px 20px 100px; background: radial-gradient(circle at center, #1e1b4b, #020617); }
+        .path-line { width: 12px; background: rgba(255,255,255,0.05); margin: 0 auto; border-radius: 20px; position: relative; min-height: 2000px; }
         
-        /* خريطة المراحل الاحترافية */
-        .map-container { flex: 1; overflow-y: auto; padding: 120px 20px 100px; background: url('https://www.transparenttextures.com/patterns/stardust.png'); }
-        .path-line { width: 10px; background: rgba(255,255,255,0.1); margin: 0 auto; position: relative; border-radius: 20px; }
-        
-        .level-node {
-            width: 90px; height: 90px; border-radius: 30px; background: white; color: var(--bg);
+        .level-bubble {
+            width: 85px; height: 85px; border-radius: 50%; background: white; color: var(--p-dark);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 24px; position: relative; margin-bottom: 40px;
-            box-shadow: 0 10px 0 #cbd5e1, 0 20px 30px rgba(0,0,0,0.5); cursor: pointer; transition: 0.2s;
+            font-weight: 900; position: absolute; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 0 #cbd5e1, 0 15px 30px rgba(0,0,0,0.4); cursor: pointer;
         }
-        .level-node:active { transform: translateY(5px); box-shadow: 0 5px 0 #cbd5e1; }
-        .level-locked { background: #334155; color: #64748b; cursor: not-allowed; border: 4px solid #1e293b; }
-        .level-locked::after { content: '🔒'; position: absolute; font-size: 14px; top: -10px; }
+        .level-bubble:active { transform: translateY(5px) scale(0.9); box-shadow: 0 5px 0 #cbd5e1; }
+        .locked { background: #334155; color: #64748b; filter: grayscale(1); opacity: 0.5; pointer-events: none; }
+        .locked::after { content: '🔒'; position: absolute; font-size: 14px; top: -15px; }
 
-        /* بطاقات العوالم */
-        .world-card {
-            height: 200px; border-radius: 40px; position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            transition: 0.4s; border: 4px solid rgba(255,255,255,0.1);
-        }
-        .world-card:hover { transform: scale(1.02); border-color: var(--primary); }
-        .world-card h3 { font-size: 32px; font-weight: 900; z-index: 2; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .world-overlay { position: absolute; inset: 0; background: linear-gradient(45deg, rgba(0,0,0,0.7), transparent); z-index: 1; }
+        /* المتجر والملابس */
+        .shop-grid { display: grid; grid-cols: 2; gap: 15px; padding: 20px; }
+        .item-card { background: rgba(255,255,255,0.05); border-radius: 30px; padding: 20px; text-align: center; border: 2px solid transparent; transition: 0.3s; }
+        .item-card.owned { border-color: var(--p-gold); background: rgba(245, 158, 11, 0.1); }
 
-        /* منطقة الألعاب */
-        #game-arena { background: radial-gradient(circle, #1e293b, #020617); }
-        .game-obj { position: absolute; transition: 0.3s; cursor: pointer; }
-
+        /* محرك الألعاب */
+        #game-canvas { background: #000; position: relative; overflow: hidden; flex-grow: 1; }
+        .game-target { position: absolute; cursor: pointer; transition: 0.2s; }
+        
         /* القائمة السفلية */
-        .bottom-nav { height: 70px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; border-radius: 30px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 1000; }
-        .nav-item { font-size: 24px; opacity: 0.5; transition: 0.3s; cursor: pointer; }
-        .nav-active { opacity: 1; color: var(--primary); transform: scale(1.2); }
+        .bottom-bar { height: 80px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; border-radius: 40px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .bar-btn { font-size: 28px; opacity: 0.4; transition: 0.3s; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .bar-btn span { font-size: 10px; font-weight: 900; margin-top: 2px; }
+        .bar-active { opacity: 1; color: var(--p-indigo); transform: translateY(-5px) scale(1.1); }
     </style>
 </head>
 <body>
 
     <div id="hud" class="hud hidden">
         <div class="flex items-center gap-3 bg-white/5 p-2 pr-4 rounded-full border border-white/10">
-            <div id="p-avatar" class="text-2xl">🐱</div>
+            <div id="player-avatar-main" class="text-3xl relative">🐱<span id="player-hat" class="absolute -top-3 -right-2 text-xl"></span></div>
             <div>
-                <p id="p-name" class="text-[10px] font-bold opacity-50 leading-none uppercase">Legend</p>
-                <p id="p-display-name" class="font-900 text-xs">البطل</p>
+                <p id="player-name-tag" class="font-900 text-xs leading-none">البطل</p>
+                <p class="text-[9px] text-indigo-400 font-bold uppercase tracking-widest">المستوى 1</p>
             </div>
         </div>
-        <div class="flex gap-3">
-            <div class="bg-yellow-500/10 px-4 py-1 rounded-full border border-yellow-500/30 flex items-center gap-2">
-                <span class="text-yellow-500 font-black" id="p-coins">500</span>
+        <div class="flex gap-2">
+            <div class="bg-yellow-500/10 px-3 py-1 rounded-2xl border border-yellow-500/30 flex items-center gap-2">
+                <span class="text-yellow-500 font-black text-sm" id="stat-coins">100</span>
                 <span>💰</span>
             </div>
-            <div class="bg-blue-500/10 px-4 py-1 rounded-full border border-blue-500/30 flex items-center gap-2">
-                <span class="text-blue-400 font-black" id="p-xp">1250</span>
+            <div class="bg-blue-500/10 px-3 py-1 rounded-2xl border border-blue-500/30 flex items-center gap-2">
+                <span class="text-blue-400 font-black text-sm" id="stat-stars">0</span>
                 <span>⭐</span>
             </div>
         </div>
     </div>
 
-    <div id="screen-login" class="screen active-screen justify-center items-center p-6">
-        <div class="w-full max-w-md text-center">
-            <h1 class="text-6xl font-900 mb-2 tracking-tighter">أساطير</h1>
-            <p class="text-indigo-400 font-bold mb-10">منصة الصف الأول ب التعليمية</p>
+    <div id="scr-login" class="app-screen active-screen justify-center items-center">
+        <div class="w-full max-w-sm p-10 text-center">
+            <h1 class="text-7xl font-900 mb-4 tracking-tighter shimmer text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-500">أساطير</h1>
+            <p class="text-white/40 font-bold mb-10 text-sm">أهلاً بك في عالم الأستاذة لبنى</p>
             
-            <input type="text" id="input-name" placeholder="ما اسمك يا بطل؟" class="w-full p-5 bg-white/5 border border-white/10 rounded-3xl text-center text-xl font-bold mb-6 outline-none focus:border-indigo-500 transition-all">
+            <input type="text" id="in-name" placeholder="ما اسمك اليوم؟" class="w-full p-5 bg-white/5 border-2 border-white/10 rounded-[2rem] text-center text-xl font-bold mb-8 outline-none focus:border-indigo-500 transition-all">
             
-            <div class="grid grid-cols-4 gap-4 mb-10">
-                <div class="avatar-opt p-4 bg-white/5 rounded-2xl border-2 border-transparent cursor-pointer text-3xl hover:border-indigo-500" onclick="setAvatar('🐱', this)">🐱</div>
-                <div class="avatar-opt p-4 bg-white/5 rounded-2xl border-2 border-transparent cursor-pointer text-3xl hover:border-indigo-500" onclick="setAvatar('🦊', this)">🦊</div>
-                <div class="avatar-opt p-4 bg-white/5 rounded-2xl border-2 border-transparent cursor-pointer text-3xl hover:border-indigo-500" onclick="setAvatar('🦖', this)">🦖</div>
-                <div class="avatar-opt p-4 bg-white/5 rounded-2xl border-2 border-transparent cursor-pointer text-3xl hover:border-indigo-500" onclick="setAvatar('🦄', this)">🦄</div>
-            </div>
-
-            <button onclick="login()" class="w-full bg-indigo-600 p-5 rounded-[2rem] font-black text-2xl shadow-2xl active:scale-95 transition-all">دخول المجرّة 🚀</button>
+            <button onclick="initPlayer()" class="w-full bg-indigo-600 hover:bg-indigo-500 p-6 rounded-[2.5rem] font-black text-2xl shadow-2xl active:scale-95 transition-all">دخول المجرّة 🚀</button>
         </div>
     </div>
 
-    <div id="screen-worlds" class="screen pt-[100px] p-6 space-y-6">
-        <h2 class="text-3xl font-900 text-center mb-4">اختر كوكبك 🪐</h2>
+    <div id="scr-worlds" class="app-screen pt-[100px] p-6 space-y-6">
+        <h2 class="text-4xl font-900 text-center mb-6">اختر وجهتك 🪐</h2>
         
-        <div class="world-card bg-[url('https://images.unsplash.com/photo-1579546678183-a9a1a4b88d66?auto=format&fit=crop&w=800')]" onclick="openWorld('arabic')">
-            <div class="world-overlay"></div>
-            <h3>📕 عالم اللغة</h3>
+        <div class="relative h-48 rounded-[3rem] overflow-hidden cursor-pointer border-4 border-transparent hover:border-pink-500 transition-all" onclick="goWorld('arabic')">
+            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800" class="absolute inset-0 w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-t from-pink-900/80 to-transparent"></div>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-6xl mb-2">📕</span>
+                <h3 class="text-3xl font-black">كوكب اللغة</h3>
+            </div>
         </div>
 
-        <div class="world-card bg-[url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800')]" onclick="openWorld('math')">
-            <div class="world-overlay"></div>
-            <h3>🔢 عالم الحساب</h3>
-        </div>
-
-        <div class="world-card opacity-50 grayscale">
-            <div class="world-overlay"></div>
-            <h3>🧪 مختبر العلوم (قريباً)</h3>
+        <div class="relative h-48 rounded-[3rem] overflow-hidden cursor-pointer border-4 border-transparent hover:border-blue-500 transition-all" onclick="goWorld('math')">
+            <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800" class="absolute inset-0 w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 to-transparent"></div>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-6xl mb-2">🔢</span>
+                <h3 class="text-3xl font-black">كوكب الحساب</h3>
+            </div>
         </div>
     </div>
 
-    <div id="screen-map" class="screen map-container">
+    <div id="scr-map" class="app-screen map-viewport">
         <div class="flex justify-between items-center mb-10">
-            <button onclick="changeScreen('screen-worlds')" class="bg-white/10 px-6 py-3 rounded-2xl font-black text-xs">⬅ العوالم</button>
-            <h2 id="current-world-name" class="text-2xl font-black">العالم</h2>
+            <button onclick="switchScr('scr-worlds')" class="bg-white/10 px-6 py-3 rounded-2xl font-black text-xs">⬅ العودة للعوالم</button>
+            <h2 id="world-title" class="text-3xl font-black text-indigo-400">الخريطة</h2>
         </div>
-        
-        <div class="path-line" id="levels-path">
+        <div class="path-line" id="levels-container"></div>
+    </div>
+
+    <div id="scr-shop" class="app-screen pt-[100px] p-6 overflow-y-auto">
+        <h2 class="text-4xl font-900 text-center mb-8 text-yellow-500 italic">المتجر الملكي 🛍️</h2>
+        <div class="grid grid-cols-2 gap-4" id="shop-items">
             </div>
     </div>
 
-    <div id="screen-game" class="screen">
-        <div class="p-6 flex justify-between items-center bg-white/5 backdrop-blur-md">
-            <button onclick="quitGame()" class="text-red-500 font-black">انسحاب ✕</button>
+    <div id="scr-leaders" class="app-screen pt-[100px] p-6 overflow-y-auto bg-slate-950">
+        <h2 class="text-4xl font-900 text-center mb-10 text-blue-400">قائمة الشرف 🏆</h2>
+        <div class="space-y-4" id="leaders-list">
+            </div>
+    </div>
+
+    <div id="scr-game" class="app-screen bg-black">
+        <div class="p-6 flex justify-between items-center bg-white/5 border-b border-white/10">
+            <button onclick="switchScr('scr-map')" class="text-red-500 font-black text-xl">✕</button>
             <div class="text-center">
-                <p id="game-task" class="text-xs opacity-50 uppercase">المهمة</p>
-                <p id="game-target" class="text-3xl font-black text-yellow-500">...</p>
+                <p class="text-[10px] opacity-40 uppercase font-black">المهمة الحالية</p>
+                <h2 id="task-desc" class="text-3xl font-black text-yellow-400">جد الكلمة</h2>
             </div>
-            <div class="font-black text-xl" id="game-timer">30s</div>
+            <div id="game-timer" class="w-12 h-12 rounded-full border-4 border-indigo-500 flex items-center justify-center font-black">20</div>
         </div>
-        <div id="game-play-area" class="relative flex-grow overflow-hidden">
-            </div>
+        <div id="game-canvas" class="flex-grow"></div>
     </div>
 
-    <div id="screen-shop" class="screen pt-[100px] p-6">
-        <h2 class="text-4xl font-900 mb-8 text-center text-pink-500">المتجر الملكي 🛍️</h2>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white/5 p-6 rounded-[2.5rem] border border-white/10 text-center">
-                <div class="text-5xl mb-4">🐲</div>
-                <p class="font-bold mb-2">تنين النار</p>
-                <button class="bg-yellow-500 text-black px-4 py-2 rounded-xl font-black text-xs">500 💰</button>
-            </div>
-            <div class="bg-white/5 p-6 rounded-[2.5rem] border border-white/10 text-center">
-                <div class="text-5xl mb-4">🌈</div>
-                <p class="font-bold mb-2">الخلفية الملونة</p>
-                <button class="bg-yellow-500 text-black px-4 py-2 rounded-xl font-black text-xs">200 💰</button>
-            </div>
-        </div>
+    <div id="navbar" class="bottom-bar hidden">
+        <div class="bar-btn bar-active" onclick="switchNav('scr-worlds', this)">🪐<span>العوالم</span></div>
+        <div class="bar-btn" onclick="switchNav('scr-shop', this)">🛍️<span>المتجر</span></div>
+        <div class="bar-btn" onclick="switchNav('scr-leaders', this)">🏆<span>الصدارة</span></div>
+        <div class="bar-btn" onclick="switchScr('scr-login')">⚙️<span>الإعدادات</span></div>
     </div>
-
-    <nav id="bottom-nav" class="bottom-nav hidden">
-        <div class="nav-item nav-active" onclick="changeScreen('screen-worlds', this)">🪐</div>
-        <div class="nav-item" onclick="changeScreen('screen-shop', this)">🛍️</div>
-        <div class="nav-item" onclick="alert('لوحة الصدارة قادمة!')">🏆</div>
-        <div class="nav-item" onclick="changeScreen('screen-login', this)">⚙️</div>
-    </nav>
 
     <script>
-        // قواعد البيانات والبيانات الحالية
-        let user = { name: '', avatar: '🐱', coins: 500, xp: 0 };
-        let currentWorld = '';
+        // --- قاعدة البيانات المؤقتة والبيانات ---
+        let player = {
+            name: '', avatar: '🐱', hat: '', coins: 200, stars: 0, 
+            ownedHats: [], unlockedLevels: 1
+        };
 
-        // تبديل الشاشات
-        function changeScreen(screenId, navEl = null) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-            document.getElementById(screenId).classList.add('active-screen');
-            
-            if(navEl) {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
-                navEl.classList.add('nav-active');
-            }
+        const shopHats = [
+            { id: 'h1', emoji: '👑', price: 100, name: 'تاج الملك' },
+            { id: 'h2', emoji: '🎓', price: 150, name: 'قبعة التخرج' },
+            { id: 'h3', emoji: '🤠', price: 80, name: 'راعي البقر' },
+            { id: 'h4', emoji: '🚀', price: 300, name: 'خوذة الفضاء' }
+        ];
+
+        let currentWorld = 'arabic';
+        let gameActive = false;
+
+        // --- وظائف التبديل ---
+        function switchScr(id) {
+            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active-screen'));
+            document.getElementById(id).classList.add('active-screen');
         }
 
-        // تسجيل الدخول
-        function login() {
-            const name = document.getElementById('input-name').value;
-            if(!name) return alert("من فضلك اكتب اسمك!");
-            user.name = name;
-            document.getElementById('p-display-name').innerText = name;
+        function switchNav(id, el) {
+            document.querySelectorAll('.bar-btn').forEach(b => b.classList.remove('bar-active'));
+            el.classList.add('bar-active');
+            switchScr(id);
+            if(id === 'scr-shop') renderShop();
+            if(id === 'scr-leaders') renderLeaders();
+        }
+
+        // --- نظام الدخول ---
+        function initPlayer() {
+            const name = document.getElementById('in-name').value;
+            if(!name) return alert("من فضلك يا بطل، اكتب اسمك أولاً!");
+            player.name = name;
+            document.getElementById('player-name-tag').innerText = name;
             document.getElementById('hud').classList.remove('hidden');
-            document.getElementById('bottom-nav').classList.remove('hidden');
-            changeScreen('screen-worlds');
+            document.getElementById('navbar').classList.remove('hidden');
+            updateStats();
+            switchScr('scr-worlds');
         }
 
-        function setAvatar(emoji, el) {
-            user.avatar = emoji;
-            document.getElementById('p-avatar').innerText = emoji;
-            document.querySelectorAll('.avatar-opt').forEach(opt => opt.style.borderColor = 'transparent');
-            el.style.borderColor = '#6366f1';
+        function updateStats() {
+            document.getElementById('stat-coins').innerText = player.coins;
+            document.getElementById('stat-stars').innerText = player.stars;
+            document.getElementById('player-hat').innerText = player.hat;
         }
 
-        // فتح العوالم وتوليد الخريطة
-        function openWorld(world) {
-            currentWorld = world;
-            document.getElementById('current-world-name').innerText = world === 'arabic' ? 'كوكب اللغة' : 'كوكب الحساب';
-            
-            const container = document.getElementById('levels-path');
+        // --- نظام العوالم والمراحل ---
+        function goWorld(w) {
+            currentWorld = w;
+            document.getElementById('world-title').innerText = w === 'arabic' ? 'كوكب اللغة' : 'كوكب الحساب';
+            renderMap();
+            switchScr('scr-map');
+        }
+
+        function renderMap() {
+            const container = document.getElementById('levels-container');
             container.innerHTML = '';
-            
-            for(let i=1; i<=20; i++) {
+            for(let i=1; i<=100; i++) {
                 const node = document.createElement('div');
-                node.className = `level-node ${i > 5 ? 'level-locked' : ''}`;
-                node.innerHTML = i;
-                
-                // تموضع متعرج احترافي
-                const xOffset = Math.sin(i * 0.8) * 80;
-                node.style.left = xOffset + 'px';
-                
-                if(i <= 5) node.onclick = () => startGame(i);
+                const isLocked = i > player.unlockedLevels;
+                node.className = `level-bubble ${isLocked ? 'locked' : ''}`;
+                node.style.top = (i * 120) + 'px';
+                node.style.left = `calc(50% + ${Math.sin(i) * 80}px - 42px)`;
+                node.innerHTML = `<span>${i}</span>`;
+                if(!isLocked) node.onclick = () => initGame(i);
                 container.appendChild(node);
             }
-            changeScreen('screen-map');
         }
 
-        // ميكانيكا اللعبة المدمجة
-        function startGame(level) {
-            changeScreen('screen-game');
-            const playArea = document.getElementById('game-play-area');
-            playArea.innerHTML = '';
-            
-            const target = currentWorld === 'arabic' ? 'حرف الألف (أ)' : 'العدد 10';
-            document.getElementById('game-target').innerText = target;
-            
-            // توليد أهداف عشوائية تسبح في الشاشة
-            for(let i=0; i<10; i++) {
-                const obj = document.createElement('div');
-                obj.className = 'game-obj text-4xl p-4 bg-white/10 rounded-full shadow-2xl';
-                obj.innerText = i === 0 ? (currentWorld === 'arabic' ? 'أ' : '10') : (currentWorld === 'arabic' ? 'ب' : '5');
-                obj.style.top = Math.random() * 80 + '%';
-                obj.style.left = Math.random() * 80 + '%';
-                
-                obj.onclick = () => {
-                    if(obj.innerText === 'أ' || obj.innerText === '10') {
-                        user.coins += 10;
-                        user.xp += 20;
-                        updateHUD();
-                        obj.style.transform = 'scale(0) rotate(360deg)';
-                        setTimeout(() => { alert("أحسنت يا بطل! +10 كوينز 💰"); quitGame(); }, 500);
-                    } else {
-                        obj.style.background = 'rgba(239, 68, 68, 0.2)';
+        // --- المتجر الملكي ---
+        function renderShop() {
+            const shop = document.getElementById('shop-items');
+            shop.innerHTML = shopHats.map(hat => `
+                <div class="item-card ${player.ownedHats.includes(hat.id) ? 'owned' : ''}">
+                    <div class="text-5xl mb-3">${hat.emoji}</div>
+                    <p class="font-bold text-sm mb-3">${hat.name}</p>
+                    ${player.ownedHats.includes(hat.id) 
+                        ? `<button onclick="wearHat('${hat.emoji}')" class="w-full bg-white text-black py-2 rounded-xl text-xs font-black">ارتداء</button>`
+                        : `<button onclick="buyHat('${hat.id}', ${hat.price})" class="w-full bg-yellow-500 text-black py-2 rounded-xl text-xs font-black">${hat.price} 💰</button>`
                     }
-                };
-                playArea.appendChild(obj);
-            }
+                </div>
+            `).join('');
         }
 
-        function quitGame() { changeScreen('screen-map'); }
+        window.buyHat = (id, price) => {
+            if(player.coins >= price) {
+                player.coins -= price;
+                player.ownedHats.push(id);
+                updateStats(); renderShop();
+                alert("مبروك! لقد اشتريت ملابس جديدة! 🎈");
+            } else alert("نقودك لا تكفي، العب أكثر لتجمع الكوينز! 💰");
+        }
 
-        function updateHUD() {
-            document.getElementById('p-coins').innerText = user.coins;
-            document.getElementById('p-xp').innerText = user.xp;
+        window.wearHat = (emoji) => {
+            player.hat = emoji;
+            updateStats();
+            alert("تبدو رائعاً بهذه الملابس! ✨");
+        }
+
+        // --- لوحة الصدارة ---
+        function renderLeaders() {
+            const list = document.getElementById('leaders-list');
+            const data = [
+                {name: "أحمد البطل", stars: 50, avatar: "🦁"},
+                {name: "سارة المبدعة", stars: 45, avatar: "🦋"},
+                {name: player.name, stars: player.stars, avatar: player.avatar}
+            ].sort((a,b) => b.stars - a.stars);
+
+            list.innerHTML = data.map((s, i) => `
+                <div class="flex items-center gap-4 p-5 bg-white/5 rounded-3xl border border-white/10">
+                    <span class="text-2xl font-black ${i===0?'text-yellow-500':''}">${i+1}</span>
+                    <span class="text-3xl">${s.avatar}</span>
+                    <span class="flex-grow font-black">${s.name}</span>
+                    <span class="text-blue-400 font-900">${s.stars} ⭐</span>
+                </div>
+            `).join('');
+        }
+
+        // --- محرك الألعاب (The Game Engine) ---
+        function initGame(lvl) {
+            switchScr('scr-game');
+            const canvas = document.getElementById('game-canvas');
+            const task = document.getElementById('task-desc');
+            canvas.innerHTML = '';
+            
+            let targetVal = "";
+            if(currentWorld === 'arabic') {
+                targetVal = "أ"; task.innerText = "أطعم القطة حرف ( أ )";
+            } else {
+                targetVal = "10"; task.innerText = "فجر الرقم ( 10 )";
+            }
+
+            let timeLeft = 20;
+            const timerEl = document.getElementById('game-timer');
+            timerEl.innerText = timeLeft;
+
+            const interval = setInterval(() => {
+                if(timeLeft <= 0) {
+                    clearInterval(interval);
+                    alert("انتهى الوقت! حصلت على 20 كوينز 💰");
+                    player.coins += 20;
+                    if(player.unlockedLevels == lvl) player.unlockedLevels++;
+                    player.stars += 1;
+                    updateStats();
+                    switchScr('scr-map'); renderMap();
+                }
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                spawnTarget(targetVal, canvas);
+            }, 1000);
+        }
+
+        function spawnTarget(val, canvas) {
+            const obj = document.createElement('div');
+            obj.className = 'game-target p-5 bg-white rounded-3xl text-3xl font-black text-indigo-600 shadow-xl';
+            obj.innerText = Math.random() > 0.3 ? val : (currentWorld === 'arabic' ? 'ب' : '5');
+            obj.style.top = Math.random() * 80 + '%';
+            obj.style.left = Math.random() * 80 + '%';
+            
+            obj.onclick = () => {
+                if(obj.innerText === val) {
+                    player.coins += 5;
+                    updateStats();
+                    obj.style.transform = 'scale(1.5)';
+                    obj.style.opacity = '0';
+                    setTimeout(() => obj.remove(), 200);
+                }
+            };
+            canvas.appendChild(obj);
+            setTimeout(() => obj.remove(), 2000);
         }
     </script>
 </body>
