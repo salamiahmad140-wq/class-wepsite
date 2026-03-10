@@ -2,51 +2,50 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة الأساطير</title>
+    <title>إدارة أبطال لبنى</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 p-10 text-white">
-    <div class="max-w-5xl mx-auto bg-slate-800 p-16 rounded-[100px] shadow-2xl border-4 border-slate-700">
-        <h1 class="text-7xl font-black text-cyan-400 mb-16 text-center">بوابة التحكم</h1>
-        <button onclick="Admin.add()" class="w-full py-10 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-[50px] font-black text-5xl mb-16 shadow-2xl">تسجيل بطل خارق +</button>
-        <div id="admin-list" class="grid grid-cols-1 gap-10"></div>
+<body class="bg-blue-50 p-10 font-sans text-right">
+    <div class="max-w-4xl mx-auto bg-white p-10 rounded-[50px] shadow-2xl border-t-8 border-blue-400">
+        <h1 class="text-5xl font-black text-blue-600 mb-8 text-center">بوابة الإدارة</h1>
+        <button onclick="Admin.add()" class="w-full py-5 bg-blue-500 text-white rounded-full font-black text-3xl mb-10 shadow-xl">تسجيل بطل جديد +</button>
+        <div id="admin-list" class="space-y-4"></div>
     </div>
 <script>
-    const DB_KEY = 'HEROES_1B_ULTRA';
+    const DB_KEY = 'LUBNA_ULTIMATE_KIDS_V1';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
             const db = this.get();
             document.getElementById('admin-list').innerHTML = db.map(s => `
-                <div class="p-12 bg-slate-700/50 border-2 border-slate-600 rounded-[70px] flex justify-between items-center">
+                <div class="p-6 border-4 border-blue-100 rounded-3xl flex justify-between items-center bg-white shadow-sm hover:shadow-lg transition">
                     <div>
-                        <div class="text-5xl font-black text-white">${s.name}</div>
-                        <div class="text-cyan-400 font-bold text-3xl mt-4 tracking-widest">كود: ${s.code}</div>
+                        <div class="text-3xl font-black">${s.name}</div>
+                        <div class="text-blue-500 font-bold text-xl">كود الدخول: ${s.code}</div>
                     </div>
-                    <div class="flex gap-8">
-                        <button onclick="Admin.gift('${s.code}')" class="bg-yellow-400 text-black px-12 py-5 rounded-full font-black text-3xl">هدية 💰</button>
-                        <button onclick="Admin.del('${s.code}')" class="text-red-500 font-black text-3xl">حذف</button>
+                    <div class="flex gap-4">
+                        <button onclick="Admin.gift('${s.code}')" class="bg-amber-400 text-black px-6 py-2 rounded-xl font-bold">هدية 💰</button>
+                        <button onclick="Admin.del('${s.code}')" class="bg-red-50 text-red-600 px-6 py-2 rounded-xl">حذف 🗑️</button>
                     </div>
                 </div>
             `).join('');
         },
         add() {
-            const name = prompt("اسم البطل الخارق:");
+            const name = prompt("اسم الطالب:");
             if(name) {
                 const db = this.get();
-                const code = "ULTRA-" + Math.floor(1000 + Math.random()*9000);
-                db.push({name, code, stars:0, coins:1000, inventory:[], tag:'', avatar:'👤', done:{math:[], arabic:[]}});
+                const code = "LBN-" + Math.floor(1000 + Math.random()*9000);
+                db.push({name, code, stars:0, coins:100, inventory:[], tag:'', avatar:'👤', progress:{math:0, arabic:0}});
                 localStorage.setItem(DB_KEY, JSON.stringify(db));
                 this.render();
-                alert("تم! الكود هو: " + code);
             }
         },
         gift(code) {
             const db = this.get(); const idx = db.findIndex(s => s.code === code);
-            db[idx].coins += 5000; localStorage.setItem(DB_KEY, JSON.stringify(db));
+            db[idx].coins += 500; localStorage.setItem(DB_KEY, JSON.stringify(db));
             this.render();
         },
-        del(code) { if(confirm("حذف الأسطورة؟")) { 
+        del(code) { if(confirm("حذف الطالب؟")) { 
             const db = this.get().filter(s => s.code !== code);
             localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
         }}
