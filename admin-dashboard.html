@@ -2,192 +2,88 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة الإدارة الكاملة | أ. لبنى</title>
+    <title>Master Control | الأستاذة لبنى</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Cairo', sans-serif; background: #020617; color: #f8fafc; margin: 0; padding-bottom: 80px; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        input, textarea, select { background: rgba(255,255,255,0.07) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; padding: 14px !important; border-radius: 12px !important; width: 100%; outline: none; }
-        input:focus { border-color: #6366f1 !important; box-shadow: 0 0 10px rgba(99,102,241,0.2); }
-        .shimmer { background: linear-gradient(90deg, #818cf8, #f472b6, #fbbf24, #818cf8); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: s 4s linear infinite; }
-        @keyframes s { to { background-position: 200% center; } }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-slate-900 text-white font-['Cairo'] p-8">
 
-    <header class="p-6 glass sticky top-0 z-50 border-b border-white/10 flex justify-between items-center">
-        <div>
-            <h1 class="text-xl font-900 shimmer font-black">لوحة التحكم الكاملة</h1>
-            <p class="text-[10px] opacity-50 font-bold uppercase">المعلمة لبنى - الصف الأول ب</p>
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+            <h1 class="text-3xl font-black text-yellow-400">لوحة تحكم الأساطير 👩‍🏫</h1>
+            <button onclick="generateNewAccount()" class="bg-green-600 px-6 py-3 rounded-2xl font-black hover:bg-green-500">+ إضافة طالب جديد</button>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-white/5 p-6 rounded-3xl border border-white/10 text-center">
+                <p class="opacity-50 text-xs">إجمالي الطلاب</p>
+                <h3 class="text-4xl font-black" id="total-students">0</h3>
+            </div>
+            <div class="bg-white/5 p-6 rounded-3xl border border-white/10 text-center">
+                <p class="opacity-50 text-xs">النجوم الموزعة</p>
+                <h3 class="text-4xl font-black text-blue-400">1,250</h3>
+            </div>
+            <div class="bg-white/5 p-6 rounded-3xl border border-white/10 text-center">
+                <p class="opacity-50 text-xs">متوسط النقاط</p>
+                <h3 class="text-4xl font-black text-yellow-500">85%</h3>
+            </div>
         </div>
-        <button onclick="location.reload()" class="w-10 h-10 glass rounded-full flex items-center justify-center">🔄</button>
-    </header>
 
-    <main class="p-4 max-w-2xl mx-auto">
-        
-        <div class="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
-            <button onclick="showTab('addPostTab')" class="tab-btn bg-indigo-600 px-5 py-3 rounded-xl font-bold text-xs whitespace-nowrap">📢 نشر محتوى</button>
-            <button onclick="showTab('managePostsTab')" class="tab-btn bg-white/5 px-5 py-3 rounded-xl font-bold text-xs whitespace-nowrap">⚙️ إدارة المحتوى</button>
-            <button onclick="showTab('studentsTab')" class="tab-btn bg-white/5 px-5 py-3 rounded-xl font-bold text-xs whitespace-nowrap">🎓 الطلاب والنجوم</button>
-            <button onclick="showTab('newStudentTab')" class="tab-btn bg-white/5 px-5 py-3 rounded-xl font-bold text-xs whitespace-nowrap">👤 إضافة طالب</button>
+        <div class="bg-white/5 rounded-[2.5rem] border border-white/10 overflow-hidden">
+            <table class="w-full text-right">
+                <thead class="bg-white/5">
+                    <tr>
+                        <th class="p-4">اسم الطالب</th>
+                        <th class="p-4">كود الدخول</th>
+                        <th class="p-4">النجوم ⭐</th>
+                        <th class="p-4">التحكم</th>
+                    </tr>
+                </thead>
+                <tbody id="student-table-body">
+                    </tbody>
+            </table>
         </div>
+    </div>
 
-        <section id="addPostTab" class="tab-content active space-y-4">
-            <div class="glass p-6 rounded-[2rem] space-y-4">
-                <h3 class="font-black">إنشاء منشور جديد</h3>
-                <select id="pType">
-                    <option value="news">إعلان (عنوان فقط)</option>
-                    <option value="hw">وظيفة (نص تفصيلي)</option>
-                    <option value="event">فعالية (صورة)</option>
-                </select>
-                <input type="text" id="pTitle" placeholder="العنوان أو نص الإعلان">
-                <textarea id="pDesc" rows="3" placeholder="اكتبي تفاصيل الوظيفة هنا..." class="hidden"></textarea>
-                <input type="text" id="pImg" placeholder="رابط الصورة (URL)" class="hidden">
-                <button onclick="handleCreatePost()" class="w-full bg-indigo-600 py-4 rounded-xl font-black text-lg">نشر الآن ✅</button>
-            </div>
-        </section>
+    <script>
+        const students = [
+            { id: 1, name: "أحمد محمد", code: "LUB-552", stars: 12 },
+            { id: 2, name: "سارة خالد", code: "LUB-901", stars: 25 }
+        ];
 
-        <section id="managePostsTab" class="tab-content space-y-3">
-            <h3 class="font-black px-2">المنشورات الحالية (إدارة)</h3>
-            <div id="pList" class="space-y-3">
-                </div>
-        </section>
-
-        <section id="studentsTab" class="tab-content space-y-4">
-            <div class="glass p-6 rounded-[2rem] space-y-4">
-                <h3 class="font-black">التحكم بنجوم وعلامات الطلاب</h3>
-                <select id="sListSelect"></select>
-                <div class="flex gap-2">
-                    <button onclick="updateStudentStar(true)" class="flex-1 bg-yellow-500 text-black font-black py-4 rounded-xl">نجم 💎</button>
-                    <button onclick="updateStudentStar(false)" class="flex-1 bg-white/10 font-bold py-4 rounded-xl">إزالة</button>
-                </div>
-                <hr class="opacity-10 my-4">
-                <input type="text" id="subjName" placeholder="الموضوع">
-                <input type="number" id="subjScore" placeholder="العلامة">
-                <button onclick="saveStudentScore()" class="w-full bg-green-600 py-4 rounded-xl font-black">حفظ العلامة 📊</button>
-            </div>
-        </section>
-
-        <section id="newStudentTab" class="tab-content space-y-4">
-            <div class="glass p-6 rounded-[2rem] space-y-4">
-                <h3 class="font-black">تسجيل طالب جديد في الصف</h3>
-                <input type="text" id="newSName" placeholder="الاسم الكامل للطالب">
-                <input type="text" id="newSUser" placeholder="اسم المستخدم (للدخول)">
-                <input type="text" id="newSPass" placeholder="كلمة السر">
-                <button onclick="handleCreateStudent()" class="w-full bg-purple-600 py-4 rounded-xl font-black text-lg">إضافة الطالب للصف 👤</button>
-            </div>
-        </section>
-
-    </main>
-
-    <script type="module">
-        import { supabase } from './supabaseClient.js';
-
-        // تبديل التبويبات وتحميل البيانات
-        window.showTab = (id) => {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.replace('bg-indigo-600', 'bg-white/5'));
-            event.target.classList.replace('bg-white/5', 'bg-indigo-600');
-            
-            if(id === 'managePostsTab') loadPosts();
-            if(id === 'studentsTab') loadStudentsList();
-        };
-
-        // التعامل مع نوع المنشور
-        document.getElementById('pType').onchange = (e) => {
-            const v = e.target.value;
-            document.getElementById('pDesc').classList.toggle('hidden', v !== 'hw');
-            document.getElementById('pImg').classList.toggle('hidden', v !== 'event');
-        };
-
-        // --- وظائف البيانات ---
-
-        window.handleCreatePost = async () => {
-            const type = document.getElementById('pType').value;
-            const title = document.getElementById('pTitle').value;
-            const desc = document.getElementById('pDesc').value;
-            const img = document.getElementById('pImg').value;
-
-            let data = { title };
-            if(type === 'hw') data = { description: desc, title: "وظيفة جديدة" };
-            if(type === 'event') data = { title, image_url: img };
-
-            const { error } = await supabase.from('assignments').insert([data]);
-            if(!error) { alert("تم النشر بنجاح!"); location.reload(); }
-        };
-
-        async function loadPosts() {
-            const { data } = await supabase.from('assignments').select('*').order('created_at', {ascending: false});
-            const container = document.getElementById('pList');
-            container.innerHTML = data.map(p => `
-                <div class="glass p-4 rounded-xl flex justify-between items-center">
-                    <div>
-                        <p class="text-sm font-bold">${p.title || 'بدون عنوان'}</p>
-                        <span class="text-[10px] opacity-40">${p.image_url ? 'فعالية' : p.description ? 'وظيفة' : 'إعلان'}</span>
-                    </div>
-                    <button onclick="deleteContent('${p.id}')" class="text-red-500 font-bold bg-red-500/10 px-3 py-1 rounded-lg text-xs">حذف</button>
-                </div>
+        function renderTable() {
+            const body = document.getElementById('student-table-body');
+            document.getElementById('total-students').innerText = students.length;
+            body.innerHTML = students.map(s => `
+                <tr class="border-b border-white/5">
+                    <td class="p-4 font-bold">${s.name}</td>
+                    <td class="p-4"><span class="bg-white/10 px-3 py-1 rounded-lg text-yellow-400 font-mono">${s.code}</span></td>
+                    <td class="p-4">${s.stars}</td>
+                    <td class="p-4 flex gap-2">
+                        <button onclick="addStar(${s.id})" class="bg-blue-600 p-2 rounded-lg text-xs">⭐ +1</button>
+                        <button onclick="deleteStudent(${s.id})" class="bg-red-500/20 text-red-500 p-2 rounded-lg text-xs">حذف</button>
+                    </td>
+                </tr>
             `).join('');
         }
 
-        window.deleteContent = async (id) => {
-            if(confirm("حذف هذا المحتوى؟")) {
-                await supabase.from('assignments').delete().eq('id', id);
-                loadPosts();
+        function generateNewAccount() {
+            const name = prompt("أدخلي اسم الطالب الجديد:");
+            if(name) {
+                const newCode = "LUB-" + Math.floor(100 + Math.random() * 900);
+                students.push({ id: Date.now(), name: name, code: newCode, stars: 0 });
+                renderTable();
+                alert(`تم إنشاء الحساب! كود الطالب هو: ${newCode}`);
             }
-        };
-
-        async function loadStudentsList() {
-            const { data } = await supabase.from('students').select('*').order('full_name');
-            document.getElementById('sListSelect').innerHTML = data.map(s => `<option value="${s.id}">${s.full_name}</option>`).join('');
         }
 
-        window.updateStudentStar = async (status) => {
-            const id = document.getElementById('sListSelect').value;
-            await supabase.from('students').update({ is_star: status }).eq('id', id);
-            alert("تم التحديث ✅");
-        };
+        function addStar(id) {
+            const s = students.find(x => x.id === id);
+            if(s) s.stars++;
+            renderTable();
+        }
 
-        window.saveStudentScore = async () => {
-            const sid = document.getElementById('sListSelect').value;
-            const sub = document.getElementById('subjName').value;
-            const scr = document.getElementById('subjScore').value;
-            await supabase.from('exams').insert([{ student_id: sid, subject: sub, score: scr }]);
-            alert("تم حفظ العلامة ✅");
-        };
-
-        window.handleCreateStudent = async () => {
-            const name = document.getElementById('newSName').value;
-            const user = document.getElementById('newSUser').value;
-            const pass = document.getElementById('newSPass').value;
-
-            if(!name || !user || !pass) return alert("يرجى ملء كافة الحقول");
-
-            const { error } = await supabase.from('students').insert([{
-                full_name: name,
-                username: user,
-                password: pass,
-                is_star: false
-            }]);
-
-            if(!error) {
-                alert(`تمت إضافة البطل ${name} بنجاح! 🎓`);
-                document.getElementById('newSName').value = '';
-                document.getElementById('newSUser').value = '';
-                document.getElementById('newSPass').value = '';
-            } else {
-                alert("حدث خطأ، تأكدي أن اسم المستخدم غير مكرر");
-            }
-        };
-
-        // تحميل أولي للطلاب
-        loadStudentsList();
+        renderTable();
     </script>
 </body>
 </html>
