@@ -3,185 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أساطير الأول ب | الإصدار الأسطوري</title>
+    <title>مجرّة الأساطير التعليمية | المنهج العربي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p-blue: #0ea5e9; --p-green: #22c55e; --p-gold: #f59e0b; }
-        body { font-family: 'Cairo', sans-serif; margin: 0; background: #020617; overflow: hidden; touch-action: none; }
+        :root { --main-bg: #030712; --accent: #6366f1; --gold: #f59e0b; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--main-bg); color: white; overflow: hidden; }
 
-        /* حاوية العالم الضخم - قابلة للسحب والتمرير */
-        #worldContainer {
-            width: 100vw; height: 100vh; overflow: auto;
-            background: url('https://www.transparenttextures.com/patterns/clean-gray-paper.png'), #0ea5e9;
-            cursor: grab; scroll-behavior: smooth;
+        /* الأنظمة الأساسية */
+        .app-screen { position: fixed; inset: 0; display: none; flex-direction: column; overflow: hidden; z-index: 10; }
+        .screen-active { display: flex; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* الخريطة الكونبة المتسعة */
+        #mapCanvas {
+            width: 3000px; height: 3000px; 
+            background: url('https://www.transparenttextures.com/patterns/dark-matter.png'), 
+                        radial-gradient(circle at center, #1e1b4b 0%, #030712 100%);
+            position: relative; cursor: grab; transition: transform 0.1s;
         }
 
-        .mega-map {
-            width: 2000px; height: 2000px; position: relative;
-            background: radial-gradient(circle at 50% 50%, #22c55e 0%, #166534 30%, #0369a1 60%, #020617 100%);
+        /* العالم (World) */
+        .world-sector {
+            position: absolute; padding: 40px; border-radius: 100px;
+            background: rgba(255, 255, 255, 0.03); border: 2px dashed rgba(255,255,255,0.1);
         }
 
-        /* تصميم الطرق (Paths) */
-        .road {
-            position: absolute; border: 12px dashed rgba(255,255,255,0.3);
-            border-radius: 100px; z-index: 1;
-        }
-
-        /* المراحل (الأيقونات الضخمة) */
-        .stage {
-            position: absolute; width: 150px; height: 150px;
-            background: white; border-radius: 40px; z-index: 10;
+        /* المرحلة (Node) */
+        .node {
+            width: 110px; height: 110px; border-radius: 35px; background: white;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 15px 0 #cbd5e1, 0 20px 40px rgba(0,0,0,0.3);
-            transition: 0.2s; cursor: pointer; border: 6px solid #f8fafc;
+            box-shadow: 0 10px 0 #d1d5db, 0 20px 40px rgba(0,0,0,0.5);
+            position: absolute; cursor: pointer; transition: 0.3s; z-index: 20;
         }
-        .stage:active { transform: translateY(10px); box-shadow: 0 5px 0 #cbd5e1; }
-        .stage.locked { filter: grayscale(1); opacity: 0.6; cursor: not-allowed; }
-        .stage.locked::before { content: '🔒'; position: absolute; top: -20px; font-size: 30px; }
+        .node:active { transform: translateY(8px) scale(0.95); box-shadow: 0 2px 0 #d1d5db; }
+        .node.locked { filter: grayscale(1); opacity: 0.4; pointer-events: none; }
+        .node-label { position: absolute; top: 120%; white-space: nowrap; font-weight: 900; font-size: 13px; color: white; text-shadow: 0 2px 10px black; }
 
-        .stage-icon { font-size: 60px; margin-bottom: 5px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); }
-        .stage-title { font-weight: 900; color: #1e293b; font-size: 14px; text-align: center; line-height: 1; }
-
-        /* واجهة اللعبة (Game Engine UI) */
-        #gameInterface {
-            position: fixed; inset: 0; z-index: 9999; background: #000;
-            display: none; flex-direction: column;
-        }
-        canvas { background: #111; width: 100%; height: 100%; }
-
-        .shimmer { animation: shimmer 2s infinite linear; background: linear-gradient(90deg, #f59e0b, #fff, #f59e0b); background-size: 200% auto; -webkit-background-clip: text; color: transparent; }
-        @keyframes shimmer { to { background-position: 200% center; } }
+        /* لوحة الصدارة والقوائم */
+        .glass-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* تصميم الأجهزة المختلفة */
+        @media (max-width: 768px) { .node { width: 90px; height: 90px; } }
     </style>
 </head>
 <body>
 
-    <div id="worldContainer">
-        <div class="mega-map" id="mapArea">
+    <div id="loginScreen" class="app-screen screen-active justify-center items-center bg-[url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&w=1920')] bg-cover">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative z-20 glass-panel p-10 rounded-[3.5rem] w-[90%] max-w-md text-center border-t-4 border-indigo-500">
+            <h1 class="text-5xl font-black mb-2 tracking-tighter shimmer">الأساطير</h1>
+            <p class="text-indigo-400 font-bold mb-8 text-sm">مجرّة الصف الأول ب التعليمية</p>
+            <input type="text" id="uName" placeholder="اسم المستخدم" class="w-full p-4 mb-3 rounded-2xl bg-white/5 border border-white/10 text-center text-white font-bold">
+            <input type="password" id="uPass" placeholder="كلمة السر" class="w-full p-4 mb-8 rounded-2xl bg-white/5 border border-white/10 text-center text-white font-bold">
+            <button onclick="doLogin()" class="w-full bg-indigo-600 hover:bg-indigo-500 py-5 rounded-2xl font-black text-xl shadow-[0_10px_30px_rgba(79,70,229,0.4)] transition-all">دخول الأبطال 🚀</button>
+            <button onclick="openAdmin()" class="mt-6 text-[10px] opacity-20 uppercase tracking-widest">Master Control Panel</button>
+        </div>
+    </div>
+
+    <div id="mainMapScreen" class="app-screen">
+        <header class="fixed top-0 inset-x-0 p-4 z-[100] flex justify-between items-start pointer-events-none">
+            <div class="pointer-events-auto glass-panel p-3 rounded-[2rem] flex items-center gap-4 shadow-2xl">
+                <div class="w-14 h-14 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-2xl border-2 border-white/20 flex items-center justify-center text-3xl">👤</div>
+                <div>
+                    <p id="p_name" class="font-black text-white text-sm">لبنى</p>
+                    <div class="flex items-center gap-2">
+                        <div class="h-2 w-24 bg-white/10 rounded-full overflow-hidden"><div id="p_xp_bar" class="h-full bg-indigo-500" style="width: 40%"></div></div>
+                        <span class="text-[10px] font-black text-indigo-300">LVL 5</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-2 pointer-events-auto">
+                <button onclick="showLeaderboard()" class="w-14 h-14 glass-panel rounded-2xl flex items-center justify-center text-2xl">🏆</button>
+                <button onclick="location.reload()" class="w-14 h-14 glass-panel rounded-2xl flex items-center justify-center text-2xl">⚙️</button>
+            </div>
+        </header>
+
+        <div id="worldContainer" class="w-full h-full overflow-auto">
+            <div id="mapCanvas">
+                
+                <div class="world-sector" style="top: 200px; left: 300px; width: 800px; height: 600px;">
+                    <h2 class="text-6xl font-black opacity-10 absolute -top-10">لغتي العربية</h2>
+                    <div class="node bg-pink-500" style="top: 100px; left: 100px;" onclick="playGame('arabic_1')">
+                        <span class="text-5xl">🍎</span>
+                        <div class="node-label text-pink-400">قطف الحروف</div>
+                    </div>
+                    <div class="node bg-indigo-500" style="top: 300px; left: 400px;" onclick="playGame('arabic_2')">
+                        <span class="text-5xl">🐛</span>
+                        <div class="node-label text-indigo-400">دودة المدود</div>
+                    </div>
+                </div>
+
+                <div class="world-sector" style="top: 1000px; left: 1200px; width: 800px; height: 600px;">
+                    <h2 class="text-6xl font-black opacity-10 absolute -top-10">وادي الحساب</h2>
+                    <div class="node bg-blue-500" style="top: 150px; left: 200px;" onclick="playGame('math_1')">
+                        <span class="text-5xl">🚀</span>
+                        <div class="node-label text-blue-400">جمع الصواريخ</div>
+                    </div>
+                    <div class="node bg-orange-500 locked" style="top: 400px; left: 500px;">
+                        <span class="text-5xl">👾</span>
+                        <div class="node-label text-orange-400">وحش الأرقام</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboardOverlay" class="app-screen bg-black/90 backdrop-blur-xl z-[1000] p-6">
+        <div class="max-w-md mx-auto w-full pt-10">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-4xl font-black text-yellow-500 italic">أبطال المجرّة 🏆</h2>
+                <button onclick="hideLeaderboard()" class="text-2xl">✕</button>
+            </div>
+            <div id="rankings" class="space-y-4">
+                </div>
+        </div>
+    </div>
+
+    <div id="adminScreen" class="app-screen bg-slate-950 z-[2000] p-8 overflow-y-auto">
+        <div class="max-w-5xl mx-auto">
+            <header class="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+                <h1 class="text-3xl font-black text-indigo-400">نظام إدارة الأساطير v17</h1>
+                <button onclick="showScreen('loginScreen')" class="bg-red-500/20 text-red-400 px-6 py-2 rounded-xl">خروج</button>
+            </header>
             
-            <div class="absolute top-[200px] left-[300px] text-white font-black text-4xl opacity-20 uppercase tracking-widest">Forest of Letters</div>
-            <div class="stage bg-green-500" style="top: 300px; left: 400px;" onclick="initGame('letters_catch')">
-                <div class="stage-icon">🍎</div>
-                <div class="stage-title">صيد الحركات</div>
-            </div>
-
-            <div class="road" style="width: 300px; height: 20px; top: 370px; left: 550px; transform: rotate(10deg);"></div>
-
-            <div class="stage bg-emerald-600" style="top: 400px; left: 850px;" onclick="initGame('word_build')">
-                <div class="stage-icon">🐛</div>
-                <div class="stage-title">دودة الكلمات</div>
-            </div>
-
-            <div class="absolute top-[800px] left-[1200px] text-white font-black text-4xl opacity-20 uppercase tracking-widest">Number Galaxy</div>
-            <div class="stage bg-blue-500" style="top: 900px; left: 1300px;" onclick="initGame('math_rocket')">
-                <div class="stage-icon">🚀</div>
-                <div class="stage-title">صاروخ الجمع</div>
-            </div>
-
-            <div class="road" style="width: 400px; height: 20px; top: 1000px; left: 1450px; transform: rotate(-20deg);"></div>
-
-            <div class="stage bg-indigo-600 locked" style="top: 850px; left: 1800px;">
-                <div class="stage-icon">👾</div>
-                <div class="stage-title">وحش الطرح</div>
-            </div>
-
-        </div>
-    </div>
-
-    <div id="gameInterface">
-        <div class="p-4 bg-slate-900 flex justify-between items-center border-b-4 border-blue-500">
-            <button onclick="closeGame()" class="bg-red-500 text-white px-8 py-2 rounded-2xl font-black shadow-lg">خروج ✕</button>
-            <div id="scoreBoard" class="text-2xl font-black text-yellow-400">XP: 0</div>
-            <div class="text-white font-bold" id="gameInfo">جاري التحميل...</div>
-        </div>
-        <div id="gameZone" class="relative flex-grow bg-blue-400 overflow-hidden flex items-center justify-center">
-            <div id="targetTask" class="absolute top-10 glass p-6 rounded-3xl text-center bg-white/20 backdrop-blur-md">
-                <h2 class="text-white text-5xl font-black" id="taskText">...</h2>
-            </div>
-            <div id="entities" class="w-full h-full relative"></div>
-        </div>
-    </div>
-
-    <div class="fixed top-6 left-6 right-6 z-[5000] flex justify-between">
-        <div class="bg-white/10 backdrop-blur-md p-4 rounded-[2rem] border-2 border-white/20 flex items-center gap-4">
-            <div class="w-14 h-14 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-xl border-2 border-white">👤</div>
-            <div>
-                <p class="font-black text-white leading-none mb-1">المعلمة لبنى</p>
-                <div class="h-3 w-32 bg-black/30 rounded-full overflow-hidden">
-                    <div class="h-full bg-green-400 w-[60%] shadow-[0_0_10px_#4ade80]"></div>
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 glass-panel p-8 rounded-[2.5rem]">
+                    <h2 class="text-xl font-black mb-6 flex items-center gap-2">👥 إدارة الطلاب والنتائج</h2>
+                    <div id="admin_student_list" class="space-y-4"></div>
+                </div>
+                <div class="glass-panel p-8 rounded-[2.5rem]">
+                    <h2 class="text-xl font-black mb-6">⚙️ إعدادات العوالم</h2>
+                    <button onclick="unlockWorld('all')" class="w-full bg-green-600 py-4 rounded-2xl font-black mb-4">فتح جميع المراحل 🔓</button>
+                    <div class="p-4 bg-white/5 rounded-2xl">
+                        <p class="text-xs opacity-50 mb-2">تغيير خلفية المجرّة</p>
+                        <select class="w-full bg-transparent border border-white/10 p-2 rounded-lg">
+                            <option>الفضاء الأزرق</option>
+                            <option>الغابة الخضراء</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="flex gap-3">
-            <button class="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl border-2 border-white/20">🏆</button>
-            <button class="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl border-2 border-white/20">⚙️</button>
-        </div>
     </div>
 
-    <script>
-        let xp = 0;
-        const gameZone = document.getElementById('entities');
+    <script type="module">
+        import { supabase } from './supabaseClient.js';
 
-        function initGame(type) {
-            document.getElementById('gameInterface').style.display = 'flex';
-            if(type === 'letters_catch') startLettersGame();
-            if(type === 'math_rocket') startMathGame();
+        // نظام السحب للمجرّة (Drag to Scroll)
+        const container = document.getElementById('worldContainer');
+        let isDown = false; let startX, startY, scrollLeft, scrollTop;
+
+        container.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - container.offsetLeft; startY = e.pageY - container.offsetTop; scrollLeft = container.scrollLeft; scrollTop = container.scrollTop; container.style.cursor = 'grabbing'; });
+        container.addEventListener('mouseleave', () => { isDown = false; container.style.cursor = 'grab'; });
+        container.addEventListener('mouseup', () => { isDown = false; container.style.cursor = 'grab'; });
+        container.addEventListener('mousemove', (e) => { if (!isDown) return; e.preventDefault(); const x = e.pageX - container.offsetLeft; const y = e.pageY - container.offsetTop; const walkX = (x - startX) * 2; const walkY = (y - startY) * 2; container.scrollLeft = scrollLeft - walkX; container.scrollTop = scrollTop - walkY; });
+
+        // الدخول
+        window.doLogin = async () => {
+            const u = document.getElementById('uName').value;
+            const p = document.getElementById('uPass').value;
+            const { data } = await supabase.from('students').select('*').eq('username', u).eq('password', p).maybeSingle();
+            
+            if(data) {
+                localStorage.setItem('legend_user', JSON.stringify(data));
+                document.getElementById('p_name').innerText = data.full_name;
+                showScreen('mainMapScreen');
+            } else alert("البطل غير موجود، تأكد من البيانات!");
+        };
+
+        window.openAdmin = () => {
+            const p = prompt("كلمة سر المعلمة:");
+            if(p === "lubna2024") { showScreen('adminScreen'); loadAdminData(); }
+        };
+
+        async function loadAdminData() {
+            const { data } = await supabase.from('students').select('*').order('full_name');
+            document.getElementById('admin_student_list').innerHTML = data.map(s => `
+                <div class="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
+                    <span class="font-bold">${s.full_name}</span>
+                    <div class="flex gap-2">
+                        <input type="number" value="${s.is_star ? 1000 : 0}" class="w-20 bg-black p-1 text-center rounded-lg text-xs m-0">
+                        <button class="bg-indigo-600 px-3 py-1 rounded-lg text-[10px]">تحديث XP</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function startLettersGame() {
-            document.getElementById('gameInfo').innerText = "صيد حركات الفتحة";
-            document.getElementById('taskText').innerText = "بَ";
-            spawnObjects('letter');
+        window.showLeaderboard = async () => {
+            const { data } = await supabase.from('students').select('*').order('is_star', {ascending: false});
+            document.getElementById('rankings').innerHTML = data.map((s, i) => `
+                <div class="flex items-center gap-4 p-5 glass-panel rounded-3xl ${i === 0 ? 'border-2 border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.3)]' : ''}">
+                    <span class="text-2xl font-black ${i===0?'text-yellow-500':'opacity-30'}">#${i+1}</span>
+                    <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-xl">👤</div>
+                    <div class="flex-grow"><p class="font-black text-sm">${s.full_name}</p></div>
+                    <div class="text-right"><p class="text-yellow-500 font-black text-xs">2450 XP</p></div>
+                </div>
+            `).join('');
+            showScreen('leaderboardOverlay');
+        };
+
+        function showScreen(id) {
+            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('screen-active'));
+            document.getElementById(id).classList.add('screen-active');
         }
 
-        function spawnObjects(type) {
-            gameZone.innerHTML = '';
-            const items = type === 'letter' ? ["بَ", "بُ", "بِ", "ب"] : ["10+5", "8+2", "3+1"];
-            const correct = type === 'letter' ? "بَ" : "10+5";
-
-            for(let i=0; i<15; i++) {
-                const el = document.createElement('div');
-                el.className = 'absolute cursor-pointer transition-all duration-500';
-                const val = items[Math.floor(Math.random() * items.length)];
-                el.innerHTML = `<div class="p-6 bg-white rounded-3xl shadow-2xl text-3xl font-black text-blue-600 border-4 border-blue-200">${val}</div>`;
-                
-                el.style.left = Math.random() * 80 + 10 + '%';
-                el.style.top = Math.random() * 80 + 10 + '%';
-
-                el.onclick = () => {
-                    if(val === correct) {
-                        xp += 50;
-                        el.style.transform = 'scale(0) rotate(360deg)';
-                        document.getElementById('scoreBoard').innerText = `XP: ${xp}`;
-                        if(xp % 200 === 0) alert("بطل أسطوري! استمر في التقدم 🌟");
-                    } else {
-                        el.style.background = 'red';
-                        setTimeout(() => el.style.background = 'white', 200);
-                    }
-                };
-                gameZone.appendChild(el);
-            }
-        }
-
-        function startMathGame() {
-            document.getElementById('gameInfo').innerText = "صاروخ الجمع الذكي";
-            document.getElementById('taskText').innerText = "15";
-            spawnObjects('math');
-        }
-
-        function closeGame() {
-            document.getElementById('gameInterface').style.display = 'none';
-            gameZone.innerHTML = '';
-        }
-
-        // سحب الخريطة بالماوس/اللمس
-        let isDown = false; let startX; let startY; let scrollLeft; let scrollTop;
-        const slider = document.getElementById('worldContainer');
-
-        slider.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - slider.offsetLeft; startY = e.pageY - slider.offsetTop; scrollLeft = slider.scrollLeft; scrollTop = slider.scrollTop; });
-        slider.addEventListener('mouseleave', () => isDown = false);
-        slider.addEventListener('mouseup', () => isDown = false);
-        slider.addEventListener('mousemove', (e) => { if(!isDown) return; e.preventDefault(); const x = e.pageX - slider.offsetLeft; const y = e.pageY - slider.offsetTop; const walkX = (x - startX) * 2; const walkY = (y - startY) * 2; slider.scrollLeft = scrollLeft - walkX; slider.scrollTop = scrollTop - walkY; });
+        window.hideLeaderboard = () => showScreen('mainMapScreen');
+        window.playGame = (id) => alert("فتح محرك الألعاب المدمج للمرحلة: " + id);
     </script>
 </body>
 </html>
