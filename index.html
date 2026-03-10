@@ -3,296 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أساطير لبنى - المستوى العالمي</title>
+    <title>LUBNA LEGENDS | الأكاديمية العالمية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Fredoka:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #6366f1; --accent: #f59e0b; --bg: #0f172a; }
-        * { user-select: none; font-family: 'Cairo', 'Fredoka', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: white; }
+        :root { --p-indigo: #6366f1; --p-pink: #ec4899; --p-yellow: #f59e0b; --bg-dark: #0f172a; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-dark); color: white; margin: 0; overflow: hidden; height: 100vh; }
+        
+        /* تصميم النيومورفيزم الفخم */
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 2rem; }
+        .btn-legend { background: white; color: #0f172a; border-radius: 1.5rem; border-bottom: 6px solid #cbd5e1; transition: 0.1s; font-weight: 900; }
+        .btn-legend:active { transform: translateY(4px); border-bottom-width: 2px; }
 
-        /* شاشات النظام */
-        .screen { position: absolute; inset: 0; display: none; flex-direction: column; overflow: hidden; z-index: 10; }
-        .active { display: flex; }
+        /* محرك الخريطة السحابية */
+        #world-map { width: 4000px; height: 100vh; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); position: relative; cursor: grab; }
+        .level-card { width: 140px; height: 140px; background: white; border-radius: 40%; position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 20px 0 rgba(0,0,0,0.2); border: 6px solid var(--p-indigo); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .level-card:hover { transform: scale(1.1) rotate(5deg); }
 
-        /* الأنيميشن */
-        @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .animate-game-pop { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* شاشة اللعبة - قماش الرسم (Canvas) */
+        #game-stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0c4a6e; }
+        .frog-sprite { font-size: 5rem; position: absolute; z-index: 50; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); transition: 0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045); }
+        
+        /* شريط المهام السفلي (OS style) */
+        .dock { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); height: 80px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 2.5rem; display: flex; align-items: center; padding: 0 20px; gap: 20px; z-index: 1000; }
+        .dock-icon { font-size: 2rem; transition: 0.3s; cursor: pointer; filter: grayscale(1); }
+        .active-icon { filter: grayscale(0); transform: translateY(-15px) scale(1.3); }
 
-        /* هود (HUD) */
-        .hud-card { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.1); border-radius: 1.5rem; }
-
-        /* لوحة الصدارة والمتجر */
-        .custom-scroll::-webkit-scrollbar { width: 8px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-
-        /* محرك الألعاب (Canvas) */
-        #gameCanvas { width: 100%; height: 100%; background: radial-gradient(circle, #1e293b, #0f172a); cursor: pointer; }
+        .screen { position: absolute; inset: 0; display: none; flex-direction: column; padding-top: 100px; z-index: 10; overflow-y: auto; }
+        .screen-active { display: flex; animation: zoomIn 0.5s ease; }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div id="scr-auth" class="screen active justify-center items-center bg-slate-950">
-        <div class="text-center animate-game-pop">
-            <div class="text-9xl mb-6">👑</div>
-            <h1 class="text-6xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-amber-400">أساطير لبنى</h1>
-            <p class="text-slate-500 font-bold mb-10 uppercase tracking-widest">Global Education Engine v4.0</p>
-            <div class="space-y-4 w-80 mx-auto">
-                <input type="text" id="player-name" placeholder="اسم البطل الصغير" class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 text-center text-xl font-bold focus:border-indigo-500 outline-none transition-all">
-                <button onclick="App.initPlayer()" class="w-full bg-indigo-600 hover:bg-indigo-500 p-5 rounded-2xl font-black text-2xl shadow-xl shadow-indigo-900/40 active:scale-95 transition-all">دخول الأكاديمية 🚀</button>
-            </div>
+    <div id="scr-auth" class="fixed inset-0 z-[2000] bg-slate-950 flex flex-col items-center justify-center p-6">
+        <div class="text-center space-y-8 animate-bounce">
+            <div class="text-9xl">🚀</div>
+            <h1 class="text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-pink-500">أساطير لبنى</h1>
+        </div>
+        <div class="glass p-10 mt-12 w-full max-w-md space-y-6">
+            <input type="text" id="access-code" placeholder="أدخل كود البطل الخاص بك" class="w-full p-6 bg-white/5 border-2 border-white/10 rounded-3xl text-center text-2xl font-black text-white outline-none focus:border-indigo-500 transition-all uppercase">
+            <button onclick="App.login()" class="w-full btn-legend p-6 text-2xl bg-indigo-500 text-white border-indigo-700 shadow-xl shadow-indigo-900/50">ابدأ المغامرة 🛡️</button>
         </div>
     </div>
 
-    <div id="main-hud" class="fixed top-0 inset-x-0 p-6 z-[100] flex justify-between items-start pointer-events-none opacity-0 transition-opacity duration-500">
-        <div class="pointer-events-auto hud-card p-3 pr-8 flex items-center gap-4 border-l-8 border-indigo-500">
+    <div id="hud" class="fixed top-0 inset-x-0 p-6 z-[1000] flex justify-between items-start pointer-events-none hidden">
+        <div class="pointer-events-auto glass p-2 pr-6 flex items-center gap-4 border-l-4 border-indigo-500">
             <div class="relative">
-                <div id="hud-avatar" class="text-5xl">🐱</div>
-                <div id="equipped-hat" class="absolute -top-4 -right-2 text-3xl"></div>
+                <div id="p-avatar" class="text-5xl">🐱</div>
+                <div id="p-hat" class="absolute -top-4 -right-2 text-3xl"></div>
             </div>
             <div>
-                <p id="hud-name" class="font-900 text-lg leading-none">--</p>
-                <div class="flex gap-2 mt-1">
-                    <span class="text-xs font-bold text-indigo-400 uppercase">مستوى 1</span>
-                    <div class="w-20 h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-indigo-500 w-1/3"></div></div>
-                </div>
+                <p id="p-name" class="font-900 text-lg leading-none">بطل الأساطير</p>
+                <p class="text-[10px] text-blue-400 font-bold uppercase mt-1">المستوى الاحترافي</p>
             </div>
         </div>
-        <div class="pointer-events-auto flex flex-col gap-2">
-            <div class="hud-card px-5 py-2 flex items-center gap-3 border-b-4 border-amber-500">
-                <span id="hud-coins" class="text-amber-500 font-black text-xl">0</span>
-                <span class="text-2xl">💰</span>
+        <div class="pointer-events-auto flex gap-3">
+            <div class="glass px-5 py-3 border-b-4 border-yellow-500 flex items-center gap-2">
+                <span id="p-coins" class="text-yellow-500 font-black text-xl">0</span> 💰
             </div>
-            <div class="hud-card px-5 py-2 flex items-center gap-3 border-b-4 border-blue-400">
-                <span id="hud-stars" class="text-blue-400 font-black text-xl">0</span>
-                <span class="text-2xl">⭐</span>
+            <div class="glass px-5 py-3 border-b-4 border-blue-400 flex items-center gap-2">
+                <span id="p-stars" class="text-blue-400 font-black text-xl">0</span> ⭐
             </div>
         </div>
     </div>
 
-    <div id="scr-map" class="screen bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-        <div class="mt-32 p-10 grid grid-cols-2 md:grid-cols-4 gap-8 overflow-y-auto custom-scroll h-full pb-32">
+    <div id="scr-map" class="screen screen-active !p-0">
+        <div id="world-map">
             </div>
     </div>
 
-    <div id="scr-game" class="screen">
-        <div class="absolute top-28 inset-x-0 text-center z-50">
-            <h2 id="mission-text" class="text-4xl font-black text-white drop-shadow-2xl">جد الرقم 10</h2>
+    <div id="scr-game" class="screen !p-0">
+        <div class="absolute top-28 inset-x-0 z-[100] text-center">
+            <h2 id="game-task" class="text-4xl font-black text-white drop-shadow-lg">...</h2>
         </div>
-        <canvas id="gameCanvas"></canvas>
-        <button onclick="App.showScreen('scr-map')" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white px-10 py-4 rounded-full font-black transition-all">إنهاء المهمة</button>
+        <div id="game-stage">
+            <div id="frog" class="frog-sprite">🐸</div>
+            <div id="game-objects" class="w-full h-full relative"></div>
+        </div>
     </div>
 
-    <div id="scr-extra" class="screen pt-32 p-8">
-        <div class="max-w-4xl mx-auto w-full flex flex-col h-full">
-            <div class="flex gap-4 mb-8">
-                <button onclick="App.renderShop()" class="flex-1 p-4 bg-indigo-600 rounded-2xl font-black text-xl">خزانة الملابس 👕</button>
-                <button onclick="App.renderLeaderboard()" class="flex-1 p-4 bg-slate-800 rounded-2xl font-black text-xl">قائمة الصدارة 🏆</button>
-            </div>
-            <div id="extra-content" class="flex-grow overflow-y-auto custom-scroll p-4">
+    <div id="scr-leaderboard" class="screen p-8 pt-32">
+        <div class="max-w-2xl mx-auto w-full">
+            <h2 class="text-5xl font-black text-center mb-10">قائمة العظماء 🏆</h2>
+            <div id="leader-list" class="space-y-4">
                 </div>
         </div>
     </div>
 
-    <nav id="navbar" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-lg h-20 hud-card flex justify-around items-center z-[200] opacity-0 transition-opacity">
-        <button onclick="App.showScreen('scr-map')" class="text-3xl hover:scale-125 transition">🗺️</button>
-        <button onclick="App.showScreen('scr-extra'); App.renderShop();" class="text-3xl hover:scale-125 transition">🛍️</button>
-        <button onclick="App.showScreen('scr-extra'); App.renderLeaderboard();" class="text-3xl hover:scale-125 transition">🏆</button>
-        <button onclick="location.reload()" class="text-3xl hover:scale-125 transition">⚙️</button>
+    <nav id="nav-dock" class="dock hidden">
+        <div class="dock-icon active-icon" onclick="App.switch('scr-map', this)">🗺️</div>
+        <div class="dock-icon" onclick="App.switch('scr-leaderboard', this)">🏆</div>
+        <div class="dock-icon" onclick="alert('المتجر يفتح قريباً!')">🛍️</div>
+        <div class="dock-icon" onclick="location.reload()">🔒</div>
     </nav>
 
     <script>
-        // --- محرك النظام الأساسي (App Engine) ---
         const App = {
-            state: {
-                player: { name: '', coins: 100, stars: 0, avatar: '🦁', hat: '', ownedHats: [] },
-                currentScreen: 'scr-auth',
-                db: [
-                    { name: 'ليان بطلة الصف', stars: 250, coins: 5000 },
-                    { name: 'يوسف المغامر', stars: 180, coins: 3200 }
-                ]
-            },
+            player: null,
+            students: JSON.parse(localStorage.getItem('lubna_students')) || [],
 
-            init() {
-                // استعادة البيانات من الذاكرة
-                const saved = localStorage.getItem('lubna_legends_data');
-                if(saved) this.state.player = JSON.parse(saved);
-                this.updateUI();
-            },
-
-            initPlayer() {
-                const name = document.getElementById('player-name').value;
-                if(!name) return alert("اكتب اسمك يا بطل!");
-                this.state.player.name = name;
-                this.save();
-                this.showScreen('scr-map');
-                document.getElementById('main-hud').style.opacity = '1';
-                document.getElementById('navbar').style.opacity = '1';
-                this.renderWorlds();
-            },
-
-            showScreen(id) {
-                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                document.getElementById(id).classList.add('active');
-                this.state.currentScreen = id;
-                if(id === 'scr-game') GameEngine.start();
-            },
-
-            save() {
-                localStorage.setItem('lubna_legends_data', JSON.stringify(this.state.player));
-                this.updateUI();
-            },
-
-            updateUI() {
-                document.getElementById('hud-name').innerText = this.state.player.name;
-                document.getElementById('hud-coins').innerText = this.state.player.coins;
-                document.getElementById('hud-stars').innerText = this.state.player.stars;
-                document.getElementById('hud-avatar').innerText = this.state.player.avatar;
-                document.getElementById('equipped-hat').innerText = this.state.player.hat;
-            },
-
-            renderWorlds() {
-                const map = document.querySelector('#scr-map div');
-                const worlds = [
-                    { name: 'مملكة الأرقام', icon: '🔢', color: 'bg-blue-600' },
-                    { name: 'غابة الحروف', icon: '🅰️', color: 'bg-green-600' },
-                    { name: 'جزيرة الأشكال', icon: '🔷', color: 'bg-purple-600' },
-                    { name: 'فضاء العلوم', icon: '🚀', color: 'bg-indigo-600' }
-                ];
-                map.innerHTML = worlds.map(w => `
-                    <div onclick="App.showScreen('scr-game')" class="${w.color} p-8 rounded-[3rem] text-center cursor-pointer transform hover:scale-105 transition shadow-2xl border-b-8 border-black/20">
-                        <div class="text-7xl mb-4">${w.icon}</div>
-                        <h3 class="text-2xl font-black">${w.name}</h3>
-                    </div>
-                `).join('');
-            },
-
-            renderShop() {
-                const hats = [
-                    { id: 'h1', name: 'تاج الملوك', icon: '👑', price: 100 },
-                    { id: 'h2', name: 'قبعة الفضاء', icon: '🚀', price: 250 },
-                    { id: 'h3', name: 'رداء القوة', icon: '🦸', price: 500 },
-                    { id: 'h4', name: 'قبعة الذكاء', icon: '🎓', price: 150 }
-                ];
-                const container = document.getElementById('extra-content');
-                container.innerHTML = `<div class="grid grid-cols-2 gap-4">` + hats.map(h => {
-                    const owned = this.state.player.ownedHats.includes(h.id);
-                    return `
-                    <div class="hud-card p-6 text-center border-2 ${this.state.player.hat === h.icon ? 'border-indigo-500' : 'border-transparent'}">
-                        <div class="text-6xl mb-4">${h.icon}</div>
-                        <p class="font-black mb-4">${h.name}</p>
-                        <button onclick="App.buyHat('${h.id}', '${h.icon}', ${h.price})" class="w-full py-3 rounded-xl font-black ${owned ? 'bg-green-600' : 'bg-amber-500'}">
-                            ${owned ? 'ارتداء' : h.price + ' 💰'}
-                        </button>
-                    </div>`;
-                }).join('') + `</div>`;
-            },
-
-            buyHat(id, icon, price) {
-                if(this.state.player.ownedHats.includes(id)) {
-                    this.state.player.hat = icon;
-                } else if(this.state.player.coins >= price) {
-                    this.state.player.coins -= price;
-                    this.state.player.ownedHats.push(id);
-                    this.state.player.hat = icon;
-                } else return alert("اجمع مزيداً من النقود!");
-                this.save(); this.renderShop();
-            },
-
-            renderLeaderboard() {
-                const container = document.getElementById('extra-content');
-                const list = [...this.state.db, {name: this.state.player.name, stars: this.state.player.stars}].sort((a,b) => b.stars - a.stars);
-                container.innerHTML = list.map((s, i) => `
-                    <div class="flex items-center gap-4 p-5 mb-3 bg-white/5 rounded-2xl border-r-4 ${i===0?'border-amber-500':'border-indigo-500'}">
-                        <span class="text-2xl font-black opacity-30">#${i+1}</span>
-                        <span class="flex-grow font-black">${s.name}</span>
-                        <span class="text-indigo-400 font-black">${s.stars} ⭐</span>
-                    </div>
-                `).join('');
-            }
-        };
-
-        // --- محرك الألعاب المتطور (Physics Game Engine) ---
-        const GameEngine = {
-            canvas: null, ctx: null, frog: null, target: 10, items: [], particles: [],
-            
-            start() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-                this.target = Math.floor(Math.random() * 20) + 1;
-                document.getElementById('mission-text').innerText = "جد الرقم " + this.target;
+            login() {
+                const code = document.getElementById('access-code').value.toUpperCase();
+                const student = this.students.find(s => s.code === code);
                 
-                this.frog = { x: this.canvas.width/2, y: this.canvas.height - 150, targetX: this.canvas.width/2, targetY: this.canvas.height - 150, size: 80 };
-                this.spawnItems();
-                this.animate();
-            },
-
-            spawnItems() {
-                this.items = [];
-                for(let i=0; i<8; i++) {
-                    this.items.push({
-                        x: Math.random() * (this.canvas.width - 100) + 50,
-                        y: Math.random() * (this.canvas.height - 400) + 150,
-                        val: Math.random() > 0.3 ? Math.floor(Math.random()*20)+1 : this.target,
-                        size: 60
-                    });
+                if(student) {
+                    this.player = student;
+                    document.getElementById('scr-auth').style.display = 'none';
+                    document.getElementById('hud').classList.remove('hidden');
+                    document.getElementById('nav-dock').classList.remove('hidden');
+                    this.updateUI();
+                    this.renderMap();
+                } else {
+                    alert("الكود غير صحيح! اطلبي الكود من الأستاذة لبنى 👑");
                 }
             },
 
-            animate() {
-                if(App.state.currentScreen !== 'scr-game') return;
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                // رسم العناصر
-                this.items.forEach(item => {
-                    this.ctx.fillStyle = "rgba(255,255,255,0.1)";
-                    this.ctx.beginPath();
-                    this.ctx.arc(item.x, item.y, item.size, 0, Math.PI*2);
-                    this.ctx.fill();
-                    this.ctx.fillStyle = "white";
-                    this.ctx.font = "bold 40px Cairo";
-                    this.ctx.textAlign = "center";
-                    this.ctx.fillText(item.val, item.x, item.y + 15);
-                });
-
-                // تحريك الضفدع بسلاسة (Interpolation)
-                this.frog.x += (this.frog.targetX - this.frog.x) * 0.1;
-                this.frog.y += (this.frog.targetY - this.frog.y) * 0.1;
-
-                this.ctx.font = "80px Cairo";
-                this.ctx.fillText("🐸", this.frog.x, this.frog.y);
-
-                requestAnimationFrame(() => this.animate());
+            updateUI() {
+                document.getElementById('p-name').innerText = this.player.name;
+                document.getElementById('p-coins').innerText = this.player.coins;
+                document.getElementById('p-stars').innerText = this.player.stars;
+                document.getElementById('p-avatar').innerText = this.player.avatar || '🐱';
             },
 
-            handleTouch(e) {
-                const rect = this.canvas.getBoundingClientRect();
-                const x = e.clientX || e.touches[0].clientX;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            switch(id, el) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('screen-active'));
+                document.getElementById(id).classList.add('screen-active');
+                document.querySelectorAll('.dock-icon').forEach(i => i.classList.remove('active-icon'));
+                el.classList.add('active-icon');
+                if(id === 'scr-leaderboard') this.renderLeaderboard();
+            },
 
-                this.items.forEach(item => {
-                    const dist = Math.hypot(item.x - x, item.y - y);
-                    if(dist < item.size) {
-                        this.frog.targetX = item.x;
-                        this.frog.targetY = item.y;
-                        if(item.val === this.target) {
-                            App.state.player.coins += 10;
-                            App.state.player.stars += 1;
-                            App.save();
-                            setTimeout(() => this.start(), 500);
+            renderMap() {
+                const map = document.getElementById('world-map');
+                map.innerHTML = '';
+                for(let i=1; i<=20; i++) {
+                    const node = document.createElement('div');
+                    node.className = 'level-card';
+                    node.style.left = (i * 200) + "px";
+                    node.style.top = (300 + Math.sin(i) * 100) + "px";
+                    node.innerHTML = `<span class="text-4xl font-black text-slate-800">${i}</span>`;
+                    node.onclick = () => this.startGame(i);
+                    map.appendChild(node);
+                }
+            },
+
+            startGame(level) {
+                this.switch('scr-game', document.querySelectorAll('.dock-icon')[0]);
+                const objects = document.getElementById('game-objects');
+                const frog = document.getElementById('frog');
+                objects.innerHTML = '';
+                
+                const target = Math.floor(Math.random() * 20) + 1;
+                document.getElementById('game-task').innerText = "ساعد الضفدع للقفز على رقم " + target;
+                
+                frog.style.left = "10%";
+                frog.style.bottom = "10%";
+
+                for(let i=0; i<6; i++) {
+                    const pad = document.createElement('div');
+                    pad.className = 'absolute w-32 h-24 bg-green-500 rounded-full flex items-center justify-center text-3xl font-black shadow-xl cursor-pointer hover:scale-110 transition';
+                    const val = (i === 0) ? target : Math.floor(Math.random()*30);
+                    pad.innerText = val;
+                    pad.style.left = (20 + Math.random() * 60) + "%";
+                    pad.style.top = (20 + Math.random() * 60) + "%";
+                    
+                    pad.onclick = () => {
+                        // قفزة فيزيائية حقيقية
+                        frog.style.left = pad.style.left;
+                        frog.style.top = pad.style.top;
+                        
+                        if(val === target) {
+                            setTimeout(() => {
+                                alert("قفزة أسطورية! ✨");
+                                this.player.coins += 50;
+                                this.player.stars += 1;
+                                this.saveData();
+                                this.startGame(level);
+                            }, 500);
                         }
-                    }
-                });
+                    };
+                    objects.appendChild(pad);
+                }
+            },
+
+            saveData() {
+                const idx = this.students.findIndex(s => s.code === this.player.code);
+                this.students[idx] = this.player;
+                localStorage.setItem('lubna_students', JSON.stringify(this.students));
+                this.updateUI();
+            },
+
+            renderLeaderboard() {
+                const list = document.getElementById('leader-list');
+                const sorted = [...this.students].sort((a,b) => b.stars - a.stars);
+                list.innerHTML = sorted.map((s, i) => `
+                    <div class="glass p-6 flex items-center gap-6 border-r-8 ${i===0?'border-yellow-500':'border-indigo-500'}">
+                        <span class="text-3xl font-black opacity-30">#${i+1}</span>
+                        <span class="text-4xl">${s.avatar || '🐱'}</span>
+                        <span class="flex-grow text-2xl font-black">${s.name}</span>
+                        <span class="text-blue-400 font-black">${s.stars} ⭐</span>
+                    </div>
+                `).join('');
             }
         };
-
-        window.addEventListener('mousedown', (e) => GameEngine.handleTouch(e));
-        window.addEventListener('touchstart', (e) => GameEngine.handleTouch(e));
-        App.init();
-
     </script>
 </body>
 </html>
