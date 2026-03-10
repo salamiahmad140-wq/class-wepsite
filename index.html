@@ -3,207 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أكاديمية الأساطير | الإصدار العالمي</title>
+    <title>أساطير لبنى - المستوى العالمي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Cairo:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Fredoka:wght@600&display=swap" rel="stylesheet">
     <style>
-        :root { --p-main: #FF3D71; --p-sec: #00D68F; --p-blue: #0095FF; --p-gold: #FFAA00; }
-        body { font-family: 'Fredoka', 'Cairo', sans-serif; background: #151A30; overflow: hidden; margin: 0; }
-        
-        /* تأثيرات حركية فائقة */
-        .glass-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 2px solid rgba(255,255,255,0.1); border-radius: 2.5rem; }
-        .game-btn { transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; border-bottom: 8px solid rgba(0,0,0,0.3); }
-        .game-btn:active { transform: translateY(4px); border-bottom-width: 2px; }
+        :root { --primary: #6366f1; --accent: #f59e0b; --bg: #0f172a; }
+        * { user-select: none; font-family: 'Cairo', 'Fredoka', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: white; }
 
-        /* خريطة العالم المتحركة */
-        #world-scroll { overflow-x: auto; scroll-behavior: smooth; white-space: nowrap; height: 100vh; background: url('https://www.transparenttextures.com/patterns/stardust.png'), linear-gradient(135deg, #151A30 0%, #101426 100%); }
-        .level-node { display: inline-block; width: 150px; height: 150px; margin: 200px 50px; position: relative; }
-        .node-circle { width: 100px; height: 100px; background: white; border-radius: 40%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; box-shadow: 0 15px 40px rgba(0,0,0,0.5); border: 5px solid var(--p-blue); }
+        /* شاشات النظام */
+        .screen { position: absolute; inset: 0; display: none; flex-direction: column; overflow: hidden; z-index: 10; }
+        .active { display: flex; }
 
-        /* الألعاب - نظام الجسيمات */
-        #game-arena { background: radial-gradient(circle, #222b45, #151a30); position: relative; overflow: hidden; }
-        .particle { position: absolute; pointer-events: none; animation: pop 0.6s ease-out forwards; }
-        @keyframes pop { from { transform: scale(0); opacity: 1; } to { transform: scale(3); opacity: 0; } }
+        /* الأنيميشن */
+        @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .animate-game-pop { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* لوحة الصدارة */
-        .leader-item { background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent); border-radius: 1.5rem; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
-        .rank-1 { border-right: 5px solid var(--p-gold); background: rgba(255,170,0,0.1); }
+        /* هود (HUD) */
+        .hud-card { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.1); border-radius: 1.5rem; }
+
+        /* لوحة الصدارة والمتجر */
+        .custom-scroll::-webkit-scrollbar { width: 8px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* محرك الألعاب (Canvas) */
+        #gameCanvas { width: 100%; height: 100%; background: radial-gradient(circle, #1e293b, #0f172a); cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="fixed top-0 inset-x-0 p-6 z-[100] flex justify-between items-center pointer-events-none">
-        <div class="pointer-events-auto glass-card p-2 pr-6 flex items-center gap-4">
-            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-3xl shadow-xl" id="ui-avatar">🦁</div>
-            <div>
-                <p id="ui-name" class="font-black text-sm text-white">بطل لبنى</p>
-                <div class="flex gap-1 text-[10px] text-blue-400 font-bold uppercase"><span id="ui-stars">15</span> ⭐ نجمة</div>
-            </div>
-        </div>
-        <div class="pointer-events-auto flex gap-4">
-            <div class="glass-card px-6 py-3 text-yellow-400 font-black flex items-center gap-2">
-                <span id="ui-coins">1500</span> <span class="text-xl">💰</span>
+    <div id="scr-auth" class="screen active justify-center items-center bg-slate-950">
+        <div class="text-center animate-game-pop">
+            <div class="text-9xl mb-6">👑</div>
+            <h1 class="text-6xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-amber-400">أساطير لبنى</h1>
+            <p class="text-slate-500 font-bold mb-10 uppercase tracking-widest">Global Education Engine v4.0</p>
+            <div class="space-y-4 w-80 mx-auto">
+                <input type="text" id="player-name" placeholder="اسم البطل الصغير" class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 text-center text-xl font-bold focus:border-indigo-500 outline-none transition-all">
+                <button onclick="App.initPlayer()" class="w-full bg-indigo-600 hover:bg-indigo-500 p-5 rounded-2xl font-black text-2xl shadow-xl shadow-indigo-900/40 active:scale-95 transition-all">دخول الأكاديمية 🚀</button>
             </div>
         </div>
     </div>
 
-    <main class="w-full h-full">
-        <section id="scr-login" class="flex flex-col items-center justify-center h-full p-6 text-center">
-            <div class="text-[120px] mb-6 animate-bounce">🏰</div>
-            <h1 class="text-6xl font-black text-white mb-4">أكاديمية الأساطير</h1>
-            <p class="text-white/40 mb-12">مستعدة للمغامرة يا بطلة؟</p>
-            <div class="glass-card p-10 w-full max-w-md">
-                <input id="login-input" type="text" placeholder="أدخل اسمك أو كودك" class="w-full p-6 rounded-3xl bg-white/5 border-2 border-white/10 text-center text-2xl font-black text-white focus:border-blue-500 mb-6 outline-none">
-                <button onclick="bootGame()" class="w-full game-btn bg-blue-500 text-white p-6 rounded-3xl font-black text-2xl shadow-blue-900/50">ابدأ الرحلة 🚀</button>
+    <div id="main-hud" class="fixed top-0 inset-x-0 p-6 z-[100] flex justify-between items-start pointer-events-none opacity-0 transition-opacity duration-500">
+        <div class="pointer-events-auto hud-card p-3 pr-8 flex items-center gap-4 border-l-8 border-indigo-500">
+            <div class="relative">
+                <div id="hud-avatar" class="text-5xl">🐱</div>
+                <div id="equipped-hat" class="absolute -top-4 -right-2 text-3xl"></div>
             </div>
-        </section>
-
-        <section id="scr-map" class="hidden h-full">
-            <div id="world-scroll">
-                <div class="inline-block w-40"></div> <div id="levels-container" class="relative inline-block h-full">
-                    </div>
-            </div>
-        </section>
-
-        <section id="scr-game" class="hidden flex-col h-full">
-            <div class="p-10 flex justify-between items-center bg-black/20">
-                <button onclick="showScreen('scr-map')" class="text-red-500 font-black">✕ انسحاب</button>
-                <div class="text-center">
-                    <p class="text-xs text-white/40 uppercase">المهمة</p>
-                    <h2 id="target-title" class="text-4xl font-black text-yellow-400">أين رقم 5؟</h2>
+            <div>
+                <p id="hud-name" class="font-900 text-lg leading-none">--</p>
+                <div class="flex gap-2 mt-1">
+                    <span class="text-xs font-bold text-indigo-400 uppercase">مستوى 1</span>
+                    <div class="w-20 h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-indigo-500 w-1/3"></div></div>
                 </div>
-                <div id="game-timer" class="text-3xl font-black text-blue-500">20</div>
             </div>
-            <div id="game-arena" class="flex-grow">
-                <div id="frog" class="absolute bottom-10 left-1/2 -translate-x-1/2 text-7xl z-50 transition-all duration-500">🐸</div>
-                <div id="lily-pads" class="w-full h-full relative"></div>
+        </div>
+        <div class="pointer-events-auto flex flex-col gap-2">
+            <div class="hud-card px-5 py-2 flex items-center gap-3 border-b-4 border-amber-500">
+                <span id="hud-coins" class="text-amber-500 font-black text-xl">0</span>
+                <span class="text-2xl">💰</span>
             </div>
-        </section>
+            <div class="hud-card px-5 py-2 flex items-center gap-3 border-b-4 border-blue-400">
+                <span id="hud-stars" class="text-blue-400 font-black text-xl">0</span>
+                <span class="text-2xl">⭐</span>
+            </div>
+        </div>
+    </div>
 
-        <section id="scr-leaderboard" class="hidden p-10 pt-32 h-full overflow-y-auto">
-            <h2 class="text-5xl font-black text-center mb-10 text-white">لوحة الأبطال 🏆</h2>
-            <div class="max-w-2xl mx-auto" id="leader-list">
+    <div id="scr-map" class="screen bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
+        <div class="mt-32 p-10 grid grid-cols-2 md:grid-cols-4 gap-8 overflow-y-auto custom-scroll h-full pb-32">
+            </div>
+    </div>
+
+    <div id="scr-game" class="screen">
+        <div class="absolute top-28 inset-x-0 text-center z-50">
+            <h2 id="mission-text" class="text-4xl font-black text-white drop-shadow-2xl">جد الرقم 10</h2>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <button onclick="App.showScreen('scr-map')" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white px-10 py-4 rounded-full font-black transition-all">إنهاء المهمة</button>
+    </div>
+
+    <div id="scr-extra" class="screen pt-32 p-8">
+        <div class="max-w-4xl mx-auto w-full flex flex-col h-full">
+            <div class="flex gap-4 mb-8">
+                <button onclick="App.renderShop()" class="flex-1 p-4 bg-indigo-600 rounded-2xl font-black text-xl">خزانة الملابس 👕</button>
+                <button onclick="App.renderLeaderboard()" class="flex-1 p-4 bg-slate-800 rounded-2xl font-black text-xl">قائمة الصدارة 🏆</button>
+            </div>
+            <div id="extra-content" class="flex-grow overflow-y-auto custom-scroll p-4">
                 </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
-    <nav id="nav-bar" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-80 h-20 glass-card flex justify-around items-center z-[200] hidden">
-        <button onclick="showScreen('scr-map')" class="text-3xl">🗺️</button>
-        <button onclick="showScreen('scr-leaderboard')" class="text-3xl">🏆</button>
-        <button onclick="alert('المتجر قيد التحديث!')" class="text-3xl">🛍️</button>
+    <nav id="navbar" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-lg h-20 hud-card flex justify-around items-center z-[200] opacity-0 transition-opacity">
+        <button onclick="App.showScreen('scr-map')" class="text-3xl hover:scale-125 transition">🗺️</button>
+        <button onclick="App.showScreen('scr-extra'); App.renderShop();" class="text-3xl hover:scale-125 transition">🛍️</button>
+        <button onclick="App.showScreen('scr-extra'); App.renderLeaderboard();" class="text-3xl hover:scale-125 transition">🏆</button>
+        <button onclick="location.reload()" class="text-3xl hover:scale-125 transition">⚙️</button>
     </nav>
 
     <script>
-        let player = { name: '', stars: 0, coins: 0, avatar: '🦁' };
+        // --- محرك النظام الأساسي (App Engine) ---
+        const App = {
+            state: {
+                player: { name: '', coins: 100, stars: 0, avatar: '🦁', hat: '', ownedHats: [] },
+                currentScreen: 'scr-auth',
+                db: [
+                    { name: 'ليان بطلة الصف', stars: 250, coins: 5000 },
+                    { name: 'يوسف المغامر', stars: 180, coins: 3200 }
+                ]
+            },
 
-        function showScreen(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            if(id === 'scr-leaderboard') renderLeaderboard();
-        }
+            init() {
+                // استعادة البيانات من الذاكرة
+                const saved = localStorage.getItem('lubna_legends_data');
+                if(saved) this.state.player = JSON.parse(saved);
+                this.updateUI();
+            },
 
-        function bootGame() {
-            const name = document.getElementById('login-input').value;
-            if(!name) return;
-            player.name = name;
-            document.getElementById('ui-name').innerText = name;
-            document.getElementById('nav-bar').classList.remove('hidden');
-            renderMap();
-            showScreen('scr-map');
-        }
+            initPlayer() {
+                const name = document.getElementById('player-name').value;
+                if(!name) return alert("اكتب اسمك يا بطل!");
+                this.state.player.name = name;
+                this.save();
+                this.showScreen('scr-map');
+                document.getElementById('main-hud').style.opacity = '1';
+                document.getElementById('navbar').style.opacity = '1';
+                this.renderWorlds();
+            },
 
-        function renderMap() {
-            const container = document.getElementById('levels-container');
-            container.innerHTML = '';
-            for(let i=1; i<=100; i++) {
-                const node = document.createElement('div');
-                node.className = 'level-node';
-                node.style.top = (Math.sin(i * 0.5) * 150) + "px";
-                node.innerHTML = `
-                    <div class="node-circle game-btn" onclick="startLevel(${i})">${i}</div>
-                    <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 font-black text-white/20">LEVEL</div>
-                `;
-                container.appendChild(node);
+            showScreen(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+                this.state.currentScreen = id;
+                if(id === 'scr-game') GameEngine.start();
+            },
+
+            save() {
+                localStorage.setItem('lubna_legends_data', JSON.stringify(this.state.player));
+                this.updateUI();
+            },
+
+            updateUI() {
+                document.getElementById('hud-name').innerText = this.state.player.name;
+                document.getElementById('hud-coins').innerText = this.state.player.coins;
+                document.getElementById('hud-stars').innerText = this.state.player.stars;
+                document.getElementById('hud-avatar').innerText = this.state.player.avatar;
+                document.getElementById('equipped-hat').innerText = this.state.player.hat;
+            },
+
+            renderWorlds() {
+                const map = document.querySelector('#scr-map div');
+                const worlds = [
+                    { name: 'مملكة الأرقام', icon: '🔢', color: 'bg-blue-600' },
+                    { name: 'غابة الحروف', icon: '🅰️', color: 'bg-green-600' },
+                    { name: 'جزيرة الأشكال', icon: '🔷', color: 'bg-purple-600' },
+                    { name: 'فضاء العلوم', icon: '🚀', color: 'bg-indigo-600' }
+                ];
+                map.innerHTML = worlds.map(w => `
+                    <div onclick="App.showScreen('scr-game')" class="${w.color} p-8 rounded-[3rem] text-center cursor-pointer transform hover:scale-105 transition shadow-2xl border-b-8 border-black/20">
+                        <div class="text-7xl mb-4">${w.icon}</div>
+                        <h3 class="text-2xl font-black">${w.name}</h3>
+                    </div>
+                `).join('');
+            },
+
+            renderShop() {
+                const hats = [
+                    { id: 'h1', name: 'تاج الملوك', icon: '👑', price: 100 },
+                    { id: 'h2', name: 'قبعة الفضاء', icon: '🚀', price: 250 },
+                    { id: 'h3', name: 'رداء القوة', icon: '🦸', price: 500 },
+                    { id: 'h4', name: 'قبعة الذكاء', icon: '🎓', price: 150 }
+                ];
+                const container = document.getElementById('extra-content');
+                container.innerHTML = `<div class="grid grid-cols-2 gap-4">` + hats.map(h => {
+                    const owned = this.state.player.ownedHats.includes(h.id);
+                    return `
+                    <div class="hud-card p-6 text-center border-2 ${this.state.player.hat === h.icon ? 'border-indigo-500' : 'border-transparent'}">
+                        <div class="text-6xl mb-4">${h.icon}</div>
+                        <p class="font-black mb-4">${h.name}</p>
+                        <button onclick="App.buyHat('${h.id}', '${h.icon}', ${h.price})" class="w-full py-3 rounded-xl font-black ${owned ? 'bg-green-600' : 'bg-amber-500'}">
+                            ${owned ? 'ارتداء' : h.price + ' 💰'}
+                        </button>
+                    </div>`;
+                }).join('') + `</div>`;
+            },
+
+            buyHat(id, icon, price) {
+                if(this.state.player.ownedHats.includes(id)) {
+                    this.state.player.hat = icon;
+                } else if(this.state.player.coins >= price) {
+                    this.state.player.coins -= price;
+                    this.state.player.ownedHats.push(id);
+                    this.state.player.hat = icon;
+                } else return alert("اجمع مزيداً من النقود!");
+                this.save(); this.renderShop();
+            },
+
+            renderLeaderboard() {
+                const container = document.getElementById('extra-content');
+                const list = [...this.state.db, {name: this.state.player.name, stars: this.state.player.stars}].sort((a,b) => b.stars - a.stars);
+                container.innerHTML = list.map((s, i) => `
+                    <div class="flex items-center gap-4 p-5 mb-3 bg-white/5 rounded-2xl border-r-4 ${i===0?'border-amber-500':'border-indigo-500'}">
+                        <span class="text-2xl font-black opacity-30">#${i+1}</span>
+                        <span class="flex-grow font-black">${s.name}</span>
+                        <span class="text-indigo-400 font-black">${s.stars} ⭐</span>
+                    </div>
+                `).join('');
             }
-        }
+        };
 
-        function startLevel(lvl) {
-            showScreen('scr-game');
-            const arena = document.getElementById('lily-pads');
-            arena.innerHTML = '';
-            const target = Math.floor(Math.random() * 10) + 1;
-            document.getElementById('target-title').innerText = `جد الرقم ${target}`;
-
-            // توليد أوراق الشجر كأنها منصات حقيقية
-            for(let i=0; i<6; i++) {
-                const pad = document.createElement('div');
-                pad.className = 'absolute w-32 h-24 bg-green-600 rounded-full flex items-center justify-center text-3xl font-black shadow-2xl cursor-pointer game-btn text-white';
-                const val = i === 0 ? target : (target + i + 2);
-                pad.innerText = val;
-                pad.style.left = (Math.random() * 70 + 10) + "%";
-                pad.style.top = (Math.random() * 70 + 10) + "%";
+        // --- محرك الألعاب المتطور (Physics Game Engine) ---
+        const GameEngine = {
+            canvas: null, ctx: null, frog: null, target: 10, items: [], particles: [],
+            
+            start() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.target = Math.floor(Math.random() * 20) + 1;
+                document.getElementById('mission-text').innerText = "جد الرقم " + this.target;
                 
-                pad.onclick = () => {
-                    const frog = document.getElementById('frog');
-                    const rect = pad.getBoundingClientRect();
-                    frog.style.left = (rect.left + rect.width/2) + "px";
-                    frog.style.top = (rect.top - 20) + "px";
-                    frog.style.bottom = "auto";
-                    frog.style.transform = "translateX(-50%) scale(1.2)";
+                this.frog = { x: this.canvas.width/2, y: this.canvas.height - 150, targetX: this.canvas.width/2, targetY: this.canvas.height - 150, size: 80 };
+                this.spawnItems();
+                this.animate();
+            },
 
-                    if(val === target) {
-                        setTimeout(() => {
-                            createExplosion(rect.left, rect.top);
-                            player.coins += 50;
-                            player.stars += 1;
-                            updateUI();
-                            alert("أحسنتِ يا بطلة! +50 كوينز 💰");
-                            startLevel(lvl);
-                        }, 500);
-                    } else {
-                        setTimeout(() => {
-                            frog.style.top = "auto";
-                            frog.style.bottom = "40px";
-                            frog.style.left = "50%";
-                        }, 500);
+            spawnItems() {
+                this.items = [];
+                for(let i=0; i<8; i++) {
+                    this.items.push({
+                        x: Math.random() * (this.canvas.width - 100) + 50,
+                        y: Math.random() * (this.canvas.height - 400) + 150,
+                        val: Math.random() > 0.3 ? Math.floor(Math.random()*20)+1 : this.target,
+                        size: 60
+                    });
+                }
+            },
+
+            animate() {
+                if(App.state.currentScreen !== 'scr-game') return;
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // رسم العناصر
+                this.items.forEach(item => {
+                    this.ctx.fillStyle = "rgba(255,255,255,0.1)";
+                    this.ctx.beginPath();
+                    this.ctx.arc(item.x, item.y, item.size, 0, Math.PI*2);
+                    this.ctx.fill();
+                    this.ctx.fillStyle = "white";
+                    this.ctx.font = "bold 40px Cairo";
+                    this.ctx.textAlign = "center";
+                    this.ctx.fillText(item.val, item.x, item.y + 15);
+                });
+
+                // تحريك الضفدع بسلاسة (Interpolation)
+                this.frog.x += (this.frog.targetX - this.frog.x) * 0.1;
+                this.frog.y += (this.frog.targetY - this.frog.y) * 0.1;
+
+                this.ctx.font = "80px Cairo";
+                this.ctx.fillText("🐸", this.frog.x, this.frog.y);
+
+                requestAnimationFrame(() => this.animate());
+            },
+
+            handleTouch(e) {
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.clientX || e.touches[0].clientX;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                this.items.forEach(item => {
+                    const dist = Math.hypot(item.x - x, item.y - y);
+                    if(dist < item.size) {
+                        this.frog.targetX = item.x;
+                        this.frog.targetY = item.y;
+                        if(item.val === this.target) {
+                            App.state.player.coins += 10;
+                            App.state.player.stars += 1;
+                            App.save();
+                            setTimeout(() => this.start(), 500);
+                        }
                     }
-                };
-                arena.appendChild(pad);
+                });
             }
-        }
+        };
 
-        function createExplosion(x, y) {
-            const p = document.createElement('div');
-            p.className = 'particle text-4xl';
-            p.innerText = "⭐";
-            p.style.left = x + "px";
-            p.style.top = y + "px";
-            document.body.appendChild(p);
-            setTimeout(() => p.remove(), 600);
-        }
+        window.addEventListener('mousedown', (e) => GameEngine.handleTouch(e));
+        window.addEventListener('touchstart', (e) => GameEngine.handleTouch(e));
+        App.init();
 
-        function updateUI() {
-            document.getElementById('ui-coins').innerText = player.coins;
-            document.getElementById('ui-stars').innerText = player.stars;
-        }
-
-        function renderLeaderboard() {
-            const list = document.getElementById('leader-list');
-            const mockData = [
-                { name: "أمير الأساطير", stars: 150, avatar: "👑" },
-                { name: "ليان المبدعة", stars: 120, avatar: "🦋" },
-                { name: player.name, stars: player.stars, avatar: "🦁" }
-            ].sort((a,b) => b.stars - a.stars);
-
-            list.innerHTML = mockData.map((s, i) => `
-                <div class="leader-item ${i===0?'rank-1':''}">
-                    <div class="text-3xl font-black text-white/20 w-10">#${i+1}</div>
-                    <div class="text-4xl">${s.avatar}</div>
-                    <div class="flex-grow text-white font-black text-xl">${s.name}</div>
-                    <div class="text-blue-400 font-black">${s.stars} ⭐</div>
-                </div>
-            `).join('');
-        }
     </script>
 </body>
 </html>
