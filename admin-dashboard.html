@@ -2,258 +2,186 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم القائدة لبنى | Control Center 2026</title>
+    <title>لوحة قيادة الإمبراطورة لبنى | Admin Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #020617; color: #f8fafc; margin: 0; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
-        .gold-glow { box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .btn-fancy { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
-        .btn-fancy:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); }
-        .status-badge { padding: 4px 12px; border-radius: 100px; font-size: 0.85rem; font-weight: bold; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: white; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .tab-active { border-bottom: 4px solid #f59e0b; color: #f59e0b; }
+        @media print { .no-print { display: none; } body { background: white; color: black; } }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-6">
 
     <div class="max-w-7xl mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-            <div class="text-right">
-                <h1 class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-indigo-400">نظام التحكم الأسطوري 🛡️</h1>
-                <p class="text-slate-400 text-xl mt-2">أهلاً بكِ أستاذة لبنى.. السيادة الكاملة بين يديكِ</p>
+        <div class="flex justify-between items-center mb-10 no-print">
+            <div>
+                <h1 class="text-5xl font-black text-amber-400">تحكم المعلمة لبنى 🛡️</h1>
+                <p class="text-slate-400 mt-2 text-xl">إدارة الـ 200 مرحلة وأبطال الصف الأول</p>
             </div>
             <div class="flex gap-4">
-                <button onclick="Admin.exportData()" class="bg-slate-800 text-white px-6 py-4 rounded-2xl font-bold border border-slate-700 hover:bg-slate-700 transition">تصدير البيانات 📥</button>
-                <button onclick="Admin.addNewStudent()" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black text-xl btn-fancy shadow-xl">إضافة بطل جديد +</button>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <div class="glass p-6 rounded-[30px] gold-glow">
-                <div class="text-slate-400 font-bold mb-1">إجمالي الأبطال</div>
-                <div class="text-4xl font-black text-white" id="stat-count">0</div>
-            </div>
-            <div class="glass p-6 rounded-[30px]">
-                <div class="text-slate-400 font-bold mb-1">خزينة النجوم</div>
-                <div class="text-4xl font-black text-amber-400" id="stat-stars">0 ⭐</div>
-            </div>
-            <div class="glass p-6 rounded-[30px]">
-                <div class="text-slate-400 font-bold mb-1">مراحل تم اجتيازها</div>
-                <div class="text-4xl font-black text-emerald-400" id="stat-levels">0</div>
-            </div>
-            <div class="glass p-6 rounded-[30px]">
-                <div class="text-slate-400 font-bold mb-1">حالة النظام</div>
-                <div class="text-4xl font-black text-indigo-400">نشط الآن</div>
+                <button onclick="Admin.addNew()" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-4 rounded-2xl font-black text-xl transition shadow-xl">إضافة بطل جديد +</button>
+                <button onclick="window.print()" class="bg-slate-700 px-6 py-4 rounded-2xl font-bold">طباعة التقارير 🖨️</button>
             </div>
         </div>
 
-        <div class="glass rounded-[40px] overflow-hidden border border-slate-800 shadow-2xl">
-            <div class="p-8 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
-                <h3 class="text-2xl font-black">قائمة نخبة الصف الأول</h3>
-                <input type="text" oninput="Admin.search(this.value)" placeholder="بحث عن اسم بطل..." class="bg-slate-800 border border-slate-700 rounded-xl px-6 py-2 outline-none focus:border-indigo-500 transition w-64">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 no-print text-center">
+            <div class="glass-card p-8 rounded-[40px]">
+                <div class="text-slate-400 text-lg">إجمالي الطلاب</div>
+                <div id="count-total" class="text-5xl font-black">0</div>
+            </div>
+            <div class="glass-card p-8 rounded-[40px] border-amber-500/30">
+                <div class="text-slate-400 text-lg">مجموع النجوم الموزعة</div>
+                <div id="count-stars" class="text-5xl font-black text-amber-400">0 ⭐</div>
+            </div>
+            <div class="glass-card p-8 rounded-[40px]">
+                <div class="text-slate-400 text-lg">مراحل تم إنجازها</div>
+                <div id="count-levels" class="text-5xl font-black text-blue-400">0</div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-[50px] overflow-hidden shadow-2xl">
+            <div class="p-8 bg-white/5 border-b border-white/10 flex justify-between items-center no-print">
+                <h2 class="text-3xl font-black">قائمة أساطير الصف</h2>
+                <input type="text" oninput="Admin.search(this.value)" placeholder="بحث عن اسم..." class="bg-slate-800 border border-slate-700 rounded-2xl px-6 py-3 w-80 outline-none focus:border-amber-400 transition">
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-right border-collapse">
                     <thead>
-                        <tr class="text-slate-500 border-b border-slate-800 bg-slate-900/30">
-                            <th class="p-6">البطل</th>
-                            <th class="p-6">كود الدخول (ثابت)</th>
-                            <th class="p-6">الرصيد (ذهب/نجوم)</th>
-                            <th class="p-6">التقدم (حساب/عربي)</th>
-                            <th class="p-6 text-center">الإجراءات العسكرية</th>
+                        <tr class="bg-slate-800/50 text-slate-400 text-xl">
+                            <th class="p-8">البطل</th>
+                            <th class="p-8">الكود الدائم</th>
+                            <th class="p-8 text-center">الرصيد</th>
+                            <th class="p-8">التقدم (200 مرحلة)</th>
+                            <th class="p-8 text-center no-print">الإجراءات</th>
                         </tr>
                     </thead>
-                    <tbody id="master-table">
+                    <tbody id="admin-body">
                         </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <div id="edit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-[1000] items-center justify-center p-4">
-        <div class="glass max-w-lg w-full p-10 rounded-[40px] border-amber-500/30">
-            <h2 class="text-3xl font-black mb-6 text-amber-400">تعديل رصيد البطل 💎</h2>
+    <div id="modal-edit" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden z-[1000] items-center justify-center p-4">
+        <div class="glass-card max-w-lg w-full p-10 rounded-[50px] border-indigo-500/50">
+            <h2 class="text-3xl font-black mb-8 text-indigo-400">تعديل بيانات البطل ⚙️</h2>
             <div class="space-y-6">
                 <div>
-                    <label class="block text-slate-400 mb-2">إضافة/خصم نجوم</label>
-                    <input type="number" id="edit-stars" class="w-full bg-slate-800 p-4 rounded-2xl outline-none text-2xl font-bold">
+                    <label class="block text-slate-400 mb-2">رصيد النجوم</label>
+                    <input type="number" id="edit-stars" class="w-full bg-slate-800 p-5 rounded-2xl text-2xl font-bold outline-none border-2 border-transparent focus:border-amber-400 transition">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-2">إضافة/خصم ذهب</label>
-                    <input type="number" id="edit-coins" class="w-full bg-slate-800 p-4 rounded-2xl outline-none text-2xl font-bold">
+                    <label class="block text-slate-400 mb-2">رصيد الذهب</label>
+                    <input type="number" id="edit-coins" class="w-full bg-slate-800 p-5 rounded-2xl text-2xl font-bold outline-none border-2 border-transparent focus:border-amber-400 transition">
                 </div>
-                <div class="flex gap-4 pt-4">
-                    <button onclick="Admin.saveEdit()" class="flex-1 bg-indigo-600 py-4 rounded-2xl font-black text-xl">حفظ التغييرات</button>
-                    <button onclick="Admin.closeModal()" class="flex-1 bg-slate-700 py-4 rounded-2xl font-black text-xl">إلغاء</button>
+                <div class="flex gap-4 pt-6">
+                    <button onclick="Admin.save()" class="flex-1 bg-indigo-600 py-5 rounded-3xl font-black text-xl hover:bg-indigo-500 transition">حفظ التغييرات</button>
+                    <button onclick="Admin.closeModal()" class="flex-1 bg-slate-700 py-5 rounded-3xl font-black text-xl">إلغاء</button>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
-    // مفتاح قاعدة البيانات المشترك مع موقع الطلاب
-    const DB_KEY = 'LUBNA_EMPIRE_FINAL_2026';
-    let currentEditingCode = null;
+    const DB_KEY = 'LUBNA_ULTIMATE_DB';
+    let currentCode = null;
 
     const Admin = {
-        // تحميل البيانات
-        getData() {
-            return JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        },
+        get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
+        saveDB(data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); this.render(); },
 
-        // حفظ البيانات
-        saveData(data) {
-            localStorage.setItem(DB_KEY, JSON.stringify(data));
-            this.render();
-        },
-
-        // عرض البيانات في الجدول
         render(filterData = null) {
-            const students = filterData || this.getData();
-            const table = document.getElementById('master-table');
-            let totalStars = 0;
-            let totalLevels = 0;
+            const students = filterData || this.get();
+            const body = document.getElementById('admin-body');
+            let tStars = 0, tLevels = 0;
 
-            table.innerHTML = students.map(s => {
-                totalStars += s.stars;
-                totalLevels += (s.progress.math + s.progress.arabic);
-                
+            body.innerHTML = students.map(s => {
+                tStars += s.stars;
+                tLevels += (s.progress.math + s.progress.arabic);
+                const totalProgress = ((s.progress.math + s.progress.arabic) / 200 * 100).toFixed(0);
+
                 return `
-                <tr class="border-b border-slate-800/50 hover:bg-indigo-500/5 transition">
-                    <td class="p-6">
-                        <div class="flex items-center gap-4">
-                            <span class="text-4xl bg-slate-800 w-16 h-16 rounded-2xl flex items-center justify-center">${s.avatar || '👤'}</span>
+                <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                    <td class="p-8">
+                        <div class="flex items-center gap-5">
+                            <span class="text-5xl bg-slate-800 w-20 h-20 rounded-3xl flex items-center justify-center border border-white/10">${s.avatar || '👤'}</span>
                             <div>
-                                <div class="font-black text-xl text-white">${s.name}</div>
-                                <div class="text-slate-500 text-sm italic">بطل مستوى أول</div>
+                                <div class="font-black text-2xl">${s.name}</div>
+                                <div class="text-indigo-400 font-bold">بطل إمبراطورية لبنى</div>
                             </div>
                         </div>
                     </td>
-                    <td class="p-6">
-                        <code class="bg-indigo-900/40 text-indigo-300 px-4 py-2 rounded-lg font-mono font-bold border border-indigo-500/30">${s.code}</code>
+                    <td class="p-8 font-mono text-2xl text-amber-400 font-bold">${s.code}</td>
+                    <td class="p-8 text-center font-black">
+                        <div class="text-amber-400">💰 ${s.coins}</div>
+                        <div class="text-blue-400">⭐ ${s.stars}</div>
                     </td>
-                    <td class="p-6">
-                        <div class="flex flex-col gap-1">
-                            <span class="text-amber-400 font-bold">💰 ${s.coins} ذهب</span>
-                            <span class="text-blue-400 font-bold">⭐ ${s.stars} نجمة</span>
+                    <td class="p-8">
+                        <div class="w-full bg-slate-800 h-4 rounded-full overflow-hidden mb-2">
+                            <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full" style="width: ${totalProgress}%"></div>
                         </div>
+                        <span class="text-sm font-bold text-slate-400">أتم ${s.progress.math + s.progress.arabic} من 200 مرحلة</span>
                     </td>
-                    <td class="p-6">
-                        <div class="text-sm space-y-2">
-                            <div class="flex justify-between"><span>حساب:</span> <span class="text-white">${s.progress.math}/100</span></div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-blue-500 h-full" style="width: ${s.progress.math}%"></div>
-                            </div>
-                            <div class="flex justify-between"><span>عربي:</span> <span class="text-white">${s.progress.arabic}/100</span></div>
-                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full" style="width: ${s.progress.arabic}%"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="p-6">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="Admin.openModal('${s.code}')" class="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl hover:bg-indigo-500 hover:text-white transition">تعديل رصيد ⚙️</button>
-                            <button onclick="Admin.resetProgress('${s.code}')" class="p-3 bg-amber-500/10 text-amber-400 rounded-xl hover:bg-amber-500 hover:text-white transition">تصفير 🔄</button>
-                            <button onclick="Admin.deleteStudent('${s.code}')" class="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition">حذف 🗑️</button>
+                    <td class="p-8 text-center no-print">
+                        <div class="flex justify-center gap-3">
+                            <button onclick="Admin.openEdit('${s.code}')" class="bg-indigo-500/20 text-indigo-400 px-4 py-2 rounded-xl border border-indigo-500/30 hover:bg-indigo-500 hover:text-white transition">تعديل ⚙️</button>
+                            <button onclick="Admin.del('${s.code}')" class="bg-red-500/20 text-red-500 px-4 py-2 rounded-xl border border-red-500/30 hover:bg-red-500 hover:text-white transition">حذف 🗑️</button>
                         </div>
                     </td>
                 </tr>
                 `;
             }).join('');
 
-            // تحديث كروت الإحصائيات
-            document.getElementById('stat-count').innerText = students.length;
-            document.getElementById('stat-stars').innerText = totalStars;
-            document.getElementById('stat-levels').innerText = totalLevels;
+            document.getElementById('count-total').innerText = students.length;
+            document.getElementById('count-stars').innerText = tStars;
+            document.getElementById('count-levels').innerText = tLevels;
+        },
 
-            if(students.length === 0) {
-                table.innerHTML = `<tr><td colspan="5" class="p-20 text-center text-slate-500 text-2xl font-bold">لا يوجد أبطال مسجلين حالياً.. قومي بإضافة أول بطل!</td></tr>`;
+        addNew() {
+            const name = prompt("ما اسم البطل الجديد؟");
+            if(name) {
+                const db = this.get();
+                const code = "LUB-" + Math.floor(1000 + Math.random()*9000);
+                db.push({ name, code, avatar: '🦁', stars: 0, coins: 0, progress: { math: 0, arabic: 0 } });
+                this.saveDB(db);
+                alert("تمت الإضافة! الكود: " + code);
             }
         },
 
-        // إضافة طالب جديد
-        addNewStudent() {
-            const name = prompt("ما هو اسم البطل الجديد؟");
-            if (name && name.trim() !== "") {
-                const students = this.getData();
-                const code = "LUB-" + Math.floor(1000 + Math.random() * 9000);
-                students.push({
-                    name: name.trim(),
-                    code: code,
-                    avatar: '🐱',
-                    stars: 0,
-                    coins: 0,
-                    progress: { math: 0, arabic: 0 }
-                });
-                this.saveData(students);
-                alert(`تم بنجاح! كود الدخول الخاص بـ (${name}) هو: ${code}`);
-            }
-        },
-
-        // البحث
-        search(val) {
-            const all = this.getData();
-            const filtered = all.filter(s => s.name.includes(val) || s.code.includes(val));
-            this.render(filtered);
-        },
-
-        // حذف طالب
-        deleteStudent(code) {
-            if(confirm("تحذير للقائدة: هل أنتِ متأكدة من حذف هذا البطل؟ سيفقد كل نجومه وتقدمه!")) {
-                const filtered = this.getData().filter(s => s.code !== code);
-                this.saveData(filtered);
-            }
-        },
-
-        // تصفير التقدم
-        resetProgress(code) {
-            if(confirm("هل تريدين إعادة البطل للمرحلة صفر في جميع العوالم؟")) {
-                const students = this.getData();
-                const idx = students.findIndex(s => s.code === code);
-                students[idx].progress = { math: 0, arabic: 0 };
-                this.saveData(students);
-            }
-        },
-
-        // المودال (نافذة التعديل)
-        openModal(code) {
-            currentEditingCode = code;
-            const s = this.getData().find(x => x.code === code);
+        openEdit(code) {
+            currentCode = code;
+            const s = this.get().find(x => x.code === code);
             document.getElementById('edit-stars').value = s.stars;
             document.getElementById('edit-coins').value = s.coins;
-            document.getElementById('edit-modal').style.display = 'flex';
+            document.getElementById('modal-edit').style.display = 'flex';
         },
 
-        closeModal() {
-            document.getElementById('edit-modal').style.display = 'none';
-        },
+        closeModal() { document.getElementById('modal-edit').style.display = 'none'; },
 
-        saveEdit() {
-            const students = this.getData();
-            const idx = students.findIndex(s => s.code === currentEditingCode);
-            students[idx].stars = parseInt(document.getElementById('edit-stars').value);
-            students[idx].coins = parseInt(document.getElementById('edit-coins').value);
-            this.saveData(students);
+        save() {
+            const db = this.get();
+            const idx = db.findIndex(s => s.code === currentCode);
+            db[idx].stars = parseInt(document.getElementById('edit-stars').value);
+            db[idx].coins = parseInt(document.getElementById('edit-coins').value);
+            this.saveDB(db);
             this.closeModal();
         },
 
-        // تصدير البيانات (للحفظ الخارجي)
-        exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.getData()));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "lubna_students_backup.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+        del(code) {
+            if(confirm("هل أنتِ متأكدة؟ سيتم حذف البطل تماماً!")) {
+                const filtered = this.get().filter(s => s.code !== code);
+                this.saveDB(filtered);
+            }
+        },
+
+        search(val) {
+            const filtered = this.get().filter(s => s.name.includes(val) || s.code.includes(val));
+            this.render(filtered);
         }
     };
 
-    // التشغيل الأولي
     Admin.render();
 </script>
 </body>
