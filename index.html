@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تحدي الأساطير 1-ب</title>
+    <title>كرنفال الصف الأول ب 🎡</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -11,130 +11,144 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&family=Fredoka:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        * { font-family: 'Fredoka', 'Cairo', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { background: #0f172a; height: 100vh; overflow: hidden; margin: 0; color: white; }
-
-        .page { position: absolute; inset: 0; display: none; flex-direction: column; padding: 20px; overflow-y: auto; padding-bottom: 130px; z-index: 10; }
-        .page-active { display: flex; animation: zoomIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        /* أزرار ضخمة وتأثيرات نيون */
-        .btn-action {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            border-bottom: 8px solid #1e3a8a; border-radius: 30px;
-            transition: 0.1s; cursor: pointer;
-        }
-        .btn-action:active { transform: translateY(6px); border-bottom-width: 2px; }
-
-        /* خريطة المراحل */
-        .map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; padding: 20px; }
-        .lvl-card {
-            aspect-ratio: 1; border-radius: 25px; background: #1e293b; 
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem; font-weight: 900; border: 4px solid #334155;
-            box-shadow: 0 8px 0 #0f172a; cursor: pointer;
-        }
-        .lvl-card.open { border-color: #3b82f6; background: #2563eb; color: white; box-shadow: 0 8px 0 #1e3a8a; }
-        .lvl-card.done { border-color: #22c55e; background: #15803d; box-shadow: 0 8px 0 #064e3b; }
-
-        /* شاشة اللعب الاحترافية */
-        #game-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; overflow: hidden; }
-        .game-bg { position: absolute; inset: 0; background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%); }
+        :root { --p-blue: #4cc9f0; --p-purple: #7209b7; --p-pink: #f72585; --p-yellow: #fee440; --p-green: #06d6a0; }
+        * { font-family: 'Fredoka', 'Cairo', sans-serif; user-select: none; outline: none; }
         
-        .target-obj { position: absolute; cursor: pointer; z-index: 5002; filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5)); }
+        body { 
+            background: #f0f9ff;
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+            height: 100vh; overflow: hidden; margin: 0;
+        }
+
+        /* فرفشة الخلفية */
+        .bubble-bg { position: absolute; border-radius: 50%; filter: blur(40px); z-index: -1; opacity: 0.5; animation: float 10s infinite alternate; }
+        @keyframes float { from { transform: translate(0,0); } to { transform: translate(50px, 50px); } }
+
+        .page { position: absolute; inset: 0; display: none; flex-direction: column; padding: 20px; overflow-y: auto; padding-bottom: 140px; }
+        .page-active { display: flex; animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* أزرار الفرفشة */
+        .btn-joy {
+            background: white; border-bottom: 10px solid #e2e8f0; border-radius: 40px;
+            transition: 0.1s; cursor: pointer; position: relative; overflow: hidden;
+        }
+        .btn-joy:active { transform: translateY(6px); border-bottom-width: 4px; }
         
-        /* شيك الشاشة عند الخطأ */
-        .shake { animation: shake 0.3s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
+        .lvl-node {
+            aspect-ratio: 1; border-radius: 35% 65% 70% 30% / 30% 40% 60% 70%;
+            background: white; border: 6px solid #f1f5f9; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: 900; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s;
+        }
+        .lvl-node.open { background: var(--p-blue); color: white; border-color: #fff; transform: rotate(-5deg); }
+        .lvl-node.done { background: var(--p-green); color: white; transform: rotate(5deg); }
+
+        /* شاشة اللعبة */
+        #game-view { position: fixed; inset: 0; background: white; z-index: 5000; display: none; }
+        .game-canvas { position: absolute; inset: 0; background: radial-gradient(circle, #fff 0%, #e0f2fe 100%); overflow: hidden; }
+        
+        .floating-obj { position: absolute; cursor: pointer; transition: transform 0.1s; z-index: 10; }
+        .floating-obj:active { transform: scale(0.8); }
+
+        .heart { color: #ff4d6d; font-size: 3rem; filter: drop-shadow(0 0 10px rgba(255,77,109,0.3)); }
     </style>
 </head>
 <body>
 
+    <div class="bubble-bg w-96 h-96 bg-blue-200 top-[-10%] left-[-10%]"></div>
+    <div class="bubble-bg w-80 h-80 bg-pink-200 bottom-[10%] right-[-10%]"></div>
+
     <div id="p-login" class="page page-active justify-center items-center">
-        <div class="bg-slate-800 p-12 rounded-[50px] border-4 border-blue-500 text-center w-[90%] max-w-lg shadow-[0_0_50px_rgba(59,130,246,0.3)]">
-            <div class="text-9xl mb-6">🔥</div>
-            <h1 class="text-6xl font-black text-white mb-4">أساطير 1-ب</h1>
-            <input type="text" id="u-code" placeholder="أدخل كود التحدي" class="w-full text-center text-4xl p-6 rounded-3xl bg-slate-900 border-2 border-slate-700 text-blue-400 outline-none focus:border-blue-500 mb-8 font-black">
-            <button onclick="App.login()" class="w-full py-7 btn-action text-4xl font-black">دخول المغامرة 🚀</button>
+        <div class="bg-white/80 backdrop-blur-md p-12 rounded-[60px] border-[12px] border-white text-center w-[90%] max-w-lg shadow-2xl">
+            <div class="text-[150px] mb-4 animate-bounce">🎈</div>
+            <h1 class="text-7xl font-black text-slate-800 mb-2">أساطير 1-ب</h1>
+            <p class="text-blue-500 font-bold text-2xl mb-12 italic">ادخل عالم المرح والذكاء!</p>
+            <input type="text" id="u-code" placeholder="اكتب كودك هنا" class="w-full text-center text-4xl p-7 rounded-full border-4 border-blue-100 outline-none focus:border-blue-400 mb-10 font-black bg-blue-50/30">
+            <button onclick="App.login()" class="w-full py-7 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-full text-4xl font-black shadow-[0_12px_0_#1d4ed8] active:translate-y-2 active:shadow-none transition-all">يلا نبدأ! 🚀</button>
         </div>
     </div>
 
     <div id="p-home" class="page items-center">
-        <div class="w-full max-w-4xl bg-slate-800/50 backdrop-blur-xl rounded-[60px] p-10 border-2 border-slate-700 mt-10">
-            <div class="flex justify-between mb-12">
-                <div class="bg-yellow-500 text-black px-8 py-3 rounded-full text-3xl font-black shadow-lg">💰 <span id="u-coins">0</span></div>
-                <div class="bg-blue-500 text-white px-8 py-3 rounded-full text-3xl font-black shadow-lg">⭐ <span id="u-stars">0</span></div>
+        <div class="w-full max-w-4xl mt-10 text-center">
+            <div class="flex justify-between px-6 mb-10">
+                <div class="bg-white px-8 py-4 rounded-full shadow-xl border-4 border-amber-300 text-4xl font-black text-amber-500">💰 <span id="u-coins">0</span></div>
+                <div class="bg-white px-8 py-4 rounded-full shadow-xl border-4 border-blue-300 text-4xl font-black text-blue-500">⭐ <span id="u-stars">0</span></div>
             </div>
-            <div class="text-[150px] mb-4" id="u-avatar">👤</div>
-            <h2 id="u-name" class="text-7xl font-black mb-12 text-blue-400">بطل 1-ب</h2>
-            <div class="grid grid-cols-2 gap-8 w-full">
-                <div onclick="App.nav('p-worlds')" class="btn-action p-10 text-4xl font-black flex flex-col items-center"><span>🗺️</span><span>الخريطة</span></div>
-                <div onclick="App.nav('p-shop')" class="btn-action p-10 text-4xl font-black flex flex-col items-center" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); border-bottom-color: #831843;"><span>🎁</span><span>المتجر</span></div>
+            
+            <div class="relative inline-block mb-10 group">
+                <div id="u-avatar" class="w-72 h-72 bg-white rounded-full flex items-center justify-center text-[150px] border-[15px] border-white shadow-2xl">👤</div>
+                <div id="u-tag" class="absolute -top-12 -right-12 text-[150px] animate-pulse"></div>
+            </div>
+            
+            <h2 id="u-name" class="text-8xl font-black text-slate-800 mb-16 drop-shadow-md">بطل الصف</h2>
+            
+            <div class="grid grid-cols-2 gap-10 px-6">
+                <div onclick="App.nav('p-worlds')" class="btn-joy p-12 text-5xl font-black text-blue-500 border-blue-100 flex flex-col items-center"><span>🌍</span><span>الخريطة</span></div>
+                <div onclick="App.nav('p-shop')" class="btn-joy p-12 text-5xl font-black text-pink-500 border-pink-100 flex flex-col items-center"><span>🎁</span><span>المتجر</span></div>
             </div>
         </div>
     </div>
 
     <div id="p-shop" class="page">
-        <h2 class="text-6xl font-black text-center mb-10 text-pink-500">متجر الأساطير ⚡</h2>
-        <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 max-w-6xl mx-auto px-4"></div>
+        <h2 class="text-7xl font-black text-center mb-16 text-slate-800 mt-5 italic">سوق الأبطال 🦄</h2>
+        <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 max-w-7xl mx-auto px-6"></div>
     </div>
 
     <div id="p-leader" class="page items-center">
-        <h2 class="text-6xl font-black text-center mb-10 text-yellow-500 italic">قائمة الشرف 🏆</h2>
-        <div id="leader-list" class="w-full max-w-3xl space-y-4"></div>
+        <h2 class="text-7xl font-black text-center mb-16 text-blue-600">لوحة الشرف 🏆</h2>
+        <div id="leader-list" class="w-full max-w-4xl space-y-6"></div>
     </div>
 
     <div id="p-worlds" class="page items-center justify-center">
-        <h2 class="text-7xl font-black mb-16">اختر العالم 🕹️</h2>
-        <div class="flex flex-wrap justify-center gap-10">
-            <div onclick="App.openMap('math')" class="w-80 h-96 bg-blue-600 rounded-[50px] flex flex-col items-center justify-center cursor-pointer border-b-[15px] border-blue-900 active:translate-y-2 active:border-b-0 transition-all">
-                <div class="text-[150px]">🧮</div>
-                <div class="text-5xl font-black">الحساب</div>
+        <h2 class="text-8xl font-black text-slate-800 mb-20">اختر مغامرتك!</h2>
+        <div class="flex flex-wrap justify-center gap-16">
+            <div onclick="App.openMap('math')" class="btn-joy w-[400px] p-16 text-center border-blue-200">
+                <div class="text-[180px] mb-6">🛸</div>
+                <div class="text-6xl font-black text-blue-600">عالم الأرقام</div>
             </div>
-            <div onclick="App.openMap('arabic')" class="w-80 h-96 bg-emerald-600 rounded-[50px] flex flex-col items-center justify-center cursor-pointer border-b-[15px] border-emerald-900 active:translate-y-2 active:border-b-0 transition-all">
-                <div class="text-[150px]">✍️</div>
-                <div class="text-5xl font-black">العربية</div>
+            <div onclick="App.openMap('arabic')" class="btn-joy w-[400px] p-16 text-center border-orange-200">
+                <div class="text-[180px] mb-6">🦁</div>
+                <div class="text-6xl font-black text-orange-600">عالم الحروف</div>
             </div>
         </div>
     </div>
 
     <div id="p-map" class="page">
-        <div class="flex justify-between items-center bg-slate-800 p-8 rounded-3xl mb-10">
-            <h2 id="map-title" class="text-4xl font-black">المراحل</h2>
-            <button onclick="App.nav('p-worlds')" class="bg-red-500 px-8 py-3 rounded-2xl font-black">خروج</button>
+        <div class="p-8 bg-white/80 rounded-[40px] mb-12 flex justify-between items-center shadow-lg">
+            <h2 id="map-title" class="text-5xl font-black text-slate-700">المهمات</h2>
+            <button onclick="App.nav('p-worlds')" class="bg-red-400 text-white px-12 py-5 rounded-full font-black text-3xl shadow-md">رجوع</button>
         </div>
-        <div id="map-grid" class="map-grid"></div>
+        <div id="map-grid" class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-8 px-4"></div>
     </div>
 
-    <div id="game-screen">
-        <div class="game-bg"></div>
-        <div class="absolute top-8 inset-x-8 flex justify-between items-center z-[6000]">
-            <div class="flex gap-4 items-center">
-                <div id="g-lives" class="text-5xl">❤️ ❤️ ❤️</div>
-                <div id="g-score" class="bg-blue-600 px-8 py-3 rounded-2xl text-3xl font-black">⭐ 0/5</div>
+    <div id="game-view">
+        <div class="game-canvas">
+            <div class="absolute top-10 inset-x-10 flex justify-between items-center z-[6000]">
+                <div id="g-lives" class="flex gap-2"></div>
+                <div id="g-task" class="bg-white/90 border-b-[15px] border-blue-400 px-16 py-8 rounded-[60px] text-8xl font-black text-slate-800 shadow-2xl">...</div>
+                <div id="g-score" class="bg-blue-500 text-white px-10 py-5 rounded-full text-4xl font-black shadow-xl">⭐ 0/5</div>
             </div>
-            <div id="g-task" class="bg-white text-slate-900 px-12 py-4 rounded-3xl text-7xl font-black shadow-[0_0_30px_#fff]">...</div>
-            <button onclick="Game.quit()" class="bg-red-500 w-20 h-20 rounded-2xl text-4xl font-black">✕</button>
+            <div id="g-arena" class="w-full h-full relative"></div>
+            <button onclick="Game.quit()" class="absolute bottom-10 left-10 bg-white/50 w-24 h-24 rounded-full text-5xl z-[7000]">❌</button>
         </div>
-        <div id="g-canvas" class="w-full h-full relative"></div>
     </div>
 
-    <nav id="navbar" class="fixed bottom-8 left-50 translate-x-[-50%] bg-slate-900/90 border-2 border-slate-700 px-10 py-4 rounded-full flex gap-12 z-[100] hidden backdrop-blur-md">
-        <div class="text-5xl cursor-pointer" onclick="App.nav('p-home')">🏠</div>
-        <div class="text-5xl cursor-pointer" onclick="App.nav('p-leader')">🏆</div>
-        <div class="text-5xl cursor-pointer" onclick="App.nav('p-shop')">🎁</div>
-        <div class="text-5xl cursor-pointer" onclick="App.nav('p-worlds')">🎮</div>
+    <nav id="navbar" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-xl border-4 border-blue-100 px-12 py-5 rounded-full flex gap-16 z-[1000] shadow-2xl hidden">
+        <div class="text-6xl cursor-pointer hover:scale-125 transition" onclick="App.nav('p-home')">🏠</div>
+        <div class="text-6xl cursor-pointer hover:scale-125 transition" onclick="App.nav('p-leader')">🏆</div>
+        <div class="text-6xl cursor-pointer hover:scale-125 transition" onclick="App.nav('p-shop')">🛍️</div>
+        <div class="text-6xl cursor-pointer hover:scale-125 transition" onclick="App.nav('p-worlds')">🎮</div>
     </nav>
 
 <script>
 /**
- * ⚙️ محرك "أساطير 1-ب"
+ * 🛠️ المحرك الذكي
  */
 const App = {
-    dbKey: 'CHALLENGE_1B_PRO_V1',
+    dbKey: 'CARNIVAL_1B_V1',
     user: null, currentWorld: 'math',
     items: Array.from({length: 50}, (_, i) => ({
-        id: i+1, n: 'عنصر '+ (i+1), e: ['🔥','💎','🚁','⚡','🐉','👾','⚔️','🕶️','🛸','🦈','🦾','👑','👟','🌋'][i%14], p: (i+5)*40
+        id: i+1, n: 'هدية '+ (i+1), e: ['🍭','🧸','🚀','🦄','🦁','🐼','🐙','⚽','🎸','🚲','🏎️','💎','🛸','🐉','🍦','🍕'][i%16], p: (i+2)*50
     })),
 
     login() {
@@ -144,9 +158,9 @@ const App = {
         if(found) {
             this.user = found;
             this.nav('p-home');
-            document.getElementById('navbar').style.display = 'flex';
+            document.getElementById('navbar').classList.remove('hidden');
             this.sync();
-        } else alert("الكود خطأ!");
+        } else alert("الكود خطأ يا بطل!");
     },
 
     nav(id) {
@@ -160,7 +174,7 @@ const App = {
         document.getElementById('u-name').innerText = this.user.name;
         document.getElementById('u-stars').innerText = this.user.stars;
         document.getElementById('u-coins').innerText = this.user.coins;
-        document.getElementById('u-avatar').innerText = this.user.equipped || '👤';
+        document.getElementById('u-tag').innerText = this.user.equipped || '';
         const db = JSON.parse(localStorage.getItem(this.dbKey)) || [];
         const idx = db.findIndex(s => s.code === this.user.code);
         db[idx] = this.user; localStorage.setItem(this.dbKey, JSON.stringify(db));
@@ -171,9 +185,9 @@ const App = {
         grid.innerHTML = this.items.map(item => {
             const owned = this.user.inventory.includes(item.id);
             return `
-                <div class="bg-slate-800 p-6 rounded-3xl border-2 ${owned?'border-blue-500':'border-slate-700'} text-center cursor-pointer hover:scale-105" onclick="App.buy(${item.id})">
-                    <div class="text-7xl mb-4">${item.e}</div>
-                    <div class="bg-yellow-500 text-black px-4 py-1 rounded-full font-black text-xl inline-block">${item.p} 💰</div>
+                <div class="bg-white p-8 rounded-[40px] border-b-[12px] ${owned?'border-blue-400 bg-blue-50':'border-slate-100'} text-center cursor-pointer hover:scale-105 transition" onclick="App.buy(${item.id})">
+                    <div class="text-8xl mb-6">${item.e}</div>
+                    <div class="bg-amber-400 text-white px-6 py-2 rounded-full font-black text-2xl inline-block">${item.p} 💰</div>
                 </div>
             `;
         }).join('');
@@ -190,16 +204,15 @@ const App = {
 
     openMap(world) {
         this.currentWorld = world;
-        const grid = document.getElementById('map-grid');
-        grid.innerHTML = '';
+        const grid = document.getElementById('map-grid'); grid.innerHTML = '';
         for(let i=1; i<=100; i++) {
             const isDone = this.user.done[world].includes(i);
             const isLocked = i > 5;
-            const card = document.createElement('div');
-            card.className = `lvl-card ${isLocked ? '' : 'open'} ${isDone ? 'done' : ''}`;
-            card.innerHTML = isLocked ? '🔒' : (isDone ? '✅' : i);
-            if(!isLocked) card.onclick = () => Game.start(i, world);
-            grid.appendChild(card);
+            const node = document.createElement('div');
+            node.className = `lvl-node ${isLocked?'':'open'} ${isDone?'done':''}`;
+            node.innerHTML = isLocked ? '🔒' : (isDone ? '✅' : i);
+            if(!isLocked) node.onclick = () => Game.start(i, world);
+            grid.appendChild(node);
         }
         this.nav('p-map');
     },
@@ -207,170 +220,214 @@ const App = {
     renderLeaderboard() {
         const db = (JSON.parse(localStorage.getItem(this.dbKey)) || []).sort((a,b) => b.stars - a.stars);
         document.getElementById('leader-list').innerHTML = db.map((s, i) => `
-            <div class="bg-slate-800 p-6 rounded-3xl flex justify-between items-center border-l-8 ${i==0?'border-yellow-400':'border-blue-500'}">
-                <div class="flex items-center gap-6">
-                    <span class="text-4xl font-black text-slate-500">#${i+1}</span>
-                    <span class="text-7xl">${s.equipped || '👤'}</span>
-                    <span class="text-3xl font-black">${s.name}</span>
+            <div class="bg-white p-8 rounded-[40px] flex justify-between items-center shadow-lg border-r-[15px] ${i==0?'border-amber-400':'border-blue-400'}">
+                <div class="flex items-center gap-10">
+                    <span class="text-5xl font-black text-slate-300">#${i+1}</span>
+                    <span class="text-[100px]">${s.equipped || '👤'}</span>
+                    <span class="text-4xl font-black text-slate-800">${s.name}</span>
                 </div>
-                <div class="text-4xl font-black text-blue-400">${s.stars} ⭐</div>
+                <div class="text-5xl font-black text-blue-500">${s.stars} ⭐</div>
             </div>
         `).join('');
     }
 };
 
 /**
- * 🎮 محرك الألعاب المعدل (صعوبة وإثارة)
+ * 🎮 محرك الألعاب (9 أنواع منوعة وأكشن)
  */
 const Game = {
     active: false, lvl: 1, world: '', score: 0, lives: 3, target: null, loop: null,
-    // بيانات الألعاب المتقدمة
-    mathQ: [{q:'12 + 4', a:16}, {q:'20 - 7', a:13}, {q:'8 + 9', a:17}, {q:'15 - 6', a:9}, {q:'11 + 8', a:19}],
-    arabicQ: [{q:'مَـ + دْ + رَ + سَـ + ة', a:'مدرسة'}, {q:'عـ + لَـ + م', a:'علم'}, {q:'طـ + ا + لِـ + ب', a:'طالب'}, {q:'قِـ + صـ + ـة', a:'قصة'}, {q:'بُـ + رْ + تُـ + قـ + ا + ل', a:'برتقال'}],
+    mathQ: [{q:'7 + 3', a:10}, {q:'15 - 5', a:10}, {q:'8 + 4', a:12}, {q:'20 - 2', a:18}, {q:'9 + 9', a:18}, {q:'14 - 4', a:10}],
+    arabicQ: [{q:'بَـ + نَـ + ت', a:'بنت'}, {q:'وِ + لَ + د', a:'ولد'}, {q:'كِـ + تـ + ا + ب', a:'كتاب'}, {q:'نَـ + جْـ + م', a:'نجم'}, {q:'قَـ + مَـ + ر', a:'قمر'}],
 
     start(lvl, world) {
         this.lvl = lvl; this.world = world; this.score = 0; this.lives = 3; this.active = true;
-        document.getElementById('game-screen').style.display = 'block';
+        document.getElementById('game-view').style.display = 'block';
         this.updateUI();
         this.next();
     },
 
     updateUI() {
         document.getElementById('g-score').innerText = `⭐ ${this.score} / 5`;
-        document.getElementById('g-lives').innerText = "❤️ ".repeat(this.lives);
+        document.getElementById('g-lives').innerHTML = Array(this.lives).fill('<span class="heart">❤️</span>').join('');
     },
 
     next() {
-        const arena = document.getElementById('g-canvas'); arena.innerHTML = '';
+        const arena = document.getElementById('g-arena'); arena.innerHTML = '';
         const data = this.world === 'math' ? this.mathQ : this.arabicQ;
         const q = data[Math.floor(Math.random()*data.length)];
         this.target = q.a;
         document.getElementById('g-task').innerText = q.q;
         
         clearInterval(this.loop);
+        const mode = Math.floor(Math.random() * 9); // 9 أنواع من الألعاب!
         
-        // اختيار طور اللعبة (كل طور أصعب من السابق)
-        const mode = Math.floor(Math.random() * 5);
-        if(mode === 0) this.mode_meteor();  // النيازك السريعة
-        else if(mode === 1) this.mode_ghost();  // أشباح تظهر وتختفي
-        else if(mode === 2) this.mode_storm();  // عاصفة الأرقام
-        else if(mode === 3) this.mode_laser();  // ليزر الحماية
-        else this.mode_blackout();              // طور الظلام
-    },
-
-    // 1. النيازك السريعة (تعتمد على سرعة اليد)
-    mode_meteor() {
-        this.loop = setInterval(() => {
-            const m = document.createElement('div');
-            const isT = Math.random() > 0.7;
-            m.className = "target-obj w-32 h-32 bg-gradient-to-br from-orange-500 to-red-600 rounded-full border-4 border-yellow-200 flex items-center justify-center text-3xl font-black";
-            m.innerText = isT ? this.target : Math.floor(Math.random()*30);
-            m.style.left = Math.random()*85 + "%"; m.style.top = "-150px";
-            document.getElementById('g-canvas').appendChild(m);
-            
-            gsap.to(m, { y: window.innerHeight+200, rotation: 360, duration: 2.5 - (this.lvl*0.1), ease: "none", onComplete:()=>m.remove() });
-            m.onclick = () => { if(isT) this.hit(m); else this.fail(); };
-        }, 900);
-    },
-
-    // 2. الأشباح (تظهر وتختفي بسرعة)
-    mode_ghost() {
-        const spawn = () => {
-            if(!this.active) return;
-            const g = document.createElement('div');
-            const isT = Math.random() > 0.5;
-            g.className = "target-obj text-8xl flex flex-col items-center";
-            g.innerHTML = `<span>${isT?'👻':'💀'}</span><div class="bg-white text-black text-2xl px-4 rounded-xl font-black">${isT?this.target:'!!'}</div>`;
-            g.style.left = Math.random()*70+15+"%"; g.style.top = Math.random()*60+20+"%";
-            document.getElementById('g-canvas').appendChild(g);
-            
-            gsap.fromTo(g, {scale:0, opacity:0}, {scale:1.2, opacity:1, duration:0.4, yoyo:true, repeat:1, onComplete:()=>g.remove()});
-            g.onclick = () => { if(isT) this.hit(g); else this.fail(); };
-        };
-        this.loop = setInterval(spawn, 1200);
-    },
-
-    // 3. عاصفة الأرقام (تتحرك في كل الاتجاهات)
-    mode_storm() {
-        for(let i=0; i<10; i++) {
-            const p = document.createElement('div');
-            const isT = i === 5;
-            p.className = "target-obj p-6 bg-blue-600 border-4 border-white rounded-full text-4xl font-black";
-            p.innerText = isT ? this.target : Math.floor(Math.random()*40);
-            p.style.left = "50%"; p.style.top = "50%";
-            document.getElementById('g-canvas').appendChild(p);
-            
-            gsap.to(p, { 
-                x: (Math.random()-0.5) * window.innerWidth, 
-                y: (Math.random()-0.5) * window.innerHeight, 
-                duration: 3, repeat: -1, yoyo: true 
-            });
-            p.onclick = () => { if(isT) this.hit(p); else this.fail(); };
+        switch(mode) {
+            case 0: this.mode_balloons(); break;    // بالونات صاعدة
+            case 1: this.mode_fallingStars(); break; // نجوم ساقطة
+            case 2: this.mode_moles(); break;        // اضرب الوحش
+            case 3: this.mode_train(); break;        // القطار السريع
+            case 4: this.mode_ufo(); break;          // الصحون الطائرة
+            case 5: this.mode_bubbles(); break;      // فقاعات الصابون
+            case 6: this.mode_presents(); break;     // هدايا الحظ
+            case 7: this.mode_birds(); break;        // الطيور المهاجرة
+            case 8: this.mode_magnets(); break;      // مغناطيس الأرقام
         }
     },
 
-    // 4. ليزر الحماية (يجب الضغط على الهدف المتحرك خلف الليزر)
-    mode_laser() {
-        const wall = document.createElement('div');
-        wall.className = "absolute inset-x-0 h-20 bg-red-600/30 border-y-4 border-red-500 animate-pulse";
-        wall.style.top = "45%";
-        document.getElementById('g-canvas').appendChild(wall);
-        
-        const ball = document.createElement('div');
-        ball.className = "target-obj w-40 h-40 bg-white rounded-full border-8 border-blue-500 flex items-center justify-center text-5xl font-black text-black";
-        ball.innerText = this.target; ball.style.left = "10%"; ball.style.top = "40%";
-        document.getElementById('g-canvas').appendChild(ball);
-        gsap.to(ball, { x: window.innerWidth, duration: 2, repeat: -1, yoyo: true });
-        ball.onclick = () => this.hit(ball);
+    // 1. بالونات ملونة
+    mode_balloons() {
+        this.loop = setInterval(() => {
+            const b = document.createElement('div');
+            const isT = Math.random() > 0.6;
+            b.className = "floating-obj w-40 h-48 bg-pink-400 rounded-full flex flex-col items-center justify-center border-4 border-white shadow-xl";
+            b.style.borderRadius = "50% 50% 50% 50% / 40% 40% 60% 60%";
+            b.innerHTML = `<span class="text-4xl font-black text-white">${isT?this.target:Math.floor(Math.random()*30)}</span>`;
+            b.style.left = Math.random()*80 + "%"; b.style.bottom = "-200px";
+            document.getElementById('g-arena').appendChild(b);
+            gsap.to(b, { y: -(window.innerHeight+400), duration: 4, onComplete:()=>b.remove() });
+            b.onclick = () => isT ? this.hit(b) : this.fail(b);
+        }, 1200);
     },
 
-    // 5. طور الظلام (يظهر السؤال والخيارات لثواني ثم تختفي)
-    mode_blackout() {
-        const create = () => {
-            const box = document.createElement('div');
-            box.className = "target-obj w-56 h-56 bg-white rounded-[40px] flex items-center justify-center text-6xl font-black text-black";
-            box.innerText = this.target;
-            box.style.left = "40%"; box.style.top = "40%";
-            document.getElementById('g-canvas').appendChild(box);
-            
-            // تختفي بعد ثانية واحدة!
-            gsap.to(box, { opacity: 0, delay: 1, duration: 0.2 });
-            box.onclick = () => this.hit(box);
+    // 2. نجوم ساقطة (سريعة)
+    mode_fallingStars() {
+        this.loop = setInterval(() => {
+            const s = document.createElement('div');
+            const isT = Math.random() > 0.5;
+            s.className = "floating-obj text-9xl";
+            s.innerHTML = isT ? "🌟" : "🌑";
+            s.style.left = Math.random()*85 + "%"; s.style.top = "-200px";
+            document.getElementById('g-arena').appendChild(s);
+            gsap.to(s, { y: window.innerHeight+400, duration: 2.5, onComplete:()=>s.remove() });
+            s.onclick = () => isT ? this.hit(s) : this.fail(s);
+        }, 800);
+    },
+
+    // 3. اضرب الوحش (Whack-a-Mole)
+    mode_moles() {
+        const spawn = () => {
+            if(!this.active) return;
+            const m = document.createElement('div');
+            const isT = Math.random() > 0.4;
+            m.className = "floating-obj w-48 h-48 bg-orange-500 rounded-full border-[10px] border-white flex items-center justify-center text-5xl font-black text-white shadow-2xl";
+            m.innerText = isT ? this.target : '👾';
+            m.style.left = Math.random()*70+10+"%"; m.style.top = Math.random()*60+20+"%";
+            document.getElementById('g-arena').appendChild(m);
+            gsap.fromTo(m, {scale:0}, {scale:1, duration:0.3, yoyo:true, repeat:1, repeatDelay:0.8, onComplete:()=>m.remove()});
+            m.onclick = () => isT ? this.hit(m) : this.fail(m);
         };
-        create();
+        spawn(); this.loop = setInterval(spawn, 1500);
+    },
+
+    // 4. القطار السريع
+    mode_train() {
+        const t = document.createElement('div');
+        t.className = "floating-obj p-10 bg-blue-600 text-white rounded-[50px] text-7xl font-black border-8 border-white shadow-2xl";
+        t.innerText = this.target; t.style.left = "-500px"; t.style.top = "40%";
+        document.getElementById('g-arena').appendChild(t);
+        gsap.to(t, { x: window.innerWidth + 600, duration: 3, repeat: -1, ease: "none" });
+        t.onclick = () => this.hit(t);
+    },
+
+    // 5. الصحون الطائرة (UFO)
+    mode_ufo() {
+        this.loop = setInterval(() => {
+            const u = document.createElement('div');
+            u.className = "floating-obj text-9xl"; u.innerText = "🛸";
+            u.style.left = Math.random()*80 + "%"; u.style.top = Math.random()*80 + "%";
+            document.getElementById('g-arena').appendChild(u);
+            gsap.from(u, { scale: 0, duration: 0.5 });
+            u.onclick = () => { u.innerText = "💥"; this.hit(u); };
+            setTimeout(() => u.remove(), 1200);
+        }, 1000);
+    },
+
+    // 6. فقاعات الصابون (تتحرك بشكل متعرج)
+    mode_bubbles() {
+        this.loop = setInterval(() => {
+            const b = document.createElement('div');
+            b.className = "floating-obj w-32 h-32 rounded-full bg-blue-200/50 border-4 border-white flex items-center justify-center text-3xl font-black";
+            const val = Math.random() > 0.7 ? this.target : '🫧';
+            b.innerText = val; b.style.left = Math.random()*80 + "%"; b.style.bottom = "-100px";
+            document.getElementById('g-arena').appendChild(b);
+            gsap.to(b, { 
+                y: -(window.innerHeight+200), 
+                x: "+=100", 
+                duration: 5, 
+                repeat: -1, 
+                yoyo: true, 
+                onComplete:()=>b.remove() 
+            });
+            b.onclick = () => val == this.target ? this.hit(b) : b.remove();
+        }, 900);
+    },
+
+    // 7. هدايا الحظ
+    mode_presents() {
+        for(let i=0; i<4; i++) {
+            const p = document.createElement('div');
+            p.className = "floating-obj w-56 h-56 bg-gradient-to-t from-purple-600 to-purple-400 rounded-[40px] border-8 border-white flex items-center justify-center text-9xl shadow-2xl";
+            p.innerText = "🎁"; p.style.top = "40%"; p.style.left = (15 + i*20) + "%";
+            document.getElementById('g-arena').appendChild(p);
+            p.onclick = () => {
+                if(Math.random() > 0.5) { p.innerText = "⭐"; this.hit(p); }
+                else { p.innerText = "💨"; gsap.to(p, {opacity:0, scale:0.5}); }
+            };
+        }
+    },
+
+    // 8. الطيور المهاجرة (تطير أفقياً)
+    mode_birds() {
+        this.loop = setInterval(() => {
+            const bird = document.createElement('div');
+            bird.className = "floating-obj text-8xl"; bird.innerText = "🐦";
+            bird.style.left = "-200px"; bird.style.top = Math.random()*60 + 20 + "%";
+            document.getElementById('g-arena').appendChild(bird);
+            gsap.to(bird, { x: window.innerWidth + 300, y: "+=100", duration: 3, onComplete:()=>bird.remove() });
+            bird.onclick = () => { bird.innerText = "✨"; this.hit(bird); };
+        }, 1500);
+    },
+
+    // 9. مغناطيس الأرقام (تسحبها لمنتصف الشاشة)
+    mode_magnets() {
+        const m = document.createElement('div');
+        m.className = "floating-obj w-64 h-64 bg-yellow-400 rounded-full border-[20px] border-white shadow-2xl flex items-center justify-center text-7xl font-black";
+        m.innerText = this.target; m.style.left = "40%"; m.style.top = "40%";
+        document.getElementById('g-arena').appendChild(m);
+        gsap.to(m, { scale: 1.2, duration: 0.5, repeat: -1, yoyo: true });
+        m.onclick = () => this.hit(m);
     },
 
     hit(el) {
-        this.score++;
-        gsap.to(el, { scale: 2, opacity: 0, duration: 0.2 });
-        confetti({ particleCount: 50, origin: { y: 0.7 } });
+        this.score++; 
+        if(el) gsap.to(el, {scale: 2, opacity: 0, duration: 0.3, onComplete:()=>el.remove()});
+        confetti({ particleCount: 40, origin: { y: 0.7 } });
         if(this.score >= 5) this.win(); else this.next();
     },
 
-    fail() {
-        this.lives--;
-        this.updateUI();
-        document.body.classList.add('shake');
-        setTimeout(() => document.body.classList.remove('shake'), 300);
+    fail(el) {
+        this.lives--; this.updateUI();
+        gsap.to(el, { x: "+=20", yoyo: true, repeat: 5, duration: 0.05 });
         if(this.lives <= 0) this.gameOver();
     },
 
     win() {
         this.active = false; clearInterval(this.loop);
-        confetti({ particleCount: 400, spread: 100 });
-        App.user.stars += 100; App.user.coins += 300;
+        confetti({ particleCount: 500, spread: 160 });
+        App.user.stars += 100; App.user.coins += 400;
         if(!App.user.done[this.world].includes(this.lvl)) App.user.done[this.world].push(this.lvl);
         App.sync();
-        setTimeout(() => { document.getElementById('game-screen').style.display='none'; App.openMap(this.world); }, 2000);
+        setTimeout(() => { document.getElementById('game-view').style.display='none'; App.openMap(this.world); }, 2500);
     },
 
     gameOver() {
         this.active = false; clearInterval(this.loop);
-        alert("خسرت القلوب! حاول مرة أخرى بتركيز أكبر يا بطل.");
-        document.getElementById('game-screen').style.display='none';
+        alert("انتهت القلوب! حاول مرة ثانية بتركيز أقوى 💪");
+        document.getElementById('game-view').style.display='none';
     },
 
-    quit() { this.active = false; clearInterval(this.loop); document.getElementById('game-screen').style.display='none'; }
+    quit() { this.active = false; clearInterval(this.loop); document.getElementById('game-view').style.display='none'; }
 };
 </script>
 </body>
