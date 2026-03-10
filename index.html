@@ -3,377 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أساطير لبنى | Omniverse 2026</title>
-    
+    <title>أساطير لبنى | التطبيق الرسمي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
-
     <style>
-        :root { --c-main: #6366f1; --c-acc: #f59e0b; --bg: #f8fafc; }
+        :root { --bg: #f0fdf4; }
         * { user-select: none; font-family: 'Fredoka', 'Cairo', sans-serif; box-sizing: border-box; }
-        body { background: var(--bg); margin: 0; overflow: hidden; height: 100vh; color: #1e293b; }
+        body { background: var(--bg); margin: 0; overflow: hidden; height: 100vh; }
+        
+        /* واجهات النظام الموسع */
+        .screen { position: absolute; inset: 0; display: none; flex-direction: column; z-index: 10; overflow-y: auto; background-color: #f8fafc; }
+        .screen-active { display: flex; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        /* الانتقالات والواجهات */
-        .view { position: absolute; inset: 0; display: none; flex-direction: column; z-index: 10; background: var(--bg); overflow-y: auto; overflow-x: hidden; }
-        .view-active { display: flex; animation: fadeUp 0.5s ease-out both; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        /* خريطة المراحل الـ 100 */
+        .level-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 20px; padding: 20px; }
+        .level-btn { aspect-ratio: 1; border-radius: 25px; background: white; box-shadow: 0 8px 0 #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; cursor: pointer; transition: 0.2s; position: relative; }
+        .level-btn:active { transform: translateY(8px); box-shadow: 0 0 0 #cbd5e1; }
+        .locked { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
+        .locked::after { content: '🔒'; position: absolute; font-size: 1.5rem; }
+        .completed { border: 4px solid #10b981; color: #10b981; }
 
-        /* التصميم الطفولي الرهيب */
-        .bouncy-card { background: white; border-radius: 40px; box-shadow: 0 20px 0 #e2e8f0; border: 8px solid white; transition: 0.3s; cursor: pointer; }
-        .bouncy-card:active { transform: translateY(15px); box-shadow: 0 5px 0 #e2e8f0; }
-
-        /* شبكة الـ 100 مرحلة */
-        .mega-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 25px; padding: 40px; }
-        .node { aspect-ratio: 1; border-radius: 35px; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; box-shadow: 0 10px 0 #cbd5e1; position: relative; }
-        .node-locked { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
-        .node-locked::before { content: '🔒'; position: absolute; font-size: 2rem; }
-        .node-done::after { content: '⭐'; position: absolute; top: -10px; right: -10px; font-size: 2rem; }
-
-        /* الألعاب */
-        .game-zone { flex-grow: 1; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .draggable { cursor: grab; transition: transform 0.2s; }
-        .draggable:active { cursor: grabbing; transform: scale(1.1); }
-
-        /* شريط التنقل */
-        .magic-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px 40px; border-radius: 100px; display: flex; gap: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); z-index: 999; }
-        .nav-ico { font-size: 2.5rem; opacity: 0.4; cursor: pointer; transition: 0.3s; }
-        .nav-ico.active { opacity: 1; transform: translateY(-10px) scale(1.2); }
+        /* شريط التنقل السفلي */
+        .bottom-nav { position: fixed; bottom: 0; inset-x: 0; background: white; padding: 20px; display: flex; justify-content: space-around; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 1000; border-top-left-radius: 40px; border-top-right-radius: 40px; }
+        .nav-btn { font-size: 2.5rem; opacity: 0.4; transition: 0.3s; cursor: pointer; }
+        .nav-btn.active { opacity: 1; transform: translateY(-10px) scale(1.2); }
     </style>
 </head>
 <body>
 
-    <div id="v-login" class="view view-active bg-gradient-to-br from-indigo-500 to-purple-600 justify-center items-center">
-        <div class="text-center text-white w-full max-w-lg">
-            <h1 class="text-[100px] font-black drop-shadow-2xl leading-none mb-4">أساطير<br>لبنى</h1>
-            <p class="text-2xl font-bold mb-12 opacity-80 tracking-widest">الموسم الأسطوري</p>
-            
-            <div class="bg-white/10 p-10 rounded-[50px] backdrop-blur-md border-4 border-white/20 shadow-2xl">
-                <input type="text" id="login-code" placeholder="أدخل كودك هنا" class="w-full bg-white/90 text-indigo-900 text-center text-4xl p-6 rounded-[30px] font-black outline-none mb-8">
-                <button onclick="App.login()" class="w-full bg-amber-400 text-indigo-900 py-6 rounded-[30px] text-3xl font-black shadow-[0_10px_0_#b45309] active:translate-y-2 active:shadow-none transition-all">دخول الأبطال 🚀</button>
+    <div id="scr-login" class="screen screen-active bg-gradient-to-b from-blue-400 to-indigo-600 justify-center items-center">
+        <div class="bg-white/10 backdrop-blur-lg p-12 rounded-[50px] border-4 border-white/30 text-center w-[90%] max-w-lg shadow-2xl">
+            <h1 class="text-7xl font-black text-white drop-shadow-lg mb-4">أساطير لبنى</h1>
+            <p class="text-xl text-blue-100 mb-10 font-bold tracking-wider">مغامرة التعلم المشوقة</p>
+            <input type="text" id="student-code" placeholder="أدخل الكود السري" class="w-full text-center text-4xl p-6 rounded-3xl font-black mb-6 text-indigo-900 outline-none uppercase tracking-widest shadow-inner">
+            <button onclick="App.login()" class="w-full bg-amber-400 hover:bg-amber-300 text-indigo-900 py-6 rounded-3xl text-3xl font-black shadow-[0_8px_0_#b45309] active:translate-y-2 active:shadow-none transition-all">ابدأ المغامرة 🚀</button>
+        </div>
+    </div>
+
+    <div id="scr-profile" class="screen pb-32">
+        <div class="bg-indigo-600 p-12 text-center text-white rounded-b-[60px] shadow-xl">
+            <div id="p-avatar" class="text-[120px] bg-white w-48 h-48 rounded-full flex items-center justify-center mx-auto shadow-2xl border-8 border-indigo-300 mb-6">👤</div>
+            <h2 id="p-name" class="text-6xl font-black mb-2">اسم البطل</h2>
+            <p id="p-code" class="text-2xl font-mono text-indigo-200 bg-indigo-800/50 inline-block px-6 py-2 rounded-full">CODE</p>
+        </div>
+        <div class="max-w-4xl mx-auto w-full p-8 grid grid-cols-2 gap-8 mt-8">
+            <div class="bg-white p-8 rounded-[40px] shadow-lg text-center border-b-8 border-amber-400">
+                <div class="text-2xl text-slate-400 font-bold mb-4">صندوق الذهب</div>
+                <div id="p-coins" class="text-6xl font-black text-amber-500">0 💰</div>
+            </div>
+            <div class="bg-white p-8 rounded-[40px] shadow-lg text-center border-b-8 border-blue-400">
+                <div class="text-2xl text-slate-400 font-bold mb-4">نجوم التميز</div>
+                <div id="p-stars" class="text-6xl font-black text-blue-500">0 ⭐</div>
             </div>
         </div>
     </div>
 
-    <div id="v-profile" class="view bg-slate-50 p-10">
-        <div class="max-w-4xl mx-auto w-full mt-20">
-            <div class="bg-white p-12 rounded-[60px] shadow-2xl text-center border-t-[20px] border-indigo-500 relative">
-                <div id="p-avatar" class="text-[120px] bg-indigo-50 w-48 h-48 rounded-full flex items-center justify-center mx-auto -mt-32 shadow-xl border-8 border-white">🐱</div>
-                <h2 id="p-name" class="text-6xl font-black text-indigo-900 mt-6">الاسم</h2>
-                <p id="p-code-disp" class="text-2xl text-slate-400 font-mono mt-2 mb-10">CODE</p>
-                
-                <div class="grid grid-cols-2 gap-8">
-                    <div class="bg-amber-50 p-8 rounded-[40px]">
-                        <div class="text-slate-500 text-xl font-bold mb-2">رصيد الذهب</div>
-                        <div id="p-coins" class="text-5xl font-black text-amber-500">0 💰</div>
-                    </div>
-                    <div class="bg-blue-50 p-8 rounded-[40px]">
-                        <div class="text-slate-500 text-xl font-bold mb-2">نجوم التميز</div>
-                        <div id="p-stars" class="text-5xl font-black text-blue-500">0 ⭐</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="v-worlds" class="view bg-sky-50 p-10">
-        <h2 class="text-6xl font-black text-center text-slate-800 mt-10 mb-16">عوالم التعلم 🪐</h2>
-        <div class="flex justify-center gap-10 max-w-5xl mx-auto">
-            <div onclick="App.openMap('math')" class="bouncy-card flex-1 p-16 text-center border-blue-400 border-b-[15px]">
-                <div class="text-[120px]">🧮</div><h3 class="text-4xl font-black text-blue-600 mt-6">عالم الحساب</h3>
-            </div>
-            <div onclick="App.openMap('arabic')" class="bouncy-card flex-1 p-16 text-center border-emerald-400 border-b-[15px]">
-                <div class="text-[120px]">📖</div><h3 class="text-4xl font-black text-emerald-600 mt-6">عالم العربية</h3>
-            </div>
-        </div>
-    </div>
-
-    <div id="v-map" class="view bg-white p-10">
-        <div class="flex justify-between items-center mb-10 max-w-7xl mx-auto w-full">
-            <h2 id="map-title" class="text-6xl font-black text-indigo-900">المراحل</h2>
-            <button onclick="App.nav('v-worlds')" class="text-4xl bg-slate-100 p-4 rounded-full">🔙</button>
-        </div>
-        <div id="map-grid" class="mega-grid max-w-7xl mx-auto w-full pb-32"></div>
-    </div>
-
-    <div id="v-game" class="view bg-slate-900 overflow-hidden">
-        <div class="absolute top-8 inset-x-8 flex justify-between z-50 pointer-events-none">
-            <div class="bg-white/90 p-6 rounded-3xl pointer-events-auto shadow-xl flex items-center gap-6">
-                <div class="text-4xl font-black text-indigo-600" id="g-level">1</div>
+    <div id="scr-worlds" class="screen pb-32 bg-sky-50">
+        <h2 class="text-5xl font-black text-center text-slate-800 mt-12 mb-12">اختر كوكبك 🪐</h2>
+        <div class="flex flex-col gap-8 px-8 max-w-2xl mx-auto w-full">
+            <div onclick="App.openWorld('math')" class="bg-white p-10 rounded-[40px] shadow-xl flex items-center gap-8 cursor-pointer active:scale-95 transition border-l-[15px] border-blue-500">
+                <div class="text-[80px]">🧮</div>
                 <div>
-                    <div id="g-instruction" class="text-2xl font-black text-slate-800">التعليمات هنا</div>
-                    <div class="text-slate-400 font-bold">ركز جيداً يا بطل</div>
+                    <h3 class="text-4xl font-black text-blue-600">عالم الحساب</h3>
+                    <p class="text-xl font-bold text-slate-400 mt-2">100 مرحلة لاكتشاف الأرقام</p>
                 </div>
             </div>
-            <button onclick="App.nav('v-map')" class="bg-red-500 text-white p-6 rounded-3xl text-3xl pointer-events-auto shadow-xl hover:bg-red-600">خروج ❌</button>
-        </div>
-        <div id="game-stage" class="game-zone text-white"></div>
-    </div>
-
-    <div id="v-store" class="view bg-pink-50 p-10 pb-40">
-        <h2 class="text-7xl font-black text-center text-pink-500 mt-10 mb-16">متجر العجائب 🛍️</h2>
-        <div id="store-items" class="grid grid-cols-4 gap-8 max-w-7xl mx-auto"></div>
-    </div>
-
-    <div id="v-rank" class="view bg-amber-50 p-10 pb-40">
-        <h2 class="text-7xl font-black text-center text-amber-600 mt-10 mb-16">أساطير الصف 🏆</h2>
-        <div id="rank-list" class="max-w-4xl mx-auto space-y-6"></div>
-    </div>
-
-    <div id="v-admin" class="view bg-slate-100 p-10 pb-40">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex justify-between items-center bg-white p-10 rounded-[40px] shadow-lg mb-10">
-                <h1 class="text-5xl font-black text-indigo-900">غرفة القائدة لبنى 👑</h1>
-                <button onclick="Admin.add()" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl text-xl font-black shadow-lg">إضافة بطل +</button>
+            <div onclick="App.openWorld('arabic')" class="bg-white p-10 rounded-[40px] shadow-xl flex items-center gap-8 cursor-pointer active:scale-95 transition border-l-[15px] border-emerald-500">
+                <div class="text-[80px]">📖</div>
+                <div>
+                    <h3 class="text-4xl font-black text-emerald-600">عالم العربية</h3>
+                    <p class="text-xl font-bold text-slate-400 mt-2">100 مرحلة لاكتشاف الحروف</p>
+                </div>
             </div>
-            <div class="bg-white rounded-[40px] shadow-lg overflow-hidden">
-                <table class="w-full text-right text-xl">
-                    <thead class="bg-slate-50"><tr class="border-b">
-                        <th class="p-6">البطل</th><th class="p-6">الكود الدائم</th><th class="p-6">المراحل (حساب/عربي)</th><th class="p-6">التحكم</th>
-                    </tr></thead>
-                    <tbody id="admin-tbody"></tbody>
-                </table>
-            </div>
-            <button onclick="App.nav('v-login')" class="mt-10 text-slate-400 font-bold">تسجيل الخروج</button>
         </div>
     </div>
 
-    <nav id="navbar" class="magic-nav hidden">
-        <div class="nav-ico active" onclick="App.nav('v-profile', this)">👤</div>
-        <div class="nav-ico" onclick="App.nav('v-worlds', this)">🪐</div>
-        <div class="nav-ico" onclick="App.nav('v-store', this)">🛍️</div>
-        <div class="nav-ico" onclick="App.nav('v-rank', this)">🏆</div>
-        <div class="nav-ico" onclick="App.nav('v-admin', this)">⚙️</div>
+    <div id="scr-levels" class="screen pb-32">
+        <div class="p-8 flex justify-between items-center bg-white shadow-sm sticky top-0 z-50">
+            <h2 id="world-title" class="text-4xl font-black text-indigo-900">المراحل</h2>
+            <button onclick="App.nav('scr-worlds')" class="text-3xl bg-slate-100 p-4 rounded-2xl">عودة 🔙</button>
+        </div>
+        <div id="levels-container" class="level-grid max-w-5xl mx-auto w-full mt-8"></div>
+    </div>
+
+    <div id="scr-game" class="screen bg-slate-900 items-center justify-center relative">
+        <button onclick="App.nav('scr-levels')" class="absolute top-8 right-8 text-4xl bg-red-500 text-white w-16 h-16 rounded-full shadow-lg z-50">❌</button>
+        <div class="absolute top-8 left-8 bg-white/90 px-8 py-4 rounded-3xl font-black text-3xl text-indigo-900 shadow-lg z-50" id="game-info">المرحلة 1</div>
+        
+        <div id="game-board" class="w-full max-w-4xl p-8 flex flex-col items-center justify-center text-center">
+            </div>
+    </div>
+
+    <nav id="student-nav" class="bottom-nav hidden">
+        <div class="nav-btn active" onclick="App.nav('scr-profile', this)">👤</div>
+        <div class="nav-btn" onclick="App.nav('scr-worlds', this)">🪐</div>
+        <div class="nav-btn" onclick="location.reload()">🚪</div>
     </nav>
 
 <script>
-    // ==========================================
-    // 🏦 قاعدة البيانات الدائمة (Permanent DB)
-    // ==========================================
-    const DB = {
-        save: (d) => localStorage.setItem('LUBNA_OMNI_DB', JSON.stringify(d)),
-        load: () => JSON.parse(localStorage.getItem('LUBNA_OMNI_DB')) || [],
-        store: [
-            { id:1, n:'تاج الملك', i:'👑', p:200 }, { id:2, n:'خوذة فضاء', i:'🚀', p:500 },
-            { id:3, n:'أرنب سريع', i:'🐰', p:150 }, { id:4, n:'رداء خارق', i:'🦸', p:1000 },
-            { id:5, n:'نظارة ذكية', i:'🕶️', p:100 }, { id:6, n:'ساحر', i:'🧙', p:800 }
-        ]
-    };
-
-    // ==========================================
-    // 🧠 النواة (Core System)
-    // ==========================================
+    const DB_KEY = 'LUBNA_OMNIVERSE_DB_2026';
+    
     const App = {
-        user: null, currentWorld: 'math',
+        user: null,
+        currentWorld: null,
 
         login() {
-            const code = document.getElementById('login-code').value.trim().toUpperCase();
-            const students = DB.load();
-            const u = students.find(s => s.code === code);
-            if(u) {
-                this.user = u;
-                document.getElementById('navbar').classList.remove('hidden');
-                this.nav('v-profile', document.querySelectorAll('.nav-ico')[0]);
-                this.sync();
-            } else alert("الكود غير صحيح! راجع الأستاذة لبنى.");
+            const code = document.getElementById('student-code').value.trim().toUpperCase();
+            const data = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+            const foundUser = data.find(s => s.code === code);
+            
+            if(foundUser) {
+                this.user = foundUser;
+                document.getElementById('student-nav').classList.remove('hidden');
+                this.updateProfileData();
+                this.nav('scr-profile', document.querySelectorAll('.nav-btn')[0]);
+            } else {
+                alert("عذراً! الكود غير صحيح أو لم تقم الأستاذة لبنى بتسجيلك بعد.");
+            }
         },
 
-        sync() {
-            // تحديث الواجهات بالبيانات
+        updateProfileData() {
             document.getElementById('p-name').innerText = this.user.name;
-            document.getElementById('p-code-disp').innerText = "الكود: " + this.user.code;
-            document.getElementById('p-avatar').innerText = this.user.avatar || '🐱';
+            document.getElementById('p-code').innerText = this.user.code;
+            document.getElementById('p-avatar').innerText = this.user.avatar;
             document.getElementById('p-coins').innerText = this.user.coins + " 💰";
             document.getElementById('p-stars').innerText = this.user.stars + " ⭐";
-            
-            // حفظ في القاعدة
-            const students = DB.load();
-            const idx = students.findIndex(s => s.code === this.user.code);
-            if(idx > -1) { students[idx] = this.user; DB.save(students); }
         },
 
-        nav(id, el=null) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('view-active'));
-            document.getElementById(id).classList.add('view-active');
-            if(el) {
-                document.querySelectorAll('.nav-ico').forEach(i => i.classList.remove('active'));
-                el.classList.add('active');
+        saveProgress() {
+            const data = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+            const index = data.findIndex(s => s.code === this.user.code);
+            if(index !== -1) {
+                data[index] = this.user;
+                localStorage.setItem(DB_KEY, JSON.stringify(data));
+                this.updateProfileData();
             }
-            if(id === 'v-store') this.renderStore();
-            if(id === 'v-rank') this.renderRank();
-            if(id === 'v-admin') Admin.render();
-            if(id === 'v-profile') this.sync();
         },
 
-        openMap(w) {
-            this.currentWorld = w;
-            document.getElementById('map-title').innerText = w === 'math' ? 'جبل الأرقام (100 مرحلة)' : 'وادي الحروف (100 مرحلة)';
-            const grid = document.getElementById('map-grid');
-            grid.innerHTML = '';
+        nav(screenId, navEl = null) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('screen-active'));
+            document.getElementById(screenId).classList.add('screen-active');
             
-            const prog = this.user.progress[w] || 0;
-            for(let i=1; i<=100; i++) {
-                const isLocked = i > (prog + 1);
-                const node = document.createElement('div');
-                node.className = `node ${isLocked ? 'node-locked' : ''} ${i <= prog ? 'node-done' : ''}`;
-                node.innerText = i;
-                if(!isLocked) node.onclick = () => Games.launch(i, w);
-                grid.appendChild(node);
+            if(navEl) {
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                navEl.classList.add('active');
             }
-            this.nav('v-map');
         },
 
-        renderStore() {
-            const grid = document.getElementById('store-items');
-            grid.innerHTML = DB.store.map(it => `
-                <div class="bouncy-card p-8 text-center" onclick="App.buy('${it.i}', ${it.p})">
-                    <div class="text-[80px] mb-4">${it.i}</div>
-                    <div class="text-2xl font-black mb-4">${it.n}</div>
-                    <div class="bg-pink-100 text-pink-600 py-2 rounded-2xl font-black text-xl">${it.p} 💰</div>
-                </div>
-            `).join('');
-        },
+        openWorld(world) {
+            this.currentWorld = world;
+            document.getElementById('world-title').innerText = world === 'math' ? 'جبل الحساب 🧮' : 'وادي الحروف 📖';
+            
+            const container = document.getElementById('levels-container');
+            container.innerHTML = '';
+            
+            const currentProgress = this.user.progress[world];
 
-        buy(item, price) {
-            if(this.user.coins >= price) {
-                this.user.coins -= price;
-                this.user.avatar = item;
-                this.sync();
-                confetti(); alert("مبارك! تم تغيير شخصيتك.");
-            } else alert("تحتاج إلى المزيد من الذهب!");
-        },
-
-        renderRank() {
-            const list = document.getElementById('rank-list');
-            const sorted = DB.load().sort((a,b) => b.stars - a.stars);
-            list.innerHTML = sorted.map((s, i) => `
-                <div class="bg-white p-6 rounded-3xl flex items-center gap-6 shadow-sm border-r-[10px] ${i===0?'border-amber-400':'border-indigo-400'}">
-                    <div class="text-3xl font-black opacity-30 w-10">#${i+1}</div>
-                    <div class="text-5xl">${s.avatar || '🐱'}</div>
-                    <div class="flex-grow text-2xl font-black text-slate-800">${s.name}</div>
-                    <div class="text-2xl font-black text-blue-500">${s.stars} ⭐</div>
-                </div>
-            `).join('');
+            for(let i = 1; i <= 100; i++) {
+                const btn = document.createElement('div');
+                const isLocked = i > currentProgress + 1;
+                const isCompleted = i <= currentProgress;
+                
+                btn.className = `level-btn ${isLocked ? 'locked' : ''} ${isCompleted ? 'completed text-emerald-500' : 'text-indigo-600'}`;
+                btn.innerText = i;
+                
+                if(!isLocked) {
+                    btn.onclick = () => GameEngine.start(i, world);
+                }
+                container.appendChild(btn);
+            }
+            this.nav('scr-levels');
         }
     };
 
     // ==========================================
-    // 🎮 محركات الألعاب الـ 10 (The 10 Game Engines)
+    // محرك الألعاب المصغر (قابل للتوسع اللانهائي)
     // ==========================================
-    const Games = {
-        stage: document.getElementById('game-stage'),
-        inst: document.getElementById('g-instruction'),
-        lvlNum: 1, world: 'math',
+    const GameEngine = {
+        level: 1,
+        world: '',
 
-        launch(lvl, w) {
-            this.lvlNum = lvl; this.world = w;
-            document.getElementById('g-level').innerText = `المرحلة ${lvl}`;
-            App.nav('v-game');
-            this.stage.innerHTML = '';
+        start(lvl, w) {
+            this.level = lvl;
+            this.world = w;
+            document.getElementById('game-info').innerText = `المرحلة ${lvl}`;
+            App.nav('scr-game');
+            this.loadLogic();
+        },
+
+        loadLogic() {
+            const board = document.getElementById('game-board');
             
-            // توزيع 10 ألعاب مختلفة على الـ 100 مرحلة باستخدام الموديلو
-            const engineType = (lvl % 10) || 10;
-            this[`engine_${engineType}`]();
-        },
-
-        win() {
-            confetti({ particleCount: 150, spread: 80 });
-            App.user.coins += 50; App.user.stars += 5;
-            if(App.user.progress[this.world] < this.lvlNum) App.user.progress[this.world] = this.lvlNum;
-            App.sync();
-            this.stage.innerHTML = `<div class="text-8xl font-black text-green-400 animate-bounce">أحسنت يا بطل! 🌟</div>`;
-            setTimeout(() => App.openMap(this.world), 2500);
-        },
-
-        // --- محرك 1: الاختيار الصحيح ---
-        engine_1() {
-            const target = this.world === 'math' ? '5' : 'ب';
-            this.inst.innerText = `أين هو ${target}؟`;
-            const options = this.world === 'math' ? [2,5,8,9] : ['أ','ب','ت','ث'];
-            options.sort(() => Math.random() - 0.5);
+            // مولد ألعاب بسيط للتوضيح يعتمد على نوع العالم
+            const target = this.world === 'math' ? Math.floor(Math.random() * 10) + 1 : ['أ','ب','ت','ث','ج'][Math.floor(Math.random()*5)];
             
-            this.stage.innerHTML = `<div class="flex gap-10">` + options.map(o => 
-                `<div onclick="if('${o}'==='${target}') Games.win(); else this.style.opacity=0.2" class="w-40 h-40 bg-white text-indigo-900 rounded-[40px] flex items-center justify-center text-7xl font-black cursor-pointer hover:scale-110 transition shadow-2xl">${o}</div>`
-            ).join('') + `</div>`;
-        },
-
-        // --- محرك 2: الإكمال (المنطق) ---
-        engine_2() {
-            this.inst.innerText = "أكمل النمط الناقص";
-            const q = this.world === 'math' ? "1 - 2 - 3 - ?" : "أ - ب - ت - ؟";
-            const a = this.world === 'math' ? "4" : "ث";
-            this.stage.innerHTML = `
-                <div class="text-center">
-                    <div class="text-7xl font-black mb-20">${q}</div>
-                    <div class="flex gap-8 justify-center">
-                        <div onclick="Games.win()" class="w-32 h-32 bg-amber-400 rounded-full flex items-center justify-center text-5xl font-black cursor-pointer">${a}</div>
-                        <div onclick="this.style.opacity=0.2" class="w-32 h-32 bg-amber-400 rounded-full flex items-center justify-center text-5xl font-black cursor-pointer">${this.world==='math'?'5':'ج'}</div>
-                    </div>
+            board.innerHTML = `
+                <div class="text-white text-5xl font-black mb-12">ابحث عن: <span class="text-amber-400 text-7xl inline-block mx-4 animate-bounce">${target}</span></div>
+                <div class="flex flex-wrap gap-8 justify-center max-w-2xl">
+                    ${this.generateOptions(target)}
                 </div>
             `;
         },
 
-        // --- محرك 3: النقر السريع ---
-        engine_3() {
-            this.inst.innerText = "انقر على الهدف 5 مرات بسرعة!";
-            let clicks = 0;
-            this.stage.innerHTML = `<div id="target-btn" class="w-60 h-60 bg-pink-500 rounded-full flex items-center justify-center text-[100px] cursor-pointer active:scale-90 transition select-none">🎯</div>`;
-            document.getElementById('target-btn').onclick = function() {
-                clicks++;
-                this.style.transform = `translate(${Math.random()*200-100}px, ${Math.random()*200-100}px)`;
-                if(clicks >= 5) Games.win();
-            };
-        },
+        generateOptions(correctAnswer) {
+            let options = [correctAnswer];
+            while(options.length < 4) {
+                let fake = this.world === 'math' ? Math.floor(Math.random() * 10) + 1 : ['ح','خ','د','ر','س'][Math.floor(Math.random()*5)];
+                if(!options.includes(fake)) options.push(fake);
+            }
+            options.sort(() => Math.random() - 0.5); // خلط الخيارات
 
-        // --- محركات 4 إلى 10 (نماذج مصغرة لتوفير المساحة وتوضيح الفكرة) ---
-        engine_4() { this.inst.innerText = "لعبة الذاكرة المطابقة"; this.stage.innerHTML = `<button onclick="Games.win()" class="text-5xl bg-white text-black p-10 rounded-[40px]">تخطي للفوز (محاكاة الذاكرة)</button>`; },
-        engine_5() { this.inst.innerText = "لعبة السحب والإفلات"; this.stage.innerHTML = `<button onclick="Games.win()" class="text-5xl bg-white text-black p-10 rounded-[40px]">تخطي للفوز (محاكاة السحب)</button>`; },
-        engine_6() { this.inst.innerText = "لعبة العد"; this.stage.innerHTML = `<button onclick="Games.win()" class="text-5xl bg-white text-black p-10 rounded-[40px]">تخطي للفوز (محاكاة العد)</button>`; },
-        engine_7() { this.inst.innerText = "لعبة الميزان"; this.stage.innerHTML = `<button onclick="Games.win()" class="text-5xl bg-white text-black p-10 rounded-[40px]">تخطي للفوز (محاكاة الميزان)</button>`; },
-        engine_8() { this.inst.innerText = "لعبة الترتيب التصاعدي"; this.stage.innerHTML = `<button onclick="Games.win()" class="text-5xl bg-white text-black p-10 rounded-[40px]">تخطي للفوز (محاكاة الترتيب)</button>`; },
-        engine_9() { this.inst.innerText = "لعبة صيد البالونات"; this.stage.innerHTML = `<button onclick="Games.win()" class="text-5xl bg-white text-black p-10 rounded-[40px]">تخطي للفوز (محاكاة البالونات)</button>`; },
-        engine_10() { this.inst.innerText = "لعبة المتاهة"; this.stage.innerHTML = `<button onclick="Games.win()" class="text-5xl bg-white text-black p-10 rounded-[40px]">تخطي للفوز (محاكاة المتاهة)</button>`; }
-    };
-
-    // ==========================================
-    // 👩‍🏫 وحدة الإدارة (Admin Panel)
-    // ==========================================
-    const Admin = {
-        render() {
-            const list = document.getElementById('admin-tbody');
-            const st = DB.load();
-            list.innerHTML = st.map(s => `
-                <tr class="border-b">
-                    <td class="p-6 font-black">${s.name}</td>
-                    <td class="p-6 font-mono text-indigo-600 bg-indigo-50 rounded-xl px-4">${s.code}</td>
-                    <td class="p-6 font-bold">ح: ${s.progress.math} | ع: ${s.progress.arabic}</td>
-                    <td class="p-6"><button onclick="Admin.del('${s.code}')" class="text-red-500 bg-red-50 px-4 py-2 rounded-xl">حذف</button></td>
-                </tr>
+            return options.map(opt => `
+                <div onclick="GameEngine.checkAnswer('${opt}', '${correctAnswer}', this)" 
+                     class="w-32 h-32 bg-white text-indigo-900 rounded-[30px] flex items-center justify-center text-6xl font-black cursor-pointer shadow-[0_10px_0_#cbd5e1] active:translate-y-2 active:shadow-none transition-all">
+                    ${opt}
+                </div>
             `).join('');
         },
-        add() {
-            const n = prompt("اكتبي اسم الطالب الجديد:");
-            if(n) {
-                const db = DB.load();
-                const code = "LUB-" + Math.floor(1000 + Math.random()*9000); // كود دائم من 4 أرقام
-                db.push({ name: n, code: code, avatar: '🐱', coins: 0, stars: 0, progress: { math: 0, arabic: 0 } });
-                DB.save(db);
-                this.render();
-                alert(`تم إضافة الطالب! الكود الدائم هو: ${code}`);
-            }
-        },
-        del(c) {
-            if(confirm("هل أنتِ متأكدة من الحذف؟")) {
-                DB.save(DB.load().filter(s => s.code !== c));
-                this.render();
+
+        checkAnswer(selected, correct, element) {
+            if(selected === correct) {
+                confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+                element.style.backgroundColor = '#10b981'; // أخضر
+                element.style.color = 'white';
+                
+                setTimeout(() => {
+                    App.user.coins += 20;
+                    App.user.stars += 5;
+                    // تحديث التقدم إذا كانت هذه أعلى مرحلة ينجزها
+                    if(App.user.progress[this.world] < this.level) {
+                        App.user.progress[this.world] = this.level;
+                    }
+                    App.saveProgress();
+                    App.openWorld(this.world); // العودة للخريطة
+                }, 1500);
+            } else {
+                element.style.backgroundColor = '#ef4444'; // أحمر
+                element.style.color = 'white';
+                element.classList.add('opacity-50', 'pointer-events-none');
+                setTimeout(() => {
+                    element.style.backgroundColor = 'white';
+                    element.style.color = '#312e81';
+                    element.classList.remove('opacity-50', 'pointer-events-none');
+                }, 800);
             }
         }
     };
-
-    // إضافة طالب تجريبي أول مرة لتسهيل فحص النظام
-    if(DB.load().length === 0) {
-        DB.save([{ name: "طالب تجريبي", code: "1234", avatar: '🐱', coins: 500, stars: 10, progress: { math: 5, arabic: 2 } }]);
-    }
 </script>
 </body>
 </html>
