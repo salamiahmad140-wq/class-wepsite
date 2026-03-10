@@ -2,272 +2,281 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إمبراطورية لبنى | الصف الأول ب</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عالم لبنى السحري | الصف الأول ب</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&family=Fredoka:wght@700&family=Are-You-Serious&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&family=Fredoka:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --gold: #fbbf24; --royal: #6366f1; --deep: #020617; }
-        * { font-family: 'Fredoka', 'Cairo', sans-serif; box-sizing: border-box; user-select: none; }
-        body { background: var(--deep); color: white; overflow: hidden; height: 100vh; }
-
-        /* الأسطح الراقية (Glassmorphism) */
-        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px; }
-        .page { position: absolute; inset: 0; display: none; flex-direction: column; padding-bottom: 100px; overflow-y: auto; }
-        .page-active { display: flex; animation: ultraFade 0.6s ease-out; }
-        @keyframes ultraFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* خريطة المراحل المتطورة */
-        .map-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 25px; padding: 40px; }
-        .lvl-card { aspect-ratio: 1; border-radius: 35px; background: white; color: var(--deep); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 3rem; font-weight: 900; position: relative; transition: 0.4s; box-shadow: 0 12px 0 #cbd5e1; cursor: pointer; }
-        .lvl-card.active-lvl { border: 5px solid var(--gold); animation: levelGlow 2s infinite; }
-        @keyframes levelGlow { 0%, 100% { box-shadow: 0 12px 0 #cbd5e1, 0 0 20px rgba(251, 191, 36, 0.4); } 50% { box-shadow: 0 12px 0 #cbd5e1, 0 0 50px rgba(251, 191, 36, 0.8); transform: scale(1.05); } }
+        :root { --pink: #ff85a2; --blue: #70d6ff; --gold: #ffd60a; --garden: #ccff33; }
+        * { font-family: 'Fredoka', 'Cairo', sans-serif; user-select: none; }
         
-        /* المراحل القادمة (Coming Soon) */
-        .lvl-locked { opacity: 0.3; background: #1e293b; color: #64748b; border: 2px dashed #475569; pointer-events: none; box-shadow: none; }
-        .coming-soon-tag { position: absolute; top: -10px; background: var(--gold); color: black; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
+        body { 
+            background: linear-gradient(to bottom, #a2d2ff, #ffffff); 
+            height: 100vh; overflow: hidden; margin: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/puffy-puffs.png');
+        }
 
-        /* شريط التحكم الملكي */
-        .nav-dock { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); padding: 12px 40px; border-radius: 50px; display: flex; gap: 40px; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); }
-        .nav-item { font-size: 2.2rem; cursor: pointer; transition: 0.3s; opacity: 0.4; }
-        .nav-item.active { opacity: 1; transform: translateY(-10px) scale(1.2); filter: drop-shadow(0 0 10px var(--gold)); }
+        /* الفراشات والورود المتحركة */
+        .butterfly { position: absolute; pointer-events: none; z-index: 1; font-size: 2rem; animation: fly 10s linear infinite; }
+        @keyframes fly {
+            0% { transform: translate(-100px, 100vh) rotate(0deg); }
+            100% { transform: translate(120vw, -100px) rotate(360deg); }
+        }
 
-        /* شاشة اللعبة */
-        #game-layer { position: fixed; inset: 0; background: radial-gradient(circle, #1e1b4b, #020617); z-index: 5000; display: none; }
-        .bubble { position: absolute; cursor: pointer; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); }
+        /* الأقسام السحرية */
+        .page { position: absolute; inset: 0; display: none; flex-direction: column; overflow-y: auto; padding-bottom: 120px; z-index: 10; }
+        .page-active { display: flex; animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+
+        /* المتجر الفخم */
+        .item-card { 
+            background: white; border-radius: 40px; border: 5px solid var(--pink); 
+            transition: 0.3s; cursor: pointer; position: relative;
+            box-shadow: 0 15px 0 #ffdae0;
+        }
+        .item-card:hover { transform: translateY(-10px) rotate(2deg); }
+        .item-card.owned { border-color: var(--garden); opacity: 0.8; }
+        .price-tag { background: var(--gold); color: #856404; padding: 5px 15px; border-radius: 20px; font-weight: 900; }
+
+        /* لوحة الصدارة */
+        .leader-row {
+            background: rgba(255, 255, 255, 0.9); border-radius: 30px; 
+            margin-bottom: 15px; border: 3px solid #bde0fe;
+            transition: 0.3s;
+        }
+        .leader-row:hover { transform: scale(1.02); background: white; }
+
+        /* شريط التحكم (Dock) */
+        .dock { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
+            padding: 15px 40px; border-radius: 100px; display: flex; gap: 30px;
+            border: 5px solid var(--blue); z-index: 1000;
+        }
+        .dock-btn { font-size: 2.5rem; cursor: pointer; transition: 0.3s; }
+        .dock-btn:hover { transform: scale(1.3) rotate(-10deg); }
+        .dock-btn.active { filter: drop-shadow(0 0 10px var(--pink)); transform: translateY(-10px); }
+
+        /* المراحل */
+        .lvl-bubble {
+            width: 100px; height: 100px; border-radius: 50%; background: white;
+            display: flex; items: center; justify-content: center; font-size: 2.5rem;
+            font-weight: 900; color: var(--pink); border: 6px solid var(--pink);
+            box-shadow: 0 10px 0 #ffdae0; cursor: pointer; transition: 0.3s;
+        }
+        .lvl-bubble.locked { background: #eee; border-color: #ccc; color: #aaa; box-shadow: none; opacity: 0.5; }
     </style>
 </head>
 <body>
 
+    <div class="butterfly" style="top:20%; left:-10%; animation-delay: 0s;">🦋</div>
+    <div class="butterfly" style="top:50%; left:-10%; animation-delay: 3s;">🌸</div>
+    <div class="butterfly" style="top:80%; left:-10%; animation-delay: 6s;">🌻</div>
+
     <div id="p-login" class="page page-active justify-center items-center">
-        <div class="glass-panel p-12 text-center w-[90%] max-w-md border-t-4 border-amber-400">
-            <h1 class="text-7xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-b from-amber-200 to-amber-500">أساطير ب</h1>
-            <p class="text-amber-200/50 mb-10 font-bold tracking-widest">LUBNA SUPREME</p>
-            <input type="text" id="user-code" placeholder="كود البطل الملكي" class="w-full text-center text-3xl p-5 rounded-3xl mb-6 bg-white text-indigo-950 font-black outline-none shadow-inner">
-            <button onclick="Core.login()" class="w-full py-5 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-950 rounded-3xl text-3xl font-black shadow-[0_12px_0_#b45309] active:translate-y-2 active:shadow-none transition-all">دخول 🛡️</button>
+        <div class="bg-white/80 p-12 rounded-[60px] border-8 border-pink-300 text-center w-[90%] max-w-lg shadow-2xl">
+            <div class="text-8xl mb-4 animate-bounce">🏰</div>
+            <h1 class="text-6xl font-black text-pink-500 mb-2">مملكة لبنى</h1>
+            <p class="text-blue-400 font-bold text-2xl mb-8">أهلاً بأبطال الصف الأول ب</p>
+            <input type="text" id="login-code" placeholder="اكتب كودك السحري" class="w-full text-center text-3xl p-5 rounded-full border-4 border-blue-200 outline-none focus:border-pink-400 mb-6 font-black">
+            <button onclick="App.login()" class="w-full py-5 bg-gradient-to-r from-pink-400 to-pink-600 text-white rounded-full text-3xl font-black shadow-[0_10px_0_#db2777] active:translate-y-2 active:shadow-none transition-all">دخول للمملكة ✨</button>
         </div>
     </div>
 
-    <div id="p-dash" class="page">
-        <div class="p-8 max-w-5xl mx-auto w-full">
-            <div class="glass-panel p-8 flex items-center gap-8 mb-10 relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 text-[200px] opacity-5 rotate-12">👑</div>
-                <div id="u-avatar" class="w-40 h-40 bg-white rounded-full flex items-center justify-center text-8xl shadow-2xl border-4 border-amber-400">👤</div>
-                <div>
-                    <h2 id="u-name" class="text-6xl font-black">البطل القادم</h2>
-                    <div class="flex gap-4 mt-4">
-                        <div class="bg-amber-400/20 px-6 py-2 rounded-2xl border border-amber-400/30 text-amber-400 font-black text-2xl">💰 <span id="u-coins">0</span></div>
-                        <div class="bg-blue-400/20 px-6 py-2 rounded-2xl border border-blue-400/30 text-blue-400 font-black text-2xl">⭐ <span id="u-stars">0</span></div>
+    <div id="p-home" class="page p-8">
+        <div class="max-w-4xl mx-auto w-full">
+            <div class="bg-white rounded-[60px] p-10 border-8 border-blue-200 shadow-xl flex flex-col items-center relative">
+                <div class="absolute top-5 left-5 text-4xl">⭐ <span id="u-stars">0</span></div>
+                <div class="absolute top-5 right-5 text-4xl">💰 <span id="u-coins">0</span></div>
+                
+                <div class="relative">
+                    <div id="u-avatar" class="w-48 h-48 bg-pink-100 rounded-full flex items-center justify-center text-[100px] border-8 border-pink-400">👤</div>
+                    <div id="u-tag" class="absolute -top-5 -right-5 text-7xl animate-pulse"></div>
+                </div>
+                <h2 id="u-name" class="text-6xl font-black text-blue-500 mt-6 italic">اسم البطل</h2>
+                
+                <div class="grid grid-cols-2 gap-6 mt-10 w-full">
+                    <div onclick="App.nav('p-worlds')" class="bg-garden rounded-[40px] p-8 text-center border-b-8 border-lime-600 cursor-pointer active:scale-95 transition">
+                        <div class="text-7xl">🗺️</div>
+                        <div class="text-3xl font-black text-lime-900 mt-2">خريطة العوالم</div>
+                    </div>
+                    <div onclick="App.nav('p-shop')" class="bg-pink-300 rounded-[40px] p-8 text-center border-b-8 border-pink-600 cursor-pointer active:scale-95 transition">
+                        <div class="text-7xl">🎁</div>
+                        <div class="text-3xl font-black text-pink-900 mt-2">متجر الهدايا</div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div onclick="Core.goWorld('math')" class="glass-panel p-10 cursor-pointer hover:bg-white/5 border-b-8 border-blue-500 group">
-                    <div class="text-8xl mb-4 group-hover:scale-110 transition">🧮</div>
-                    <h3 class="text-4xl font-black">عالم الأرقام</h3>
-                    <p class="text-blue-400 font-bold mt-2">5 مراحل مفتوحة • 95 ترقبوا</p>
-                </div>
-                <div onclick="Core.goWorld('arabic')" class="glass-panel p-10 cursor-pointer hover:bg-white/5 border-b-8 border-emerald-500 group">
-                    <div class="text-8xl mb-4 group-hover:scale-110 transition">📖</div>
-                    <h3 class="text-4xl font-black">عالم الكلمات</h3>
-                    <p class="text-emerald-400 font-bold mt-2">5 مراحل مفتوحة • 95 ترقبوا</p>
-                </div>
+    <div id="p-shop" class="page p-10">
+        <h2 class="text-6xl font-black text-center text-pink-500 mb-10">متجر أبطال ب السحري 🛍️</h2>
+        <div id="shop-grid" class="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-6xl mx-auto">
+            </div>
+    </div>
+
+    <div id="p-leader" class="page p-10">
+        <h2 class="text-6xl font-black text-center text-blue-500 mb-10">أوائل مملكة لبنى 🏆</h2>
+        <div id="leader-container" class="max-w-4xl mx-auto w-full">
+            </div>
+    </div>
+
+    <div id="p-worlds" class="page p-10 items-center">
+        <h2 class="text-6xl font-black text-pink-500 mb-16">اختر مغامرتك اليوم 🎈</h2>
+        <div class="flex flex-wrap justify-center gap-12">
+            <div onclick="App.openMap('math')" class="w-80 bg-white p-10 rounded-[60px] border-b-[20px] border-blue-400 text-center cursor-pointer hover:scale-105 transition">
+                <div class="text-[120px] mb-4">🔢</div>
+                <h3 class="text-4xl font-black text-blue-600">عالم الحساب</h3>
+            </div>
+            <div onclick="App.openMap('arabic')" class="w-80 bg-white p-10 rounded-[60px] border-b-[20px] border-pink-400 text-center cursor-pointer hover:scale-105 transition">
+                <div class="text-[120px] mb-4">🅰️</div>
+                <h3 class="text-4xl font-black text-pink-600">عالم العربية</h3>
             </div>
         </div>
     </div>
 
     <div id="p-map" class="page">
-        <div class="p-8 flex justify-between items-center sticky top-0 bg-deep/80 backdrop-blur-md z-50">
-            <h2 id="map-title" class="text-5xl font-black text-amber-400 italic">اسم العالم</h2>
-            <button onclick="Core.nav('p-dash')" class="bg-white/10 px-8 py-3 rounded-2xl font-black">رجوع 🔙</button>
+        <div class="p-8 flex justify-between">
+            <h2 id="map-name" class="text-5xl font-black text-blue-500">الخريطة</h2>
+            <button onclick="App.nav('p-worlds')" class="bg-white px-8 py-3 rounded-full font-black shadow-lg">رجوع</button>
         </div>
-        <div id="map-render" class="map-container"></div>
+        <div id="map-bubbles" class="flex flex-wrap justify-center gap-8 p-10"></div>
     </div>
 
-    <div id="game-layer">
-        <div class="absolute top-8 inset-x-8 flex justify-between items-center z-[6000]">
-            <div class="flex gap-4">
-                <div id="g-score" class="bg-white/10 backdrop-blur-xl px-8 py-4 rounded-3xl border border-white/20 text-3xl font-black text-amber-400">0 / 5</div>
-            </div>
-            <div id="g-task" class="bg-white px-12 py-5 rounded-[40px] text-5xl font-black text-indigo-950 shadow-[0_0_50px_rgba(255,255,255,0.2)]">...</div>
-            <button onclick="Engine.quit()" class="bg-red-500/20 hover:bg-red-500 w-16 h-16 rounded-full border border-red-500/50 text-white text-3xl">✕</button>
-        </div>
-        <div id="arena" class="w-full h-full relative overflow-hidden"></div>
-    </div>
-
-    <nav id="royal-nav" class="nav-dock hidden">
-        <div class="nav-item active" onclick="Core.nav('p-dash', this)">🏠</div>
-        <div class="nav-item" onclick="Core.nav('p-leader', this)">🏆</div>
-        <div class="nav-item" onclick="Core.nav('p-shop', this)">🛍️</div>
-        <div class="nav-item" onclick="location.reload()">🚪</div>
+    <nav id="dock" class="dock hidden">
+        <div class="dock-btn active" onclick="App.nav('p-home', this)">🏠</div>
+        <div class="dock-btn" onclick="App.nav('p-leader', this)">🏆</div>
+        <div class="dock-btn" onclick="App.nav('p-shop', this)">🎁</div>
+        <div class="dock-btn" onclick="App.nav('p-worlds', this)">🎮</div>
     </nav>
 
 <script>
 /**
- * 🧠 المحرك الأساسي (Core System)
+ * 🛠️ محرك الإمبراطورية (The Magical Core)
  */
-const Core = {
-    dbKey: 'LUBNA_V4_ULTIMATE',
+const App = {
+    dbKey: 'LUBNA_FINAL_2026_B',
     user: null,
+    // قائمة الـ 50 عنصر (بنات وأولاد)
+    items: [
+        {id:1, n:'تاج وردي', e:'👑', p:100, g:'f'}, {id:2, n:'سيف ذهبي', e:'⚔️', p:150, g:'m'},
+        {id:3, n:'جناح فراشة', e:'🦋', p:200, g:'f'}, {id:4, n:'خوذة نينجا', e:'🥷', p:250, g:'m'},
+        {id:5, n:'عصا سحرية', e:'🪄', p:300, g:'f'}, {id:6, n:'سيارة سباق', e:'🏎️', p:400, g:'m'},
+        {id:7, n:'نظارة قلب', e:'🕶️', p:120, g:'f'}, {id:8, n:'قبعة قرصان', e:'🏴‍☠️', p:180, g:'m'},
+        {id:9, n:'يونيكورن', e:'🦄', p:1000, g:'f'}, {id:10, n:'تنين نار', e:'🐉', p:1000, g:'m'},
+        // ... تكملة الـ 50 برمجياً للسهولة
+        ...Array.from({length: 40}, (_, i) => ({
+            id: i+11, n: 'هدية سحرية ' + (i+11), e: ['🍭','🧸','🚀','🚁','💎','🎀','🥎','🎸','🚲','🦁','🐼','🐙'][i%12], p: (i+1)*50, g: 'a'
+        }))
+    ],
 
     login() {
-        const code = document.getElementById('user-code').value.trim().toUpperCase();
+        const code = document.getElementById('login-code').value.trim().toUpperCase();
         const db = JSON.parse(localStorage.getItem(this.dbKey)) || [];
         const found = db.find(s => s.code === code);
+        
         if(found) {
             this.user = found;
-            this.nav('p-dash');
-            document.getElementById('royal-nav').classList.remove('hidden');
+            if(!this.user.inventory) this.user.inventory = [];
+            if(!this.user.tag) this.user.tag = '';
+            this.nav('p-home');
+            document.getElementById('dock').classList.remove('hidden');
             this.sync();
-            confetti({ particleCount: 150, spread: 70 });
-        } else alert("الكود خطأ يا بطل!");
+        } else alert("الكود خطأ يا بطل الصف الأول! اسأل معلمتك لبنى.");
     },
 
     nav(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('page-active'));
         document.getElementById(id).classList.add('page-active');
         if(el) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.dock-btn').forEach(d => d.classList.remove('active'));
             el.classList.add('active');
         }
+        if(id === 'p-shop') this.renderShop();
+        if(id === 'p-leader') this.renderLeaderboard();
     },
 
     sync() {
         document.getElementById('u-name').innerText = this.user.name;
         document.getElementById('u-stars').innerText = this.user.stars;
         document.getElementById('u-coins').innerText = this.user.coins;
-        document.getElementById('u-avatar').innerText = this.user.avatar || '👤';
-        const db = JSON.parse(localStorage.getItem(this.dbKey));
+        document.getElementById('u-tag').innerText = this.user.tag;
+        
+        const db = JSON.parse(localStorage.getItem(this.dbKey)) || [];
         const idx = db.findIndex(s => s.code === this.user.code);
         db[idx] = this.user;
         localStorage.setItem(this.dbKey, JSON.stringify(db));
     },
 
-    goWorld(world) {
+    renderShop() {
+        const grid = document.getElementById('shop-grid');
+        grid.innerHTML = this.items.map(item => {
+            const owned = this.user.inventory.includes(item.id);
+            return `
+                <div class="item-card p-6 text-center ${owned?'owned':''}" onclick="App.buy(${item.id})">
+                    <div class="text-7xl mb-2">${item.e}</div>
+                    <div class="font-black text-sm">${item.n}</div>
+                    <div class="price-tag mt-2 inline-block">${item.p} 💰</div>
+                    ${owned ? '<div class="text-xs text-green-500 font-bold">تم الشراء</div>' : ''}
+                </div>
+            `;
+        }).join('');
+    },
+
+    buy(id) {
+        const item = this.items.find(i => i.id === id);
+        if(this.user.inventory.includes(id)) {
+            this.user.tag = item.e;
+            this.sync();
+            alert("لقد ارتديت: " + item.n);
+            return;
+        }
+        if(this.user.coins >= item.p) {
+            this.user.coins -= item.p;
+            this.user.inventory.push(id);
+            this.user.tag = item.e;
+            this.sync();
+            this.renderShop();
+            confetti({ particleCount: 100 });
+        } else alert("نقودك لا تكفي! العب واجمع المزيد.");
+    },
+
+    renderLeaderboard() {
+        const db = (JSON.parse(localStorage.getItem(this.dbKey)) || []).sort((a,b) => b.stars - a.stars);
+        document.getElementById('leader-container').innerHTML = db.map((s, i) => `
+            <div class="leader-row p-6 flex justify-between items-center ${s.code===this.user.code?'border-pink-500 bg-pink-50':''}">
+                <div class="flex items-center gap-4">
+                    <span class="text-4xl font-black text-blue-400 w-12">#${i+1}</span>
+                    <span class="text-5xl">${s.avatar || '🦁'}</span>
+                    <div>
+                        <div class="text-2xl font-black">${s.name} <span class="text-4xl">${s.tag || ''}</span></div>
+                    </div>
+                </div>
+                <div class="text-4xl font-black text-pink-500">${s.stars} ⭐</div>
+            </div>
+        `).join('');
+    },
+
+    openMap(world) {
         this.currentWorld = world;
-        document.getElementById('map-title').innerText = world === 'math' ? 'تحدي الأرقام' : 'تحدي الكلمات';
-        const render = document.getElementById('map-render');
-        render.innerHTML = '';
-        
+        document.getElementById('map-name').innerText = world === 'math' ? 'عالم الحساب السحري' : 'عالم الكلمات الممتع';
+        const container = document.getElementById('map-bubbles');
+        container.innerHTML = '';
         for(let i=1; i<=100; i++) {
-            const card = document.createElement('div');
-            const isLocked = i > 5; // 5 مراحل فقط مفتوحة حالياً
-            const isDone = i <= this.user.progress[world];
-            
-            card.className = `lvl-card ${isLocked ? 'lvl-locked' : ''} ${i === this.user.progress[world] + 1 ? 'active-lvl' : ''}`;
-            card.innerHTML = i > 5 ? `<span class="coming-soon-tag">قريباً</span>🔒` : i;
-            
-            if(!isLocked) card.onclick = () => Engine.start(i, world);
-            render.appendChild(card);
+            const isLocked = i > 5; // أول 5 مراحل فقط
+            const bubble = document.createElement('div');
+            bubble.className = `lvl-bubble ${isLocked?'locked':''}`;
+            bubble.innerHTML = isLocked ? '🔒' : i;
+            if(i > 5) {
+                bubble.onclick = () => alert("ترقبوا.. هذه المرحلة ستفتح قريباً بمفاجأة من المعلمة لبنى! ✨");
+            }
+            container.appendChild(bubble);
         }
         this.nav('p-map');
-    }
-};
-
-/**
- * 🎮 محرك الألعاب المتطور (The Game Engine)
- */
-const Engine = {
-    active: false, lvl: 0, world: '', score: 0, target: null,
-    
-    // بيانات المراحل المخصصة
-    data: {
-        math: [
-            {t: '10 + 5', a: 15}, {t: '20 - 4', a: 16}, {t: '8 + 7', a: 15}, {t: '15 - 10', a: 5}, {t: '9 + 9', a: 18}
-        ],
-        arabic: [
-            {t: 'مَـ + ـدْرَ + سَـ + ـة', a: 'مدرسة'}, 
-            {t: 'قَـ + ـلَـ + ـم', a: 'قلم'},
-            {t: 'بَـ + ـيْـ + ـت', a: 'بيت'},
-            {t: 'كِـ + ـتَـ + ـا + ب', a: 'كتاب'},
-            {t: 'نُـ + ـجُـ + ـو + م', a: 'نجوم'}
-        ]
-    },
-
-    start(lvl, world) {
-        this.lvl = lvl; this.world = world; this.score = 0; this.active = true;
-        document.getElementById('game-layer').style.display = 'block';
-        this.nextQuestion();
-    },
-
-    nextQuestion() {
-        const arena = document.getElementById('arena');
-        arena.innerHTML = '';
-        const qData = this.data[this.world][Math.floor(Math.random()*5)];
-        this.target = qData.a;
-        document.getElementById('g-task').innerText = qData.t;
-        document.getElementById('g-score').innerText = `${this.score} / 5`;
-
-        this.spawnLoop = setInterval(() => {
-            if(!this.active) return;
-            this.spawnObject();
-        }, 1200);
-    },
-
-    spawnObject() {
-        const obj = document.createElement('div');
-        const isCorrect = Math.random() > 0.7;
-        let val;
-
-        if(this.world === 'math') {
-            val = isCorrect ? this.target : Math.floor(Math.random()*20);
-        } else {
-            const fillers = ['تفاح', 'خالد', 'لعب', 'نار'];
-            val = isCorrect ? this.target : fillers[Math.floor(Math.random()*fillers.length)];
-        }
-
-        obj.className = "bubble w-32 h-32 text-3xl shadow-2xl";
-        obj.style.background = `hsla(${Math.random()*360}, 70%, 50%, 0.8)`;
-        obj.innerText = val;
-        obj.style.left = Math.random() * (window.innerWidth - 150) + "px";
-        obj.style.top = window.innerHeight + "px";
-        
-        document.getElementById('arena').appendChild(obj);
-
-        gsap.to(obj, {
-            y: -200, duration: 5, ease: "none",
-            onComplete: () => obj.remove()
-        });
-
-        obj.onclick = () => {
-            if(val == this.target) {
-                this.score++;
-                confetti({ particleCount: 40, origin: { x: obj.offsetLeft/window.innerWidth, y: obj.offsetTop/window.innerHeight } });
-                obj.remove();
-                if(this.score >= 5) this.win();
-                else {
-                    clearInterval(this.spawnLoop);
-                    this.nextQuestion();
-                }
-            } else {
-                gsap.to(obj, { x: 20, repeat: 3, yoyo: true, duration: 0.1 });
-                obj.style.background = "red";
-            }
-        };
-    },
-
-    win() {
-        this.active = false; clearInterval(this.spawnLoop);
-        confetti({ particleCount: 300, spread: 100 });
-        Core.user.stars += 20;
-        Core.user.coins += 100;
-        if(Core.user.progress[this.world] < this.lvl) Core.user.progress[this.world] = this.lvl;
-        Core.sync();
-        
-        setTimeout(() => {
-            document.getElementById('game-layer').style.display = 'none';
-            Core.goWorld(this.world);
-        }, 2000);
-    },
-
-    quit() {
-        this.active = false; clearInterval(this.spawnLoop);
-        document.getElementById('game-layer').style.display = 'none';
     }
 };
 </script>
