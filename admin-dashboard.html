@@ -2,88 +2,100 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Master Control | الأستاذة لبنى</title>
+    <title>غرفة التحكم | أستاذة لبنى</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Cairo', sans-serif; background: #f0f2f5; }</style>
 </head>
-<body class="bg-slate-900 text-white font-['Cairo'] p-8">
+<body class="p-8">
 
-    <div class="max-w-4xl mx-auto">
-        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
-            <h1 class="text-3xl font-black text-yellow-400">لوحة تحكم الأساطير 👩‍🏫</h1>
-            <button onclick="generateNewAccount()" class="bg-green-600 px-6 py-3 rounded-2xl font-black hover:bg-green-500">+ إضافة طالب جديد</button>
-        </header>
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden">
+            <div class="bg-indigo-600 p-8 text-white flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-black">غرفة التحكم بالأساطير 👑</h1>
+                    <p class="opacity-70">أهلاً بكِ يا أستاذة لبنى، تحكمي في عالمكِ التعليمي</p>
+                </div>
+                <button onclick="addStudent()" class="bg-white text-indigo-600 px-8 py-4 rounded-2xl font-black shadow-lg hover:scale-105 transition">
+                    + إضافة طالب جديد
+                </button>
+            </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white/5 p-6 rounded-3xl border border-white/10 text-center">
-                <p class="opacity-50 text-xs">إجمالي الطلاب</p>
-                <h3 class="text-4xl font-black" id="total-students">0</h3>
+            <div class="grid grid-cols-4 gap-6 p-8 bg-slate-50">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-blue-500">
+                    <p class="text-slate-400 text-sm">إجمالي الطلاب</p>
+                    <h3 class="text-3xl font-black" id="stat-total">2</h3>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-yellow-500">
+                    <p class="text-slate-400 text-sm">النجوم الممنوحة</p>
+                    <h3 class="text-3xl font-black">1,450</h3>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-green-500">
+                    <p class="text-slate-400 text-sm">أكواد نشطة</p>
+                    <h3 class="text-3xl font-black">8</h3>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-pink-500">
+                    <p class="text-slate-400 text-sm">مستوى التفاعل</p>
+                    <h3 class="text-3xl font-black">98%</h3>
+                </div>
             </div>
-            <div class="bg-white/5 p-6 rounded-3xl border border-white/10 text-center">
-                <p class="opacity-50 text-xs">النجوم الموزعة</p>
-                <h3 class="text-4xl font-black text-blue-400">1,250</h3>
-            </div>
-            <div class="bg-white/5 p-6 rounded-3xl border border-white/10 text-center">
-                <p class="opacity-50 text-xs">متوسط النقاط</p>
-                <h3 class="text-4xl font-black text-yellow-500">85%</h3>
-            </div>
-        </div>
 
-        <div class="bg-white/5 rounded-[2.5rem] border border-white/10 overflow-hidden">
-            <table class="w-full text-right">
-                <thead class="bg-white/5">
-                    <tr>
-                        <th class="p-4">اسم الطالب</th>
-                        <th class="p-4">كود الدخول</th>
-                        <th class="p-4">النجوم ⭐</th>
-                        <th class="p-4">التحكم</th>
-                    </tr>
-                </thead>
-                <tbody id="student-table-body">
-                    </tbody>
-            </table>
+            <div class="p-8">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="text-slate-400 border-b">
+                            <th class="p-4">اسم الطالب</th>
+                            <th class="p-4">كود الدخول</th>
+                            <th class="p-4">النجوم ⭐</th>
+                            <th class="p-4">الكوينز 💰</th>
+                            <th class="p-4">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table">
+                        </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        const students = [
-            { id: 1, name: "أحمد محمد", code: "LUB-552", stars: 12 },
-            { id: 2, name: "سارة خالد", code: "LUB-901", stars: 25 }
+        let students = [
+            { id: 1, name: "أمير الأساطير", code: "LUB-201", stars: 150, coins: 2000 },
+            { id: 2, name: "ليان المبدعة", code: "LUB-202", stars: 120, coins: 1500 }
         ];
 
-        function renderTable() {
-            const body = document.getElementById('student-table-body');
-            document.getElementById('total-students').innerText = students.length;
-            body.innerHTML = students.map(s => `
-                <tr class="border-b border-white/5">
-                    <td class="p-4 font-bold">${s.name}</td>
-                    <td class="p-4"><span class="bg-white/10 px-3 py-1 rounded-lg text-yellow-400 font-mono">${s.code}</span></td>
-                    <td class="p-4">${s.stars}</td>
-                    <td class="p-4 flex gap-2">
-                        <button onclick="addStar(${s.id})" class="bg-blue-600 p-2 rounded-lg text-xs">⭐ +1</button>
-                        <button onclick="deleteStudent(${s.id})" class="bg-red-500/20 text-red-500 p-2 rounded-lg text-xs">حذف</button>
+        function render() {
+            const table = document.getElementById('admin-table');
+            document.getElementById('stat-total').innerText = students.length;
+            table.innerHTML = students.map(s => `
+                <tr class="border-b hover:bg-slate-50 transition">
+                    <td class="p-4 font-black text-slate-700">${s.name}</td>
+                    <td class="p-4"><span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-lg font-mono font-bold">${s.code}</span></td>
+                    <td class="p-4 font-bold text-yellow-600">${s.stars}</td>
+                    <td class="p-4 font-bold text-green-600">${s.coins}</td>
+                    <td class="p-4">
+                        <button onclick="edit(${s.id})" class="bg-blue-500 text-white p-2 rounded-lg text-xs">تعديل</button>
+                        <button onclick="del(${s.id})" class="bg-red-500 text-white p-2 rounded-lg text-xs">حذف</button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function generateNewAccount() {
-            const name = prompt("أدخلي اسم الطالب الجديد:");
+        function addStudent() {
+            const name = prompt("اسم الطالب:");
             if(name) {
-                const newCode = "LUB-" + Math.floor(100 + Math.random() * 900);
-                students.push({ id: Date.now(), name: name, code: newCode, stars: 0 });
-                renderTable();
-                alert(`تم إنشاء الحساب! كود الطالب هو: ${newCode}`);
+                const code = "LUB-" + Math.floor(Math.random()*900 + 100);
+                students.push({ id: Date.now(), name, code, stars: 0, coins: 100 });
+                render();
             }
         }
 
-        function addStar(id) {
-            const s = students.find(x => x.id === id);
-            if(s) s.stars++;
-            renderTable();
+        function del(id) {
+            students = students.filter(s => s.id !== id);
+            render();
         }
 
-        renderTable();
+        render();
     </script>
 </body>
 </html>
