@@ -2,30 +2,30 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة أبطال لبنى</title>
+    <title>إدارة الصف 1-ب</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-blue-50 p-10 font-sans text-right">
-    <div class="max-w-4xl mx-auto bg-white p-10 rounded-[50px] shadow-2xl border-t-8 border-blue-400">
-        <h1 class="text-5xl font-black text-blue-600 mb-8 text-center">بوابة الإدارة</h1>
-        <button onclick="Admin.add()" class="w-full py-5 bg-blue-500 text-white rounded-full font-black text-3xl mb-10 shadow-xl">تسجيل بطل جديد +</button>
+<body class="bg-slate-900 p-10 text-white">
+    <div class="max-w-4xl mx-auto bg-slate-800 p-10 rounded-[40px] border-2 border-slate-700 shadow-2xl">
+        <h1 class="text-5xl font-black text-blue-400 mb-10 text-center">إدارة أبطال 1-ب</h1>
+        <button onclick="Admin.add()" class="w-full py-6 bg-blue-600 rounded-3xl font-black text-3xl mb-10 shadow-lg">إضافة طالب جديد +</button>
         <div id="admin-list" class="space-y-4"></div>
     </div>
 <script>
-    const DB_KEY = 'LUBNA_ULTIMATE_KIDS_V1';
+    const DB_KEY = 'CHALLENGE_1B_PRO_V1';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
             const db = this.get();
             document.getElementById('admin-list').innerHTML = db.map(s => `
-                <div class="p-6 border-4 border-blue-100 rounded-3xl flex justify-between items-center bg-white shadow-sm hover:shadow-lg transition">
+                <div class="p-6 bg-slate-700 rounded-3xl flex justify-between items-center border border-slate-600">
                     <div>
                         <div class="text-3xl font-black">${s.name}</div>
-                        <div class="text-blue-500 font-bold text-xl">كود الدخول: ${s.code}</div>
+                        <div class="text-blue-400 font-bold text-xl">الكود: ${s.code}</div>
                     </div>
                     <div class="flex gap-4">
-                        <button onclick="Admin.gift('${s.code}')" class="bg-amber-400 text-black px-6 py-2 rounded-xl font-bold">هدية 💰</button>
-                        <button onclick="Admin.del('${s.code}')" class="bg-red-50 text-red-600 px-6 py-2 rounded-xl">حذف 🗑️</button>
+                        <button onclick="Admin.gift('${s.code}')" class="bg-yellow-500 text-black px-6 py-2 rounded-xl font-black">هدية 💰</button>
+                        <button onclick="Admin.del('${s.code}')" class="text-red-400 font-bold">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -34,16 +34,15 @@
             const name = prompt("اسم الطالب:");
             if(name) {
                 const db = this.get();
-                const code = "LBN-" + Math.floor(1000 + Math.random()*9000);
-                db.push({name, code, stars:0, coins:100, inventory:[], tag:'', avatar:'👤', progress:{math:0, arabic:0}});
-                localStorage.setItem(DB_KEY, JSON.stringify(db));
-                this.render();
+                const code = "LEGEND-" + Math.floor(1000 + Math.random()*9000);
+                db.push({name, code, stars:0, coins:200, inventory:[], equipped:'', avatar:'👤', done:{math:[], arabic:[]}});
+                localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
+                alert("تمت الإضافة! الكود: " + code);
             }
         },
         gift(code) {
             const db = this.get(); const idx = db.findIndex(s => s.code === code);
-            db[idx].coins += 500; localStorage.setItem(DB_KEY, JSON.stringify(db));
-            this.render();
+            db[idx].coins += 1000; localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
         },
         del(code) { if(confirm("حذف الطالب؟")) { 
             const db = this.get().filter(s => s.code !== code);
