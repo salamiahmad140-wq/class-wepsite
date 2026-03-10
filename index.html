@@ -3,107 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أرض الأساطير - الأول ب</title>
+    <title>خريطة الأساطير | الصف الأول ب</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; margin: 0; transition: 0.6s; overflow-x: hidden; }
-        body.dark { background: #070b14; color: white; }
-        body.light { background: #e0f2fe; color: #0369a1; }
-
-        /* ستايل العوالم - يشبه Kideo Land */
-        .world-node {
-            width: 130px; height: 130px; border-radius: 40px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 0 rgba(0,0,0,0.2); border: 4px solid white;
+        * { -webkit-tap-highlight-color: transparent; outline: none; }
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            margin: 0; background: #0c4a6e; 
+            overflow-x: hidden; color: white;
         }
-        .world-node:active { transform: translateY(8px); box-shadow: 0 5px 0 rgba(0,0,0,0.2); }
         
-        /* قفل الألعاب القادمة */
-        .locked { filter: grayscale(1) opacity(0.6); pointer-events: none; }
-        .locked::after { content: '🔒'; position: absolute; top: -10px; right: -10px; font-size: 24px; }
+        /* خلفية الخريطة المتحركة */
+        .adventure-map {
+            min-height: 200vh;
+            background: linear-gradient(to bottom, #0ea5e9, #22c55e, #eab308, #f97316);
+            position: relative; padding-top: 100px;
+        }
 
-        /* حركة الدودة البسيطة للخلفية */
-        .worm-bg { position: fixed; bottom: 10%; left: -100px; font-size: 40px; animation: crawl 20s linear infinite; z-index: -1; }
-        @keyframes crawl { 0% { left: -100px; transform: scaleX(1); } 50% { left: 110vw; transform: scaleX(1); } 51% { transform: scaleX(-1); } 100% { left: -100px; transform: scaleX(-1); } }
+        /* المسار المتعرج */
+        .path-svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; stroke-dasharray: 20; animation: dash 10s linear infinite;
+        }
+        @keyframes dash { to { stroke-dashoffset: -100; } }
 
-        .glass { backdrop-filter: blur(15px); background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .shimmer { background: linear-gradient(90deg, #fbbf24, #f87171, #60a5fa, #fbbf24); background-size: 200% auto; -webkit-background-clip: text; color: transparent; animation: s 4s linear infinite; }
-        @keyframes s { to { background-position: 200% center; } }
+        /* المراحل (المواقع) */
+        .node {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            width: 100px; height: 100px; border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10; cursor: pointer; transition: 0.3s;
+            border: 6px solid rgba(255,255,255,0.8);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.2), 0 0 30px rgba(255,255,255,0.3);
+        }
+        .node:active { transform: translateX(-50%) scale(0.9) translateY(5px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+        
+        .node.locked { filter: grayscale(1); background: #475569 !important; border-color: #94a3b8; }
+        .node.locked::after { content: '🔒'; position: absolute; font-size: 24px; bottom: -10px; }
+
+        .node.active-node { animation: float 2s ease-in-out infinite; box-shadow: 0 0 40px #fde047; }
+        @keyframes float { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-15px); } }
+
+        .label { position: absolute; bottom: -45px; background: white; color: #0c4a6e; padding: 4px 15px; border-radius: 12px; font-weight: 900; font-size: 12px; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        /* زر الألوان الجانبي */
+        #sideControl { position: fixed; top: 120px; left: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+        .side-btn { width: 50px; height: 50px; border-radius: 15px; background: white; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 6px 0 #cbd5e1; }
+
+        .floating-cloud { position: absolute; opacity: 0.6; z-index: 2; animation: cloudDrift 20s linear infinite; }
+        @keyframes cloudDrift { from { left: -150px; } to { left: 110%; } }
     </style>
 </head>
-<body class="dark">
+<body>
 
-    <div class="worm-bg">🐛</div>
+    <div class="adventure-map" id="map">
+        <div class="floating-cloud text-6xl" style="top: 150px; animation-duration: 25s;">☁️</div>
+        <div class="floating-cloud text-6xl" style="top: 500px; animation-duration: 35s;">☁️</div>
 
-    <div id="mainApp" class="min-h-screen">
-        <header class="p-6 flex justify-between items-center glass rounded-b-[3rem] sticky top-0 z-50">
-            <div class="flex items-center gap-3" onclick="openProfile()">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-3xl shadow-lg border-2 border-white">👤</div>
-                <div>
-                    <p id="navName" class="font-black text-sm">البطل المبدع</p>
-                    <div class="flex gap-1 text-[10px] text-yellow-400 font-bold">⭐⭐⭐⭐⭐</div>
-                </div>
-            </div>
-            <h1 class="text-xl font-900 shimmer font-black">أرض الأساطير</h1>
-        </header>
+        <svg class="path-svg">
+            <path id="pathLine" d="M 200 0 Q 350 200 200 400 T 200 800 T 200 1200 T 200 1600" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="8"/>
+        </svg>
 
-        <main class="p-6 pb-40">
-            
-            <div class="mb-10 text-center">
-                <h2 class="text-2xl font-black mb-2">أهلاً بك في مغامرتك! 🛡️</h2>
-                <p class="text-xs opacity-60">لقد قطعت 50% من طريق العلم هذا العام، استعد للقادم!</p>
-            </div>
+        <div class="node active-node bg-pink-500" style="top: 150px; margin-left: -80px;" onclick="launchGame('worm')">
+            <span class="text-5xl">🐛</span>
+            <div class="label">دودة الحروف</div>
+        </div>
 
-            <div class="space-y-12">
-                
-                <div class="space-y-6">
-                    <h3 class="text-xl font-black flex items-center gap-2">📕 لغتي العربية (مراجعة)</h3>
-                    <div class="flex flex-wrap justify-around gap-y-10">
-                        <div class="world-node bg-pink-500" onclick="alert('انطلقت لعبة دودة الحروف!')">
-                            <span class="text-4xl mb-1">🐛</span>
-                            <span class="text-[10px] font-black">دودة الحروف</span>
-                        </div>
-                        <div class="world-node bg-purple-500" onclick="alert('انطلقت لعبة تركيب الكلمات!')">
-                            <span class="text-4xl mb-1">🧩</span>
-                            <span class="text-[10px] font-black">تركيب كلمات</span>
-                        </div>
-                    </div>
-                </div>
+        <div class="node bg-blue-500" style="top: 450px; margin-left: 80px;" onclick="launchGame('balloons')">
+            <span class="text-5xl">🎈</span>
+            <div class="label">وادي الأرقام</div>
+        </div>
 
-                <div class="space-y-6">
-                    <h3 class="text-xl font-black flex items-center gap-2">🔢 ركن الحساب (الجمع والطرح)</h3>
-                    <div class="flex flex-wrap justify-around gap-y-10">
-                        <div class="world-node bg-blue-500" onclick="alert('انطلقت لعبة منطاد الأرقام!')">
-                            <span class="text-4xl mb-1">🎈</span>
-                            <span class="text-[10px] font-black">منطاد الأرقام</span>
-                        </div>
-                        <div class="world-node bg-indigo-500 locked">
-                            <span class="text-4xl mb-1">⚖️</span>
-                            <span class="text-[10px] font-black">أكبر وأصغر</span>
-                        </div>
-                    </div>
-                </div>
+        <div class="node bg-orange-500" style="top: 750px; margin-left: -60px;" onclick="launchGame('puzzles')">
+            <span class="text-5xl">🧩</span>
+            <div class="label">تركيب الكلمات</div>
+        </div>
 
-                <div class="mt-12 p-6 glass rounded-[2.5rem] text-center border-2 border-dashed border-white/20">
-                    <p class="text-yellow-400 font-black text-sm mb-2">💎 لعبة الأسبوع القادم</p>
-                    <p class="text-xs opacity-50">ترقبوا "متاهة التنوين" يوم الأحد القادم!</p>
-                </div>
+        <div class="node locked bg-purple-500" style="top: 1050px; margin-left: 70px;">
+            <span class="text-5xl">🏰</span>
+            <div class="label">قصر التنوين</div>
+        </div>
 
-            </div>
-        </main>
-
-        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] glass p-4 rounded-[2.5rem] flex justify-around items-center z-[1000] shadow-2xl">
-            <button class="text-3xl">🏠</button>
-            <button class="text-3xl opacity-20" onclick="alert('سيتم تفعيل لوحة المتصدرين غداً!')">🏆</button>
-            <button class="text-3xl opacity-20">📸</button>
-        </nav>
+        <div class="node locked bg-emerald-500" style="top: 1350px; margin-left: -40px;">
+            <span class="text-5xl">🚀</span>
+            <div class="label">فضاء الجمع</div>
+        </div>
     </div>
 
-    <div style="position: fixed; bottom: 100px; left: 20px; z-index: 5000;">
-        <button onclick="document.body.classList.toggle('dark'); document.body.classList.toggle('light');" class="w-12 h-12 bg-indigo-600 text-white rounded-2xl shadow-xl flex items-center justify-center text-xl">🌓</button>
+    <div id="sideControl">
+        <button class="side-btn" onclick="location.reload()">🔄</button>
+        <button class="side-btn" onclick="openLeaderboard()">🏆</button>
+        <button class="side-btn" onclick="toggleMusic()">🎵</button>
     </div>
 
+    <header class="fixed top-0 inset-x-0 p-4 z-[2000] flex justify-between items-center bg-white/10 backdrop-blur-md border-b border-white/20">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-yellow-400 rounded-2xl border-2 border-white flex items-center justify-center text-3xl shadow-lg">👤</div>
+            <div>
+                <p id="playerName" class="font-black text-sm">البطل المبدع</p>
+                <p class="text-[10px] text-yellow-300 font-bold">نقاط الأساطير: 1250 XP</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <div class="text-2xl font-black text-white">الصف الأول ب</div>
+        </div>
+    </header>
+
+    <div id="gameOverlay" class="fixed inset-0 bg-black z-[10000] hidden flex flex-col">
+        <div class="p-4 flex justify-between items-center bg-white/5">
+            <button onclick="closeGame()" class="bg-red-500 px-6 py-2 rounded-xl font-black text-white">خروج ✕</button>
+            <div id="gameTitle" class="font-black">جاري التحميل...</div>
+        </div>
+        <iframe id="gameFrame" class="w-full h-full border-none"></iframe>
+    </div>
+
+    <script>
+        // تحديث المسار ليتناسب مع عرض الشاشة
+        function updatePath() {
+            const w = window.innerWidth;
+            const line = document.getElementById('pathLine');
+            // رسم مسار متعرج ديناميكي
+            const d = `M ${w/2} 0 Q ${w/2 + 100} 150 ${w/2 - 80} 300 T ${w/2 + 80} 600 T ${w/2 - 60} 900 T ${w/2 + 70} 1200 T ${w/2 - 40} 1500`;
+            line.setAttribute('d', d);
+        }
+        window.onresize = updatePath;
+        updatePath();
+
+        function launchGame(id) {
+            // هنا نضع روابط الألعاب الحقيقية التي تبرمجينها أو تختاريها
+            const games = {
+                'worm': 'https://wordwall.net/embed/7891234', // مثال فقط
+                'balloons': 'https://wordwall.net/embed/4567890',
+                'puzzles': 'https://wordwall.net/embed/1122334'
+            };
+            document.getElementById('gameFrame').src = games[id];
+            document.getElementById('gameOverlay').classList.remove('hidden');
+        }
+
+        function closeGame() {
+            document.getElementById('gameOverlay').classList.add('hidden');
+            document.getElementById('gameFrame').src = '';
+        }
+    </script>
 </body>
 </html>
