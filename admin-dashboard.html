@@ -2,78 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>تحكم إمبراطورية لبنى | الصف الأول ب</title>
+    <title>غرفة قيادة أ. لبنى | الصف الأول ب</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-50 p-10 font-['Cairo']">
-
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-12">
-            <div>
-                <h1 class="text-5xl font-black text-indigo-950">قائمة أساطير الصف الأول ب 👑</h1>
-                <p class="text-slate-500 text-xl">إدارة المهمات، النجوم، والطلاب</p>
-            </div>
-            <button onclick="Admin.add()" class="bg-indigo-600 text-white px-10 py-5 rounded-[30px] font-black text-2xl shadow-xl">إضافة بطل +</button>
-        </div>
-
-        <div class="bg-white rounded-[40px] shadow-2xl overflow-hidden border">
-            <table class="w-full text-right">
-                <thead class="bg-slate-50 border-b">
-                    <tr class="text-slate-500 font-bold">
-                        <th class="p-8">البطل</th>
-                        <th class="p-8 text-center">كود الدخول</th>
-                        <th class="p-8 text-center">التقدم</th>
-                        <th class="p-8 text-center">إدارة</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-table"></tbody>
-            </table>
-        </div>
+<body class="bg-blue-50 p-10 font-sans">
+    <div class="max-w-4xl mx-auto bg-white p-10 rounded-[50px] shadow-2xl">
+        <h1 class="text-5xl font-black text-blue-600 mb-8 text-center">إدارة أساطير الصف الأول ب 👑</h1>
+        <button onclick="Admin.add()" class="w-full py-4 bg-pink-500 text-white rounded-3xl font-black text-2xl mb-10 shadow-xl">إضافة بطل جديد +</button>
+        <div id="admin-list" class="space-y-4"></div>
     </div>
 
 <script>
-    const DB_KEY = 'LUBNA_V4_ULTIMATE';
+    const DB_KEY = 'LUBNA_FINAL_2026_B';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
-        save(data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); this.render(); },
-
         render() {
             const db = this.get();
-            document.getElementById('admin-table').innerHTML = db.map(s => `
-                <tr class="border-b hover:bg-slate-50 transition">
-                    <td class="p-8 font-black text-2xl">${s.name}</td>
-                    <td class="p-8 text-center"><span class="bg-indigo-100 text-indigo-700 px-6 py-2 rounded-xl font-mono font-black">${s.code}</span></td>
-                    <td class="p-8 text-center">
-                        <div class="text-amber-500 font-black">⭐ ${s.stars} | 💰 ${s.coins}</div>
-                        <div class="text-sm text-slate-400">مراحل مفتوحة: ${s.progress.math + s.progress.arabic}</div>
-                    </td>
-                    <td class="p-8 text-center">
-                        <button onclick="Admin.del('${s.code}')" class="text-red-500 font-bold">حذف 🗑️</button>
-                    </td>
-                </tr>
+            document.getElementById('admin-list').innerHTML = db.map(s => `
+                <div class="p-6 border-4 border-blue-100 rounded-3xl flex justify-between items-center">
+                    <div>
+                        <div class="text-2xl font-black">${s.name}</div>
+                        <div class="text-blue-500 font-bold">كود الدخول: ${s.code}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="Admin.gift('${s.code}')" class="bg-amber-400 p-3 rounded-xl font-bold">هدية 💰</button>
+                        <button onclick="Admin.del('${s.code}')" class="bg-red-500 text-white p-3 rounded-xl">حذف</button>
+                    </div>
+                </div>
             `).join('');
         },
-
         add() {
-            const name = prompt("اسم الطالب الجديد:");
+            const name = prompt("اسم بطل الصف الأول ب:");
             if(name) {
                 const db = this.get();
-                const code = "B-" + Math.floor(1000 + Math.random()*9000);
-                db.push({
-                    name, code, stars: 0, coins: 0,
-                    progress: { math: 0, arabic: 0 }
-                });
-                this.save(db);
+                const code = "LBN-" + Math.floor(1000 + Math.random()*9000);
+                db.push({name, code, stars:0, coins:500, inventory:[], tag:'', progress:{math:0, arabic:0}});
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
+                this.render();
                 alert("تم! الكود هو: " + code);
             }
         },
-
-        del(code) {
-            if(confirm("حذف الطالب؟")) {
-                this.save(this.get().filter(s => s.code !== code));
-            }
-        }
+        gift(code) {
+            const db = this.get();
+            const idx = db.findIndex(s => s.code === code);
+            db[idx].coins += 1000;
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            this.render();
+        },
+        del(code) { if(confirm("حذف؟")) { 
+            const db = this.get().filter(s => s.code !== code);
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            this.render();
+        }}
     };
     Admin.render();
 </script>
