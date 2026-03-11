@@ -2,72 +2,71 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة أساطير 1-ب</title>
+    <title>لوحة أساطير 1-ب | الإدارة</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
 </head>
 <body class="bg-slate-50 p-8 font-['Cairo']">
     <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-10">
+        <div class="flex justify-between items-center mb-10 bg-blue-700 p-8 rounded-[40px] text-white shadow-2xl">
             <div>
-                <h1 class="text-4xl font-black text-indigo-700">مرحباً أستاذة 1-ب 👋</h1>
-                <p class="text-slate-500">من هنا يمكنكِ متابعة نجوم طلابك وهداياهم</p>
+                <h1 class="text-3xl font-black italic">لوحة التحكم العالمية 👩‍🏫</h1>
+                <p class="opacity-80">تابعي تقدم طلابك نحو الـ 180 نجمة</p>
             </div>
-            <button onclick="Admin.showAdd()" class="bg-indigo-600 text-white px-8 py-4 rounded-3xl font-black shadow-lg hover:scale-105 transition">إضافة بطل جديد +</button>
+            <button onclick="Admin.modal(true)" class="bg-white text-blue-700 px-8 py-4 rounded-3xl font-black shadow-lg">+ إضافة بطل</button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="students-list"></div>
+        <div id="list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-[3000]">
-        <div class="bg-white p-10 rounded-[40px] w-full max-w-md shadow-2xl">
-            <h2 class="text-2xl font-black mb-6">تسجيل طالب جديد</h2>
-            <input type="text" id="m-name" placeholder="اسم الطالب" class="w-full p-4 mb-4 bg-slate-100 rounded-2xl border-none outline-none font-bold">
-            <input type="text" id="m-code" placeholder="كود سري (مثل: A10)" class="w-full p-4 mb-8 bg-slate-100 rounded-2xl border-none outline-none font-black uppercase">
-            <button onclick="Admin.save()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black">حفظ الطالب</button>
+    <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center backdrop-blur-md z-[2000]">
+        <div class="bg-white p-10 rounded-[40px] w-full max-w-md">
+            <h2 class="text-2xl font-black mb-6 text-blue-700">تسجيل بطل جديد</h2>
+            <input type="text" id="m-name" placeholder="اسم الطالب" class="w-full p-5 mb-4 bg-slate-100 rounded-2xl outline-none font-bold">
+            <input type="text" id="m-code" placeholder="الكود (S1)" class="w-full p-5 mb-8 bg-slate-100 rounded-2xl outline-none font-black text-2xl">
+            <button onclick="Admin.save()" class="w-full bg-blue-700 text-white py-5 rounded-2xl font-black text-xl">حفظ</button>
         </div>
     </div>
 
 <script>
-    const DB_KEY = 'LEGENDS_ULTRA_V1';
+    const DB_KEY = 'LEGENDS_ULTIMATE_V7';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
             const db = this.get();
-            document.getElementById('students-list').innerHTML = db.map(u => `
-                <div class="bg-white p-6 rounded-[35px] shadow-sm border border-slate-100">
-                    <div class="flex items-center gap-4 mb-6">
+            document.getElementById('list').innerHTML = db.map(u => `
+                <div class="bg-white p-8 rounded-[40px] shadow-sm border border-slate-100 relative overflow-hidden">
+                    <div class="flex items-center gap-4 mb-4">
                         <div class="text-5xl">${u.avatar || '👦'}</div>
                         <div>
                             <h3 class="text-xl font-black">${u.name}</h3>
-                            <p class="text-sm bg-indigo-50 text-indigo-600 px-2 rounded-full inline-block">كود: ${u.code}</p>
+                            <span class="text-xs font-bold text-blue-500">كود: ${u.code}</span>
                         </div>
                     </div>
-                    <div class="flex justify-between border-t pt-4">
-                        <div class="text-center"><p class="text-xs text-slate-400 font-bold">النجوم</p><p class="text-rose-500 font-black">⭐ ${u.stars}</p></div>
-                        <div class="text-center"><p class="text-xs text-slate-400 font-bold">العملات</p><p class="text-amber-500 font-black">💰 ${u.coins}</p></div>
+                    <div class="bg-slate-50 p-4 rounded-2xl mb-6 flex justify-around">
+                        <div class="text-center"><p class="text-xs font-bold text-slate-400">النجوم</p><p class="text-2xl font-black text-amber-500">⭐ ${u.stars}</p></div>
+                        <div class="text-center"><p class="text-xs font-bold text-slate-400">الحالة</p><p class="text-sm font-black">${u.stars >= 180 ? '👑 مكتمل' : '⏳ جاري'}</p></div>
                     </div>
-                    <div class="mt-6 flex gap-2">
-                        <button onclick="Admin.gift('${u.code}')" class="flex-1 bg-green-100 text-green-600 py-2 rounded-xl font-bold">🎁 هدية 500</button>
-                        <button onclick="Admin.del('${u.code}')" class="bg-red-50 text-red-500 px-4 rounded-xl font-bold">🗑️</button>
+                    <div class="flex gap-2">
+                        <button onclick="Admin.gift('${u.code}')" class="flex-1 bg-green-500 text-white py-3 rounded-2xl font-black">إضافة نجوم ✨</button>
+                        <button onclick="Admin.del('${u.code}')" class="bg-red-50 text-red-500 px-4 rounded-2xl font-bold">🗑️</button>
                     </div>
                 </div>
             `).join('');
         },
-        showAdd() { document.getElementById('modal').style.display = 'flex'; },
+        modal(s) { document.getElementById('modal').style.display = s ? 'flex' : 'none'; },
         save() {
             const n = document.getElementById('m-name').value; const c = document.getElementById('m-code').value.toUpperCase();
             if(!n || !c) return;
             const db = this.get();
-            db.push({name:n, code:c, stars:0, coins:200, avatar:'👦', progress:{}});
+            db.push({name:n, code:c, stars:0, avatar:'👦'});
             localStorage.setItem(DB_KEY, JSON.stringify(db));
-            this.render(); document.getElementById('modal').style.display = 'none';
+            this.render(); this.modal(false);
         },
         gift(c) {
-            let db = this.get();
-            db.find(x => x.code === c).coins += 500;
+            let db = this.get(); db.find(x => x.code === c).stars += 50;
             localStorage.setItem(DB_KEY, JSON.stringify(db));
-            this.render(); alert('تم إرسال هدية للبطل!');
+            this.render();
         },
         del(c) { if(confirm('حذف؟')) {
             localStorage.setItem(DB_KEY, JSON.stringify(this.get().filter(x => x.code !== c)));
