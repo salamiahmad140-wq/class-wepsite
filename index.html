@@ -3,149 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>أساطير 1-ب | التعليم الذكي</title>
+    <title>أساطير 1-ب | المنصة المتكاملة</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Fredoka:wght@600&display=swap" rel="stylesheet">
 
     <style>
-        :root { --main: #FF6B6B; --secondary: #4ECDC4; --accent: #FFE66D; --bg: #F7FFF7; --deep: #1A535C; }
-        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--deep); margin: 0; overflow: hidden; display: flex; justify-content: center; height: 100vh; }
+        :root { --p: #FF4757; --s: #2ED573; --a: #1E90FF; --bg: #F0F2F5; --text: #2F3542; }
+        * { font-family: 'Cairo', sans-serif; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #0f172a; margin: 0; height: 100vh; display: flex; justify-content: center; overflow: hidden; }
         
-        /* الحاوية الرئيسية للهاتف/التابلت */
-        #app { width: 100%; max-width: 450px; height: 100%; background: var(--bg); position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        #app-shell { width: 100%; max-width: 480px; height: 100%; background: var(--bg); position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 0 100px rgba(0,0,0,0.5); }
 
-        /* شاشات التنقل السلس */
-        .screen { position: absolute; inset: 0; display: none; flex-direction: column; padding: 20px; animation: screenReveal 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .screen.active { display: flex; }
-        @keyframes screenReveal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .screen { position: absolute; inset: 0; display: none; flex-direction: column; padding: 25px; padding-bottom: 100px; overflow-y: auto; z-index: 10; background: var(--bg); }
+        .screen.active { display: flex; animation: slideIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        @keyframes slideIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* نيو-روبو المبهج (Premium CSS Robot) */
-        #neo-robo { position: fixed; bottom: 100px; left: 20px; z-index: 1000; pointer-events: none; transition: 1s; transform: scale(0); }
-        #neo-robo.active { transform: scale(1); }
-        .robo-head { width: 90px; height: 80px; background: white; border-radius: 25px; border: 4px solid var(--deep); position: relative; box-shadow: 0 10px 0 #ddd; animation: roboFloat 2.5s infinite ease-in-out; }
-        .robo-face { position: absolute; top: 20px; left: 15px; right: 15px; height: 35px; background: #2F2F2F; border-radius: 15px; display: flex; justify-content: space-around; align-items: center; padding: 0 10px; }
-        .eye { width: 12px; height: 12px; background: #00FFCC; border-radius: 50%; box-shadow: 0 0 10px #00FFCC; }
-        .robo-msg { position: absolute; bottom: 95px; left: 0; background: white; color: var(--deep); padding: 12px 18px; border-radius: 25px 25px 25px 0; border: 3px solid var(--secondary); font-weight: 900; width: 220px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); font-size: 0.9rem; }
-        @keyframes roboFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        /* نيو-روبو المطور (Premium SVG) */
+        .robo-wrap { position: fixed; bottom: 110px; right: 20px; z-index: 1000; pointer-events: none; transition: 0.5s; transform: scale(0); }
+        .robo-wrap.active { transform: scale(1); }
+        .robo-bubble { position: absolute; bottom: 100px; right: 10px; background: white; color: var(--text); padding: 15px; border-radius: 25px 25px 0 25px; border: 4px solid var(--a); font-weight: 900; width: 180px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        /* أزرار العوالم (العربي والحساب) */
+        .world-card { border-radius: 40px; padding: 30px; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; color: white; position: relative; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .world-math { background: linear-gradient(135deg, #1e90ff, #00d2ff); }
+        .world-arabic { background: linear-gradient(135deg, #ff4757, #ff6b81); }
+        .world-card:active { transform: scale(0.95); }
 
-        /* أزرار 3D Bubble */
-        .btn-game { background: var(--secondary); color: white; border-radius: 25px; padding: 18px; font-weight: 900; border-bottom: 8px solid #36b1a8; transition: 0.1s; cursor: pointer; text-align: center; font-size: 1.2rem; }
-        .btn-game:active { transform: translateY(4px); border-bottom-width: 2px; }
+        /* شريط التقدم نحو 180 نجمة */
+        .progress-container { width: 100%; height: 12px; background: #e2e8f0; border-radius: 10px; margin-top: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background: #fbbf24; width: 0%; transition: 1s ease-out; }
 
-        /* شريط التنقل السفلي الاحترافي */
-        .nav-bar { position: absolute; bottom: 0; width: 100%; height: 80px; background: white; border-top: 2px solid #eee; display: flex; justify-content: space-around; align-items: center; padding: 0 20px; border-radius: 35px 35px 0 0; }
-        .nav-link { font-size: 1.8rem; filter: grayscale(1); opacity: 0.3; transition: 0.3s; }
-        .nav-link.active { filter: grayscale(0); opacity: 1; transform: translateY(-10px) scale(1.2); }
+        /* التنقل السفلي */
+        .nav-bar { position: absolute; bottom: 0; width: 100%; height: 85px; background: white; display: flex; justify-content: space-around; align-items: center; border-radius: 35px 35px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 100; }
+        .nav-item { font-size: 1.8rem; filter: grayscale(1); opacity: 0.3; transition: 0.3s; cursor: pointer; }
+        .nav-item.active { filter: grayscale(0); opacity: 1; transform: translateY(-8px); }
 
-        /* تصميم المتجر والصدارة */
-        .glass-item { background: white; border-radius: 25px; border: 1px solid #eee; padding: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        /* دودة الحروف ومنطاد الأرقام (تأثيرات بصرية) */
+        .game-icon { font-size: 4rem; margin-bottom: 10px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
     </style>
 </head>
 <body>
 
-<div id="app">
+<div id="app-shell">
     
-    <div id="neo-robo">
-        <div class="robo-msg" id="robo-text">أهلاً يا بطل! أنا نيو-روبو</div>
-        <div class="robo-head">
-            <div class="robo-face">
-                <div class="eye"></div>
-                <div class="eye"></div>
-            </div>
-        </div>
+    <div id="neo-robo" class="robo-wrap">
+        <div class="robo-bubble" id="robo-text">مستعد للمغامرة؟</div>
+        <svg width="90" height="90" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="90" fill="#1E90FF" />
+            <rect x="40" y="60" width="120" height="80" rx="30" fill="white" />
+            <circle cx="70" cy="95" r="12" fill="#2F3542"><animate attributeName="cy" values="95;90;95" dur="3s" repeatCount="indefinite"/></circle>
+            <circle cx="130" cy="95" r="12" fill="#2F3542"><animate attributeName="cy" values="95;90;95" dur="3s" repeatCount="indefinite"/></circle>
+            <path d="M80 120 Q100 135 120 120" stroke="#FF4757" stroke-width="8" fill="none" stroke-linecap="round" />
+        </svg>
     </div>
 
-    <div id="scr-login" class="screen active justify-center p-10 bg-white">
+    <div id="sc-login" class="screen active justify-center bg-white p-10">
         <div class="text-center">
-            <div class="w-32 h-32 bg-yellow-400 rounded-[40px] mx-auto mb-6 flex items-center justify-center text-6xl shadow-xl">🚀</div>
-            <h1 class="text-4xl font-black text-slate-800 mb-2">أساطير 1-ب</h1>
-            <p class="text-slate-400 font-bold mb-10">عالم التعلم الممتع</p>
-            <input type="text" id="user-code" placeholder="أدخل كودك السري" class="w-full p-5 rounded-3xl bg-slate-100 border-none text-center text-2xl font-black mb-6 outline-none focus:ring-4 ring-cyan-200 uppercase">
-            <div onclick="App.login()" class="btn-game">دخول الأساطير</div>
+            <div class="text-8xl mb-6">⭐</div>
+            <h1 class="text-4xl font-black text-slate-800">أساطير 1-ب</h1>
+            <p class="text-slate-400 font-bold mb-10 italic">بوابتك نحو النجوم</p>
+            <input type="text" id="login-code" placeholder="كود البطل" class="w-full p-5 rounded-3xl bg-slate-100 text-center text-3xl font-black mb-6 outline-none border-4 border-transparent focus:border-blue-400 uppercase">
+            <button onclick="App.login()" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-xl shadow-xl active:scale-95 transition">انطلاق 🚀</button>
         </div>
     </div>
 
-    <div id="scr-home" class="screen">
+    <div id="sc-home" class="screen">
         <div class="flex justify-between items-center mb-6">
-            <div class="bg-white px-5 py-2 rounded-full font-black text-amber-500 shadow-sm border border-amber-100">💰 <span id="u-coins">0</span></div>
-            <div class="bg-white px-5 py-2 rounded-full font-black text-rose-500 shadow-sm border border-rose-100">⭐ <span id="u-stars">0</span></div>
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-xs font-bold text-slate-400">هدفك: 180 نجمة</p>
+                <div class="progress-container"><div id="p-bar" class="progress-bar"></div></div>
+            </div>
+            <div class="text-right">
+                <span id="u-stars" class="text-2xl font-black text-amber-500">0</span> <span class="text-sm font-bold">⭐</span>
+            </div>
         </div>
-        
+
         <div class="text-center mb-8">
-            <div id="u-avatar" class="w-28 h-28 mx-auto rounded-full bg-white border-4 border-cyan-400 flex items-center justify-center text-6xl shadow-xl mb-3">👦</div>
-            <h2 id="u-name" class="text-2xl font-black text-slate-700">بطل الأساطير</h2>
+            <div id="u-avatar" class="w-24 h-24 mx-auto bg-white rounded-full border-4 border-blue-400 flex items-center justify-center text-5xl mb-2 shadow-lg">👦</div>
+            <h2 id="u-name" class="text-2xl font-black">البطل الأسطوري</h2>
         </div>
 
-        <div class="grid gap-4 overflow-y-auto pb-20">
-            <div onclick="App.nav('scr-map')" class="glass-item flex items-center gap-5 cursor-pointer hover:scale-[1.02] transition">
-                <div class="text-5xl bg-cyan-50 p-3 rounded-2xl">🗺️</div>
-                <div class="text-right">
-                    <h3 class="text-xl font-black text-slate-800">خريطة التعلم</h3>
-                    <p class="text-slate-400 text-sm">أكمل 180 نجمة لتفوز!</p>
-                </div>
+        <div class="grid gap-4">
+            <div onclick="App.openWorld('arabic')" class="world-card world-arabic">
+                <div class="game-icon">🐛</div>
+                <h3 class="text-2xl font-black">عالم لغتي</h3>
+                <p class="font-bold opacity-90">مغامرة دودة الحروف</p>
             </div>
-            <div id="special-task" class="glass-item border-2 border-dashed border-rose-300 bg-rose-50 flex items-center gap-5 cursor-pointer">
-                <div class="text-5xl">🏆</div>
-                <div>
-                    <h3 class="text-xl font-black text-rose-600">المهمة الكبرى</h3>
-                    <p class="text-rose-400 text-sm">مربيتك تنتظرك في القمة</p>
-                </div>
+            <div onclick="App.openWorld('math')" class="world-card world-math">
+                <div class="game-icon">🎈</div>
+                <h3 class="text-2xl font-black">عالم الحساب</h3>
+                <p class="font-bold opacity-90">تحدي منطاد الأرقام</p>
             </div>
         </div>
     </div>
 
-    <div id="scr-map" class="screen bg-slate-50">
-        <header class="flex items-center gap-4 mb-8">
-            <button onclick="App.nav('scr-home', 0)" class="text-2xl bg-white p-2 rounded-xl shadow-sm">🔙</button>
-            <h2 class="text-2xl font-black text-slate-800">مراحل التحدي</h2>
-        </header>
-        <div class="grid grid-cols-1 gap-4 overflow-y-auto pb-24" id="map-levels">
-            <div class="glass-item p-6 flex justify-between items-center bg-white border-l-8 border-cyan-500 cursor-pointer" onclick="Game.start('السبب والنتيجة')">
-                <div><h4 class="font-black text-lg">1. السبب والنتيجة</h4><p class="text-xs text-slate-400">تحليل المواقف</p></div>
-                <div class="text-2xl">🔍</div>
-            </div>
-            <div class="glass-item p-6 flex justify-between items-center bg-white border-l-8 border-amber-500 cursor-pointer" onclick="Game.start('خطوات المستخدم')">
-                <div><h4 class="font-black text-lg">2. خطوات المستخدم</h4><p class="text-xs text-slate-400">ترتيب الأحداث</p></div>
-                <div class="text-2xl">👣</div>
-            </div>
-            <div class="glass-item p-6 flex justify-between items-center bg-white border-l-8 border-rose-500 cursor-pointer" onclick="Game.start('التوازي 1')">
-                <div><h4 class="font-black text-lg">3. التوازي 1</h4><p class="text-xs text-slate-400">الأنماط المتكررة</p></div>
-                <div class="text-2xl">📏</div>
-            </div>
+    <div id="sc-map" class="screen bg-slate-50">
+        <div class="flex items-center gap-4 mb-8">
+            <button onclick="App.nav('sc-home', 0)" class="text-2xl bg-white p-2 rounded-2xl shadow-sm">🔙</button>
+            <h2 id="map-title" class="text-2xl font-black">خريطة التحدي</h2>
         </div>
+        <div id="levels-list" class="flex flex-col gap-4"></div>
     </div>
 
-    <div id="scr-game" class="screen z-[2000] p-0 bg-white">
-        <div class="p-6 bg-cyan-600 text-white flex justify-between items-center">
+    <div id="sc-game" class="screen z-[2000] p-0 bg-white">
+        <div class="p-6 bg-slate-800 text-white flex justify-between items-center">
             <div id="g-lives" class="text-2xl">❤️❤️❤️</div>
-            <div id="g-title" class="font-black text-lg italic">المرحلة</div>
-            <button onclick="App.nav('scr-map')" class="text-sm font-bold opacity-80 underline">انسحاب</button>
+            <div id="g-info" class="font-black">مرحلة 1</div>
+            <button onclick="App.nav('sc-map')" class="underline text-sm">انسحاب</button>
         </div>
-        <div class="p-8 text-center"><h3 id="g-question" class="text-2xl font-black text-slate-700 leading-relaxed">...</h3></div>
-        <div id="g-arena" class="flex-1 flex flex-col p-6 gap-4"></div>
-    </div>
-
-    <div id="scr-shop" class="screen">
-        <h2 class="text-3xl font-black text-center mb-8 text-rose-500">متجر الأساطير 🛍️</h2>
-        <div id="shop-items" class="grid grid-cols-2 gap-4"></div>
+        <div class="p-8 text-center"><h3 id="g-task" class="text-2xl font-black leading-relaxed">...</h3></div>
+        <div id="g-arena" class="flex-1 p-6 flex flex-col gap-4"></div>
     </div>
 
     <div id="nav-bar" class="nav-bar hidden">
-        <div class="nav-link active" onclick="App.nav('scr-home', 0)">🏠</div>
-        <div class="nav-link" onclick="App.nav('scr-shop', 1); Shop.render()">🛍️</div>
-        <div class="nav-link" onclick="App.nav('scr-lead', 2); Lead.render()">🏆</div>
+        <div class="nav-item active" onclick="App.nav('sc-home', 0)">🏠</div>
+        <div class="nav-item" onclick="App.nav('sc-shop', 1)">🛍️</div>
+        <div class="nav-item" onclick="App.nav('sc-lead', 2)">🏆</div>
     </div>
 
 </div>
 
 <script>
-const DB_KEY = 'LEGENDS_ULTRA_V1';
+const DB_KEY = 'LEGENDS_ULTIMATE_V7';
 
-// --- نيو-روبو الذكي ---
+// --- نيو-روبو التفاعلي ---
 const Robo = {
     say(text, time = 4000) {
         const el = document.getElementById('neo-robo');
@@ -159,120 +144,101 @@ const Robo = {
 // --- محرك التطبيق ---
 const App = {
     user: null,
+    worlds: {
+        arabic: { title: 'عالم لغتي 🐛', levels: ['دودة الحروف', 'السبب والنتيجة', 'ترتيب الجمل'] },
+        math: { title: 'عالم الحساب 🎈', levels: ['منطاد الأرقام', 'خطوات المستخدم', 'التوازي 1'] }
+    },
     login() {
-        const code = document.getElementById('user-code').value.trim().toUpperCase();
+        const code = document.getElementById('login-code').value.trim().toUpperCase();
         const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
         const u = db.find(x => x.code === code);
-        
         if(u) {
             this.user = u; this.sync();
             document.getElementById('nav-bar').classList.remove('hidden');
-            this.nav('scr-home', 0);
-            Robo.say(`أهلاً بك يا بطل 1-ب ${u.name}! مستعد لجمع 180 نجمة؟ ✨`, 5000);
-            confetti({particleCount: 100, spread: 70});
+            this.nav('sc-home', 0);
+            Robo.say(`أهلاً بطل 1-ب ${u.name}! نيو-روبو جاهز لجمع 180 نجمة!`, 5000);
+            confetti();
         } else {
-            Robo.say("أوبس! الكود غير صحيح، تأكد من معلمتك 🧐");
+            Robo.say("الكود غير صحيح، تأكد من معلمتك 🧐");
         }
     },
     sync() {
         document.getElementById('u-name').innerText = this.user.name;
         document.getElementById('u-stars').innerText = this.user.stars;
-        document.getElementById('u-coins').innerText = this.user.coins;
         document.getElementById('u-avatar').innerText = this.user.avatar || '👦';
-        let db = JSON.parse(localStorage.getItem(DB_KEY));
-        db[db.findIndex(x => x.code === this.user.code)] = this.user;
+        const progress = Math.min((this.user.stars / 180) * 100, 100);
+        document.getElementById('p-bar').style.width = progress + '%';
+        
+        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const idx = db.findIndex(x => x.code === this.user.code);
+        if(idx !== -1) db[idx] = this.user; else db.push(this.user);
         localStorage.setItem(DB_KEY, JSON.stringify(db));
     },
     nav(id, idx) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(idx !== undefined) {
-            document.querySelectorAll('.nav-link').forEach((l, i) => l.classList.toggle('active', i === idx));
-        }
+        if(idx !== undefined) document.querySelectorAll('.nav-item').forEach((l, i) => l.classList.toggle('active', i === idx));
+    },
+    openWorld(type) {
+        const w = this.worlds[type];
+        document.getElementById('map-title').innerText = w.title;
+        const list = document.getElementById('levels-list');
+        list.innerHTML = w.levels.map((lvl, i) => `
+            <div onclick="Game.start('${lvl}')" class="bg-white p-6 rounded-[30px] flex justify-between items-center shadow-sm border-l-8 ${type==='arabic'?'border-red-400':'border-blue-400'}">
+                <span class="font-black text-xl">${i+1}. ${lvl}</span>
+                <span class="text-2xl">✨</span>
+            </div>
+        `).join('');
+        this.nav('sc-map');
     }
 };
 
-// --- محرك الألعاب التعليمي ---
+// --- محرك الألعاب (Game Engine) ---
 const Game = {
-    lives: 3, currentTask: null,
-    start(title) {
+    lives: 3,
+    start(name) {
         this.lives = 3;
-        App.nav('scr-game');
-        document.getElementById('g-title').innerText = title;
-        this.renderTask(title);
+        App.nav('sc-game');
+        document.getElementById('g-info').innerText = name;
+        this.renderTask(name);
     },
-    renderTask(title) {
+    renderTask(name) {
         document.getElementById('g-lives').innerText = "❤️".repeat(this.lives);
         const arena = document.getElementById('g-arena');
         arena.innerHTML = '';
         
-        let q, options, correct;
-
-        if(title === 'السبب والنتيجة') {
-            q = "رميتُ الحجر على الزجاج، ماذا يحدث؟";
-            correct = "انكسر الزجاج 🔨";
-            options = ["انكسر الزجاج 🔨", "طار الزجاج 🎈", "ضحك الزجاج 😂"].sort(() => Math.random()-0.5);
-        } else if(title === 'خطوات المستخدم') {
-            q = "ما هي الخطوة الأولى لتنظيف أسنانك؟";
-            correct = "وضع المعجون 🪥";
-            options = ["غسل الوجه 🧼", "وضع المعجون 🪥", "النوم 😴"].sort(() => Math.random()-0.5);
+        let q, opts, correct;
+        if(name === 'السبب والنتيجة') {
+            q = "رميت الحجر على النافذة، ماذا حدث؟"; correct = "انكسر الزجاج";
+            opts = ["انكسر الزجاج", "طار العصفور", "نزل المطر"];
+        } else if(name === 'خطوات المستخدم') {
+            q = "لأغسل يدي، ماذا أفعل أولاً؟"; correct = "أفتح الصنبور";
+            opts = ["أفتح الصنبور", "أجفف يدي", "أذهب للنوم"];
+        } else if(name === 'منطاد الأرقام') {
+            q = "أي منطاد يحمل الرقم الأكبر؟"; correct = "9";
+            opts = ["9", "5", "3"];
         } else {
-            q = "أكمل النمط: 🟥 🟦 🟥 ؟";
-            correct = "🟦";
-            options = ["🟦", "🟥", "🟡"].sort(() => Math.random()-0.5);
+            q = "أكمل النمط: 🔴 🔵 🔴 ..."; correct = "🔵";
+            opts = ["🔵", "🔴", "🟡"];
         }
 
-        document.getElementById('g-question').innerText = q;
-        options.forEach(opt => {
-            const btn = document.createElement('div');
-            btn.className = "btn-game bg-white !text-slate-800 border-2 border-slate-100 py-6";
-            btn.innerText = opt;
-            btn.onclick = () => {
-                if(opt === correct) {
-                    this.win();
+        document.getElementById('g-task').innerText = q;
+        opts.sort(() => Math.random() - 0.5).forEach(o => {
+            const b = document.createElement('div');
+            b.className = "bg-slate-100 p-6 rounded-2xl text-center text-xl font-black cursor-pointer active:scale-95 transition border-2 border-transparent hover:border-blue-400";
+            b.innerText = o;
+            b.onclick = () => {
+                if(o === correct) {
+                    confetti(); Robo.say("عبقري! إجابة صحيحة!");
+                    App.user.stars += 30; App.sync();
+                    setTimeout(() => App.nav('sc-map'), 2000);
                 } else {
-                    this.lives--;
-                    if(this.lives === 0) {
-                        Robo.say("لا بأس، جرب مرة أخرى يا بطل!");
-                        App.nav('scr-map');
-                    } else {
-                        document.getElementById('g-lives').innerText = "❤️".repeat(this.lives);
-                        Robo.say("أوه! ركز قليلاً، أنت ذكي!");
-                    }
+                    this.lives--; document.getElementById('g-lives').innerText = "❤️".repeat(this.lives);
+                    if(this.lives === 0) App.nav('sc-map'); else Robo.say("ركز يا بطل، أنت تستطيع!");
                 }
             };
-            arena.appendChild(btn);
+            arena.appendChild(b);
         });
-    },
-    win() {
-        confetti();
-        Robo.say("رائع! حصلت على 60 نجمة إضافية! 🌟");
-        App.user.stars += 60; App.user.coins += 100;
-        App.sync();
-        setTimeout(() => App.nav('scr-map'), 2000);
-    }
-};
-
-// --- المتجر (Shop) ---
-const Shop = {
-    items: ['🦁','🦊','🐼','🦸‍♂️','🚀','🦄'],
-    render() {
-        const grid = document.getElementById('shop-items');
-        grid.innerHTML = this.items.map(item => `
-            <div class="glass-item text-center">
-                <div class="text-6xl mb-4">${item}</div>
-                <button onclick="Shop.buy('${item}')" class="w-full bg-cyan-500 text-white py-2 rounded-xl font-black text-sm">شراء (200 💰)</button>
-            </div>
-        `).join('');
-    },
-    buy(item) {
-        if(App.user.coins >= 200) {
-            App.user.coins -= 200; App.user.avatar = item; App.sync();
-            Robo.say("يا للهول! أنت تبدو رائعاً الآن! ✨");
-            App.nav('scr-home', 0);
-        } else {
-            Robo.say("أوه، تحتاج عملات أكثر! العب لتربح 💰");
-        }
     }
 };
 </script>
