@@ -2,81 +2,133 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة القائدة | إدارة الأساطير</title>
+    <title>لوحة القيادة | روبيك</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #fdfcf0; }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 2px solid #f1f5f9; }
+        body { font-family: 'Cairo', sans-serif; background: #f8fafc; }
+        .dashboard-card { background: white; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .action-btn { transition: 0.2s; cursor: pointer; }
+        .action-btn:active { transform: scale(0.95); }
     </style>
 </head>
-<body class="p-6">
+<body class="p-4 md:p-8">
 
-    <div class="max-w-5xl mx-auto">
-        <div class="flex justify-between items-center mb-10 bg-white p-8 rounded-[40px] shadow-sm border-2 border-yellow-100">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-8 bg-indigo-600 text-white p-8 rounded-3xl shadow-lg">
             <div>
-                <h1 class="text-4xl font-black text-slate-800">إدارة أبطال 1-ب 👑</h1>
-                <p class="text-yellow-600 font-bold">بإمكانكِ إضافة الأبطال وتعديل أكوادهم هنا</p>
+                <h1 class="text-4xl font-black mb-2">لوحة المعلمة الذكية ⚙️</h1>
+                <p class="text-indigo-200 font-bold text-lg">من هنا تديرين عالم الأساطير وطلابك</p>
             </div>
-            <button onclick="Admin.showAdd()" class="bg-yellow-400 text-white px-8 py-4 rounded-3xl font-black text-xl shadow-lg hover:scale-105 transition">+ إضافة بطل</button>
+            <button onclick="Admin.showModal()" class="bg-white text-indigo-600 px-6 py-3 rounded-2xl font-black text-xl action-btn shadow-md hover:bg-indigo-50">+ طالب جديد</button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="students-list">
-            </div>
+        <div class="dashboard-card overflow-hidden">
+            <table class="w-full text-right">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                    <tr>
+                        <th class="p-5 font-black text-slate-600">اسم الطالب</th>
+                        <th class="p-5 font-black text-slate-600">الكود السري</th>
+                        <th class="p-5 font-black text-slate-600 text-center">النجوم ⭐</th>
+                        <th class="p-5 font-black text-slate-600 text-center">تقدم الحساب</th>
+                        <th class="p-5 font-black text-slate-600 text-center">تقدم لغتي</th>
+                        <th class="p-5 font-black text-slate-600 text-center">أدوات</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table">
+                    </tbody>
+            </table>
+        </div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/40 hidden flex items-center justify-center p-4">
-        <div class="bg-white p-10 rounded-[40px] w-full max-w-md shadow-2xl">
-            <h2 class="text-3xl font-black mb-6">بطل جديد ✨</h2>
-            <input type="text" id="m-name" placeholder="اسم الطالب" class="w-full p-4 mb-4 bg-slate-50 rounded-2xl border-2 border-slate-100 outline-none focus:border-yellow-400 font-bold">
-            <input type="text" id="m-code" placeholder="الكود (مثلاً: 2024)" class="w-full p-4 mb-6 bg-slate-50 rounded-2xl border-2 border-slate-100 outline-none focus:border-yellow-400 font-bold">
+    <div id="modal-add" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-white p-8 rounded-3xl w-full max-w-md shadow-2xl">
+            <h2 class="text-2xl font-black text-indigo-600 mb-6">إضافة بطل جديد</h2>
+            
+            <label class="block font-bold mb-2 text-slate-600">اسم الطالب:</label>
+            <input type="text" id="inp-name" class="w-full p-4 mb-4 rounded-xl bg-slate-100 border-none outline-none focus:ring-2 focus:ring-indigo-500 font-bold">
+            
+            <label class="block font-bold mb-2 text-slate-600">الكود (مثال: 1234):</label>
+            <input type="text" id="inp-code" class="w-full p-4 mb-6 rounded-xl bg-slate-100 border-none outline-none focus:ring-2 focus:ring-indigo-500 font-bold uppercase">
+            
             <div class="flex gap-4">
-                <button onclick="Admin.save()" class="flex-1 bg-yellow-400 text-white py-4 rounded-2xl font-black">حفظ</button>
-                <button onclick="Admin.hide()" class="flex-1 bg-slate-100 text-slate-400 py-4 rounded-2xl font-black">إلغاء</button>
+                <button onclick="Admin.save()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold action-btn">حفظ الطالب</button>
+                <button onclick="Admin.hideModal()" class="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold action-btn">إلغاء</button>
             </div>
         </div>
     </div>
 
 <script>
-    const DB_KEY = 'LEGENDS_V5_MEGA';
+    const DB_KEY = 'LEGENDS_MEGA_V1';
+
     const Admin = {
-        get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
+        getDB() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
+        saveDB(data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); this.render(); },
+        
         render() {
-            const db = this.get();
-            const list = document.getElementById('students-list');
-            list.innerHTML = db.map(s => `
-                <div class="bg-white p-6 rounded-[35px] shadow-sm border-2 border-slate-50 flex justify-between items-center">
-                    <div>
-                        <div class="text-2xl font-black text-slate-700">${s.name}</div>
-                        <div class="text-blue-500 font-bold">الكود: <span class="bg-blue-50 px-2 rounded">${s.code}</span></div>
-                        <div class="mt-2 text-slate-400">⭐ ${s.stars} | 💰 ${s.coins}</div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="Admin.edit('${s.code}')" class="bg-slate-100 p-3 rounded-2xl">✏️</button>
-                        <button onclick="Admin.del('${s.code}')" class="bg-red-50 p-3 rounded-2xl">🗑️</button>
-                    </div>
-                </div>
+            const db = this.getDB();
+            const tbody = document.getElementById('admin-table');
+            
+            if(db.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-10 text-center text-slate-400 font-bold">لا يوجد طلاب بعد، أضيفي طالباً جديداً!</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = db.map(u => `
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                    <td class="p-5 font-bold text-slate-800 text-lg">${u.name}</td>
+                    <td class="p-5"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg font-mono font-bold">${u.code}</span></td>
+                    <td class="p-5 text-center font-black text-pink-500">${u.stars}</td>
+                    <td class="p-5 text-center font-bold text-blue-600">مرحلة ${u.progress.math}</td>
+                    <td class="p-5 text-center font-bold text-rose-600">مرحلة ${u.progress.arabic}</td>
+                    <td class="p-5 text-center flex justify-center gap-2">
+                        <button onclick="Admin.gift('${u.code}')" class="bg-yellow-100 text-yellow-600 p-2 rounded-lg action-btn" title="هدية">🎁</button>
+                        <button onclick="Admin.del('${u.code}')" class="bg-red-100 text-red-600 p-2 rounded-lg action-btn" title="حذف">🗑️</button>
+                    </td>
+                </tr>
             `).join('');
         },
-        showAdd() { document.getElementById('modal').style.display = 'flex'; },
-        hide() { document.getElementById('modal').style.display = 'none'; },
+
+        showModal() { document.getElementById('modal-add').style.display = 'flex'; },
+        hideModal() { document.getElementById('modal-add').style.display = 'none'; },
+
         save() {
-            const name = document.getElementById('m-name').value;
-            const code = document.getElementById('m-code').value;
-            if(!name || !code) return;
-            const db = this.get();
-            db.push({name, code, stars:0, coins:100, done:[], inventory:[], equipped:''});
-            localStorage.setItem(DB_KEY, JSON.stringify(db));
-            this.render(); this.hide();
+            const name = document.getElementById('inp-name').value.trim();
+            const code = document.getElementById('inp-code').value.trim().toUpperCase();
+            
+            if(!name || !code) return alert("يرجى ملء البيانات!");
+            
+            const db = this.getDB();
+            if(db.find(u => u.code === code)) return alert("الكود مستخدم لطالب آخر!");
+
+            db.push({
+                name: name, code: code, stars: 0, coins: 200, 
+                progress: { math: 0, arabic: 0 }
+            });
+
+            this.saveDB(db);
+            this.hideModal();
+            document.getElementById('inp-name').value = '';
+            document.getElementById('inp-code').value = '';
         },
+
+        gift(code) {
+            const db = this.getDB();
+            const idx = db.findIndex(u => u.code === code);
+            db[idx].coins += 500;
+            this.saveDB(db);
+            alert(`تم إرسال 500 عملة للطالب ${db[idx].name}!`);
+        },
+
         del(code) {
-            if(confirm('حذف الطالب؟')) {
-                const db = this.get().filter(s => s.code !== code);
-                localStorage.setItem(DB_KEY, JSON.stringify(db));
-                this.render();
+            if(confirm("هل أنت متأكد من حذف الطالب نهائياً؟")) {
+                const db = this.getDB().filter(u => u.code !== code);
+                this.saveDB(db);
             }
         }
     };
+
+    // تشغيل عند الفتح
     Admin.render();
 </script>
 </body>
