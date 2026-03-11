@@ -2,71 +2,57 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة أساطير 1-ب | الإدارة</title>
+    <title>إدارة أساطير 1-ب</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-50 p-8 font-['Cairo']">
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-10 bg-blue-700 p-8 rounded-[40px] text-white shadow-2xl">
-            <div>
-                <h1 class="text-3xl font-black italic">لوحة التحكم العالمية 👩‍🏫</h1>
-                <p class="opacity-80">تابعي تقدم طلابك نحو الـ 180 نجمة</p>
-            </div>
-            <button onclick="Admin.modal(true)" class="bg-white text-blue-700 px-8 py-4 rounded-3xl font-black shadow-lg">+ إضافة بطل</button>
+<body class="bg-slate-100 p-8 font-['Cairo']">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-indigo-600 text-white p-8 rounded-3xl mb-8 flex justify-between items-center shadow-xl">
+            <h1 class="text-3xl font-black text-white">لوحة تحكم المربية 👩‍🏫</h1>
+            <button onclick="Admin.modal(true)" class="bg-white text-indigo-600 px-6 py-2 rounded-full font-black">إضافة طالب +</button>
         </div>
-
-        <div id="list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        <div id="list" class="grid gap-4"></div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center backdrop-blur-md z-[2000]">
-        <div class="bg-white p-10 rounded-[40px] w-full max-w-md">
-            <h2 class="text-2xl font-black mb-6 text-blue-700">تسجيل بطل جديد</h2>
-            <input type="text" id="m-name" placeholder="اسم الطالب" class="w-full p-5 mb-4 bg-slate-100 rounded-2xl outline-none font-bold">
-            <input type="text" id="m-code" placeholder="الكود (S1)" class="w-full p-5 mb-8 bg-slate-100 rounded-2xl outline-none font-black text-2xl">
-            <button onclick="Admin.save()" class="w-full bg-blue-700 text-white py-5 rounded-2xl font-black text-xl">حفظ</button>
+    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+        <div class="bg-white p-8 rounded-3xl w-80">
+            <h2 class="text-xl font-black mb-4">طالب جديد</h2>
+            <input id="n" type="text" placeholder="الاسم" class="w-full p-3 bg-slate-100 rounded-xl mb-3">
+            <input id="c" type="text" placeholder="الكود (S1)" class="w-full p-3 bg-slate-100 rounded-xl mb-6 font-black uppercase">
+            <button onclick="Admin.save()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-black">حفظ</button>
+            <button onclick="Admin.modal(false)" class="w-full text-slate-400 mt-2">إلغاء</button>
         </div>
     </div>
 
 <script>
-    const DB_KEY = 'LEGENDS_ULTIMATE_V7';
+    const DB_KEY = 'ASATIR_FINAL_V1';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
             const db = this.get();
             document.getElementById('list').innerHTML = db.map(u => `
-                <div class="bg-white p-8 rounded-[40px] shadow-sm border border-slate-100 relative overflow-hidden">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="text-5xl">${u.avatar || '👦'}</div>
-                        <div>
-                            <h3 class="text-xl font-black">${u.name}</h3>
-                            <span class="text-xs font-bold text-blue-500">كود: ${u.code}</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-2xl mb-6 flex justify-around">
-                        <div class="text-center"><p class="text-xs font-bold text-slate-400">النجوم</p><p class="text-2xl font-black text-amber-500">⭐ ${u.stars}</p></div>
-                        <div class="text-center"><p class="text-xs font-bold text-slate-400">الحالة</p><p class="text-sm font-black">${u.stars >= 180 ? '👑 مكتمل' : '⏳ جاري'}</p></div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="Admin.gift('${u.code}')" class="flex-1 bg-green-500 text-white py-3 rounded-2xl font-black">إضافة نجوم ✨</button>
-                        <button onclick="Admin.del('${u.code}')" class="bg-red-50 text-red-500 px-4 rounded-2xl font-bold">🗑️</button>
+                <div class="bg-white p-6 rounded-3xl flex justify-between items-center shadow-sm">
+                    <div><h3 class="font-black">${u.name}</h3><p class="text-xs text-indigo-500 font-bold">كود: ${u.code}</p></div>
+                    <div class="flex items-center gap-4">
+                        <span class="font-black text-amber-500">⭐ ${u.stars}</span>
+                        <button onclick="Admin.addStar('${u.code}')" class="bg-amber-100 text-amber-600 px-3 py-1 rounded-lg">+60</button>
+                        <button onclick="Admin.del('${u.code}')" class="text-red-300">🗑️</button>
                     </div>
                 </div>
             `).join('');
         },
         modal(s) { document.getElementById('modal').style.display = s ? 'flex' : 'none'; },
         save() {
-            const n = document.getElementById('m-name').value; const c = document.getElementById('m-code').value.toUpperCase();
+            const n = document.getElementById('n').value; const c = document.getElementById('c').value.toUpperCase();
             if(!n || !c) return;
-            const db = this.get();
-            db.push({name:n, code:c, stars:0, avatar:'👦'});
+            const db = this.get(); db.push({name:n, code:c, stars:0});
             localStorage.setItem(DB_KEY, JSON.stringify(db));
             this.render(); this.modal(false);
         },
-        gift(c) {
-            let db = this.get(); db.find(x => x.code === c).stars += 50;
-            localStorage.setItem(DB_KEY, JSON.stringify(db));
-            this.render();
+        addStar(c) {
+            let db = this.get(); db.find(x => x.code === c).stars += 60;
+            localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
         },
         del(c) { if(confirm('حذف؟')) {
             localStorage.setItem(DB_KEY, JSON.stringify(this.get().filter(x => x.code !== c)));
