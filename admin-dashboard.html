@@ -2,40 +2,71 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة الأساطير</title>
+    <title>تحكم المعلم 🏰</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-950 p-10 text-white">
-    <div class="max-w-4xl mx-auto bg-slate-900 p-12 rounded-[50px] border-2 border-slate-800">
-        <h1 class="text-5xl font-black text-center mb-12 text-blue-400">تحكم الأساطير 🏰</h1>
-        <button onclick="Admin.add()" class="w-full py-6 bg-blue-600 rounded-3xl font-black text-3xl mb-12 shadow-lg">إضافة بطل +</button>
+<body class="bg-slate-950 p-6 text-white text-right">
+    <div class="max-w-4xl mx-auto bg-slate-900 p-8 rounded-[40px] border-2 border-slate-800 shadow-2xl">
+        <h1 class="text-4xl font-black text-center mb-10 text-cyan-400">إدارة أبطال الأول ب</h1>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <input type="text" id="adm-name" placeholder="اسم الطالب الجديد" class="p-4 rounded-2xl bg-black border border-slate-700 outline-none focus:border-cyan-400">
+            <input type="text" id="adm-code" placeholder="الكود (اختياري)" class="p-4 rounded-2xl bg-black border border-slate-700 outline-none focus:border-cyan-400">
+            <button onclick="Admin.add()" class="sm:col-span-2 py-4 bg-cyan-600 rounded-2xl font-black text-xl hover:bg-cyan-500 transition">+ إضافة الطالب</button>
+        </div>
+
         <div id="admin-list" class="space-y-4"></div>
     </div>
+
 <script>
-    const DB_KEY = 'LEGENDS_1B_REBORN';
+    const DB_KEY = 'LEGENDS_1B_V3';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
             const db = this.get();
-            document.getElementById('admin-list').innerHTML = db.map(s => `
-                <div class="p-6 bg-slate-800 rounded-3xl flex justify-between items-center border border-slate-700">
-                    <div><div class="text-3xl font-black">${s.name}</div><div class="text-blue-400">كود: ${s.code}</div></div>
-                    <button onclick="Admin.gift('${s.code}')" class="bg-yellow-500 text-black px-6 py-2 rounded-xl font-black">هدية 💰</button>
+            document.getElementById('admin-list').innerHTML = db.map((s, i) => `
+                <div class="p-6 bg-slate-800 rounded-3xl flex flex-wrap justify-between items-center border border-slate-700">
+                    <div class="mb-4 sm:mb-0">
+                        <div class="text-2xl font-black text-white">${s.name}</div>
+                        <div class="text-cyan-400 font-bold">الكود الحالي: ${s.code}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="Admin.edit('${s.code}')" class="bg-blue-500 px-4 py-2 rounded-xl font-bold">تعديل الكود</button>
+                        <button onclick="Admin.del('${s.code}')" class="bg-red-500 px-4 py-2 rounded-xl font-bold">حذف</button>
+                    </div>
                 </div>
             `).join('');
         },
         add() {
-            const name = prompt("الاسم:");
-            if(name) {
+            const name = document.getElementById('adm-name').value;
+            let code = document.getElementById('adm-code').value.toUpperCase();
+            if(!name) return alert("اكتب الاسم!");
+            if(!code) code = "LEG-" + Math.floor(1000+Math.random()*9000);
+            
+            const db = this.get();
+            if(db.find(s => s.code === code)) return alert("هذا الكود مستخدم مسبقاً!");
+            
+            db.push({name, code, stars:0, coins:500, inventory:[], equipped:'', done:{math:[], arabic:[]}});
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            this.render();
+            document.getElementById('adm-name').value = ''; document.getElementById('adm-code').value = '';
+        },
+        edit(oldCode) {
+            const newCode = prompt("أدخل الكود الجديد لهذا الطالب:").toUpperCase();
+            if(newCode) {
                 const db = this.get();
-                const code = "LEG-" + Math.floor(1000 + Math.random()*9000);
-                db.push({name, code, stars:0, coins:500, inventory:[], equipped:'', done:{math:[], arabic:[]}});
-                localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
+                const idx = db.findIndex(s => s.code === oldCode);
+                db[idx].code = newCode;
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
+                this.render();
             }
         },
-        gift(code) {
-            const db = this.get(); const idx = db.findIndex(s => s.code === code);
-            db[idx].coins += 1000; localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
+        del(code) {
+            if(confirm("هل أنت متأكد من حذف هذا البطل؟")) {
+                const db = this.get().filter(s => s.code !== code);
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
+                this.render();
+            }
         }
     };
     Admin.render();
