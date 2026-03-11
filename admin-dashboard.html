@@ -2,62 +2,80 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة أساطير 1-ب</title>
+    <title>لوحة التحكم | أساطير 1-ب</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-100 p-8 font-['Cairo']">
+<body class="bg-slate-50 p-6 font-['Cairo']">
     <div class="max-w-4xl mx-auto">
-        <div class="bg-indigo-600 text-white p-8 rounded-3xl mb-8 flex justify-between items-center shadow-xl">
-            <h1 class="text-3xl font-black text-white">لوحة تحكم المربية 👩‍🏫</h1>
-            <button onclick="Admin.modal(true)" class="bg-white text-indigo-600 px-6 py-2 rounded-full font-black">إضافة طالب +</button>
+        <div class="bg-blue-600 text-white p-10 rounded-[40px] mb-8 shadow-xl flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-black">غرفة القيادة 👩‍🏫</h1>
+                <p class="opacity-80">إدارة أبطال الصف الأول ب</p>
+            </div>
+            <button onclick="Admin.modal(true)" class="bg-white text-blue-600 px-8 py-3 rounded-2xl font-black shadow-lg">إضافة طالب +</button>
         </div>
-        <div id="list" class="grid gap-4"></div>
+
+        <div id="student-list" class="grid gap-4"></div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
-        <div class="bg-white p-8 rounded-3xl w-80">
-            <h2 class="text-xl font-black mb-4">طالب جديد</h2>
-            <input id="n" type="text" placeholder="الاسم" class="w-full p-3 bg-slate-100 rounded-xl mb-3">
-            <input id="c" type="text" placeholder="الكود (S1)" class="w-full p-3 bg-slate-100 rounded-xl mb-6 font-black uppercase">
-            <button onclick="Admin.save()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-black">حفظ</button>
-            <button onclick="Admin.modal(false)" class="w-full text-slate-400 mt-2">إلغاء</button>
+    <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-[35px] w-full max-w-sm">
+            <h2 class="text-2xl font-black mb-6">تسجيل طالب جديد</h2>
+            <input id="m-name" type="text" placeholder="اسم الطالب الكامل" class="w-full p-4 bg-slate-100 rounded-2xl mb-3 outline-none">
+            <input id="m-code" type="text" placeholder="كود الدخول (مثلاً: S1)" class="w-full p-4 bg-slate-100 rounded-2xl mb-6 outline-none font-black uppercase">
+            <button onclick="Admin.save()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-lg">تأكيد الإضافة</button>
+            <button onclick="Admin.modal(false)" class="w-full text-slate-400 mt-4 font-bold">إلغاء</button>
         </div>
     </div>
 
 <script>
-    const DB_KEY = 'ASATIR_FINAL_V1';
+    const DB_KEY = 'LEGENDS_1B_DATABASE';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
             const db = this.get();
-            document.getElementById('list').innerHTML = db.map(u => `
-                <div class="bg-white p-6 rounded-3xl flex justify-between items-center shadow-sm">
-                    <div><h3 class="font-black">${u.name}</h3><p class="text-xs text-indigo-500 font-bold">كود: ${u.code}</p></div>
-                    <div class="flex items-center gap-4">
-                        <span class="font-black text-amber-500">⭐ ${u.stars}</span>
-                        <button onclick="Admin.addStar('${u.code}')" class="bg-amber-100 text-amber-600 px-3 py-1 rounded-lg">+60</button>
-                        <button onclick="Admin.del('${u.code}')" class="text-red-300">🗑️</button>
+            document.getElementById('student-list').innerHTML = db.map(u => `
+                <div class="bg-white p-6 rounded-[30px] flex justify-between items-center shadow-sm border border-slate-100">
+                    <div>
+                        <h3 class="font-black text-xl">${u.name}</h3>
+                        <p class="text-sm text-blue-500 font-bold">الكود السري: ${u.code}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-center px-4">
+                            <p class="text-xs text-slate-400 font-bold">النقاط</p>
+                            <p class="font-black text-blue-600">${u.xp || 0}</p>
+                        </div>
+                        <button onclick="Admin.gift('${u.code}')" class="bg-amber-100 text-amber-600 px-4 py-2 rounded-xl font-black">🎁 500</button>
+                        <button onclick="Admin.del('${u.code}')" class="text-red-300 hover:text-red-500 transition">🗑️</button>
                     </div>
                 </div>
             `).join('');
         },
         modal(s) { document.getElementById('modal').style.display = s ? 'flex' : 'none'; },
         save() {
-            const n = document.getElementById('n').value; const c = document.getElementById('c').value.toUpperCase();
-            if(!n || !c) return;
-            const db = this.get(); db.push({name:n, code:c, stars:0});
+            const name = document.getElementById('m-name').value;
+            const code = document.getElementById('m-code').value.toUpperCase();
+            if(!name || !code) return;
+            const db = this.get();
+            db.push({name, code, xp:0, coins:100});
             localStorage.setItem(DB_KEY, JSON.stringify(db));
             this.render(); this.modal(false);
         },
-        addStar(c) {
-            let db = this.get(); db.find(x => x.code === c).stars += 60;
-            localStorage.setItem(DB_KEY, JSON.stringify(db)); this.render();
+        gift(c) {
+            let db = this.get();
+            const u = db.find(x => x.code === c);
+            u.coins = (u.coins || 0) + 500;
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            this.render(); alert(`تم إرسال 500 عملة هدية لـ ${u.name}!`);
         },
-        del(c) { if(confirm('حذف؟')) {
-            localStorage.setItem(DB_KEY, JSON.stringify(this.get().filter(x => x.code !== c)));
-            this.render();
-        }}
+        del(c) {
+            if(confirm('هل أنت متأكدة من حذف هذا البطل؟')) {
+                let db = this.get().filter(x => x.code !== c);
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
+                this.render();
+            }
+        }
     };
     Admin.render();
 </script>
