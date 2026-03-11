@@ -2,81 +2,75 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة تحكم نيو-روبو</title>
+    <title>إدارة أساطير 1-ب</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-50 p-6 font-['Cairo']">
-
+<body class="bg-slate-50 p-8 font-['Cairo']">
     <div class="max-w-6xl mx-auto">
-        <header class="flex justify-between items-center mb-10 bg-indigo-600 p-8 rounded-[40px] text-white shadow-2xl">
+        <div class="flex justify-between items-center mb-10">
             <div>
-                <h1 class="text-4xl font-black italic">لوحة إدارة الأساطير 👑</h1>
-                <p class="opacity-80">تحكم بالطلاب، الهدايا، والمراحل</p>
+                <h1 class="text-4xl font-black text-indigo-700">مرحباً أستاذة 1-ب 👋</h1>
+                <p class="text-slate-500">من هنا يمكنكِ متابعة نجوم طلابك وهداياهم</p>
             </div>
-            <button onclick="Admin.modal(true)" class="bg-white text-indigo-600 px-8 py-4 rounded-3xl font-black text-xl hover:scale-105 transition">+ إضافة بطل</button>
-        </header>
+            <button onclick="Admin.showAdd()" class="bg-indigo-600 text-white px-8 py-4 rounded-3xl font-black shadow-lg hover:scale-105 transition">إضافة بطل جديد +</button>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="list"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="students-list"></div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-[2000] backdrop-blur-sm">
+    <div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-[3000]">
         <div class="bg-white p-10 rounded-[40px] w-full max-w-md shadow-2xl">
-            <h2 class="text-3xl font-black mb-6 text-indigo-600">تسجيل بطل جديد ✨</h2>
-            <input type="text" id="m-name" placeholder="اسم الطالب" class="w-full p-5 mb-4 bg-slate-100 rounded-2xl border-none outline-none focus:ring-2 ring-indigo-500 text-xl font-bold">
-            <input type="text" id="m-code" placeholder="الكود (مثلاً: A10)" class="w-full p-5 mb-8 bg-slate-100 rounded-2xl border-none outline-none focus:ring-2 ring-indigo-500 text-xl font-black uppercase">
-            <div class="flex gap-4">
-                <button onclick="Admin.save()" class="flex-1 bg-indigo-600 text-white py-5 rounded-2xl font-black text-xl">حفظ</button>
-                <button onclick="Admin.modal(false)" class="flex-1 bg-slate-200 text-slate-500 py-5 rounded-2xl font-black text-xl">إلغاء</button>
-            </div>
+            <h2 class="text-2xl font-black mb-6">تسجيل طالب جديد</h2>
+            <input type="text" id="m-name" placeholder="اسم الطالب" class="w-full p-4 mb-4 bg-slate-100 rounded-2xl border-none outline-none font-bold">
+            <input type="text" id="m-code" placeholder="كود سري (مثل: A10)" class="w-full p-4 mb-8 bg-slate-100 rounded-2xl border-none outline-none font-black uppercase">
+            <button onclick="Admin.save()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black">حفظ الطالب</button>
         </div>
     </div>
 
 <script>
-    const DB_KEY = 'LEGENDS_NEO_V6';
+    const DB_KEY = 'LEGENDS_ULTRA_V1';
     const Admin = {
         get() { return JSON.parse(localStorage.getItem(DB_KEY)) || []; },
         render() {
             const db = this.get();
-            document.getElementById('list').innerHTML = db.map(u => `
-                <div class="bg-white p-6 rounded-[35px] shadow-sm border border-slate-100 hover:shadow-xl transition">
-                    <div class="flex items-center gap-4 mb-4">
+            document.getElementById('students-list').innerHTML = db.map(u => `
+                <div class="bg-white p-6 rounded-[35px] shadow-sm border border-slate-100">
+                    <div class="flex items-center gap-4 mb-6">
                         <div class="text-5xl">${u.avatar || '👦'}</div>
                         <div>
-                            <h3 class="text-2xl font-black text-slate-800">${u.name}</h3>
-                            <span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full font-bold text-sm">كود: ${u.code}</span>
+                            <h3 class="text-xl font-black">${u.name}</h3>
+                            <p class="text-sm bg-indigo-50 text-indigo-600 px-2 rounded-full inline-block">كود: ${u.code}</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 mb-6 text-center">
-                        <div class="bg-yellow-50 p-2 rounded-2xl text-yellow-600 font-bold">💰 ${u.coins}</div>
-                        <div class="bg-rose-50 p-2 rounded-2xl text-rose-600 font-bold">⭐ ${u.stars}</div>
+                    <div class="flex justify-between border-t pt-4">
+                        <div class="text-center"><p class="text-xs text-slate-400 font-bold">النجوم</p><p class="text-rose-500 font-black">⭐ ${u.stars}</p></div>
+                        <div class="text-center"><p class="text-xs text-slate-400 font-bold">العملات</p><p class="text-amber-500 font-black">💰 ${u.coins}</p></div>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="Admin.gift('${u.code}')" class="flex-1 bg-green-500 text-white py-2 rounded-xl font-bold">🎁 هدية</button>
-                        <button onclick="Admin.del('${u.code}')" class="bg-rose-100 text-rose-600 px-4 rounded-xl font-bold">🗑️</button>
+                    <div class="mt-6 flex gap-2">
+                        <button onclick="Admin.gift('${u.code}')" class="flex-1 bg-green-100 text-green-600 py-2 rounded-xl font-bold">🎁 هدية 500</button>
+                        <button onclick="Admin.del('${u.code}')" class="bg-red-50 text-red-500 px-4 rounded-xl font-bold">🗑️</button>
                     </div>
                 </div>
             `).join('');
         },
-        modal(s) { document.getElementById('modal').style.display = s ? 'flex' : 'none'; },
+        showAdd() { document.getElementById('modal').style.display = 'flex'; },
         save() {
-            const name = document.getElementById('m-name').value;
-            const code = document.getElementById('m-code').value.toUpperCase();
-            if(!name || !code) return;
+            const n = document.getElementById('m-name').value; const c = document.getElementById('m-code').value.toUpperCase();
+            if(!n || !c) return;
             const db = this.get();
-            db.push({name, code, stars:0, coins:100, progress:{math:0, arabic:0}, avatar:'👦'});
+            db.push({name:n, code:c, stars:0, coins:200, avatar:'👦', progress:{}});
             localStorage.setItem(DB_KEY, JSON.stringify(db));
-            this.render(); this.modal(false);
+            this.render(); document.getElementById('modal').style.display = 'none';
         },
         gift(c) {
             let db = this.get();
             db.find(x => x.code === c).coins += 500;
             localStorage.setItem(DB_KEY, JSON.stringify(db));
-            this.render(); alert('تم إرسال 500 عملة!');
+            this.render(); alert('تم إرسال هدية للبطل!');
         },
         del(c) { if(confirm('حذف؟')) {
-            let db = this.get().filter(x => x.code !== c);
-            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            localStorage.setItem(DB_KEY, JSON.stringify(this.get().filter(x => x.code !== c)));
             this.render();
         }}
     };
